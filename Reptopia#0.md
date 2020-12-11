@@ -204,8 +204,8 @@ Selenium (mg/kg)
   - +a 부력 (수중 생물 또는 날아다니는 생명체 구현)
 
 * 게코 골격, 옆 모습 참고 사진
-![gk1](/img/토케이 뼈.jpg)
-![gk1](/img/레게 옆.jpg)
+![gk1](/img/tokbone.jpg)
+![gk2](/img/leoside.jpg)
 
 
 function spin(angle, joint){
