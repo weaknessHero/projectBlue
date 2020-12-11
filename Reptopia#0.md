@@ -254,7 +254,7 @@ https://m.blog.naver.com/dalsapcho/20144939371
 - Swamp
 ![sw1](/img/swamp.jpg)
 ![sw2](/img/swamp2.jpg)
-![sw3](/img/swamp-alligator.jpg)
+![sw3](/img/swamp_alligator.jpg)
 
 
  - Underwater
