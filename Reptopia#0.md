@@ -54,8 +54,8 @@
 
 영양/미네랄 비교
 
-|       Nutrition       |   Cricket   |    Mealworm   |   Tables   |  Superworm  |   Waxworm   |
-|-----------------------|------------:|--------------:|-----------:|------------:|------------:|
+|       Nutrition       |   Cricket   |    Mealworm   |  Superworm  |   Waxworm   |
+|-----------------------|------------:|--------------:|------------:|------------:|
 | Weight (mg/insect)                 |  349 | 78  | 558 | 235 |
 | Moisture (g/kg)                    |  725 | 689 | 630 | 641 |
 | Crude Protein (g/kg)               |  165 | 186 | 186 | 144 |
