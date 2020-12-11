@@ -146,8 +146,8 @@ https://m.blog.naver.com/dalsapcho/20144939371
 
 
 - Rocky desert
-![rd1](/img/rock0x0Ddesert.jpg)
-![rd2](/img/rocky0x0Ddesert.jpg)
+![rd1](/img/rockd.jpg)
+![rd2](/img/rockyd.jpg)
 
 
 - Swamp
