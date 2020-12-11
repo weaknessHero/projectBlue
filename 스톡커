@@ -26,8 +26,6 @@ open api로 주가정보를 받아서 정보를 분석하고 계산별로 따로
 A제품 매출 B제품 이익 수치로 나누어서 지분 %로 나누어서 계산한다. 
  ex) A 제품 +2점 이익 지분 60% 점수 B제품 +3점 이익 지분 40% 일 경우 이 회사는 1.2+1.2점 약 2.4점의 점수가 추가되는 것입니다.
  
- 
- <div>
- <img src='../img/aa.gif'>
- 
- </div>
+![aa](https://user-images.githubusercontent.com/41188989/101887347-153d8b00-3be0-11eb-9bc7-efb350fbb09e.GIF)
+![ab](https://user-images.githubusercontent.com/41188989/101887353-166eb800-3be0-11eb-80e7-2c369c000c6e.GIF)
+
