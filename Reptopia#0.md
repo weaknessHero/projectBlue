@@ -259,7 +259,7 @@ https://m.blog.naver.com/dalsapcho/20144939371
 
 
 - Underwater
-![uw1](/img/underwater jungle.jpg)
+![uw1](/img/underwatjung.jpg)
 ![uw2](/img/underwater.jpg)
 ![uw3](/img/underwaterfish.jpg)
 
