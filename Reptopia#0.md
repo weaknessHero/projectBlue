@@ -204,10 +204,8 @@ Selenium (mg/kg)
   - +a 부력 (수중 생물 또는 날아다니는 생명체 구현)
 
 * 게코 골격, 옆 모습 참고 사진
-
-
-
-
+![gk1](/img/토케이 뼈.jpg)
+![gk1](/img/레게 옆.jpg)
 
 
 function spin(angle, joint){
@@ -229,13 +227,17 @@ mx, my 유도식
 P’의 좌표의 –만큼 이미지를 이동시킨 후 θ만큼 회전함.
 
 https://m.blog.naver.com/dalsapcho/20144939371
-결과
 
+결과
+![hu](/img/headUp.gif)
 
 
 
 
 *웹 디자인 아이디어
+![ds1](/img/design0.jpg)
+![ds2](/img/design1.jpg)
+![ds3](/img/design2.jpg)
 
 
 *웹 배경 사진 자료
