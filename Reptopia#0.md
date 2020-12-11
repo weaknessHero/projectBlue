@@ -225,7 +225,7 @@ function spin(angle, joint){
 mx, my 유도식
 
 P’의 좌표의 –만큼 이미지를 이동시킨 후 θ만큼 회전함.
-
+![spin](/img/spin.png)
 https://m.blog.naver.com/dalsapcho/20144939371
 
 결과
