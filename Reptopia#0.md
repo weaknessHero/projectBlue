@@ -54,127 +54,16 @@
 
 영양/미네랄 비교
 
-| Tables   |      Are      |  Cool |
-|----------|:-------------:|------:|
-| col 1 is |  left-aligned | $1600 |
-| col 2 is |    centered   |   $12 |
-| col 3 is | right-aligned |    $1 |
+|       Nutrition       |   Cricket   |    Mealworm   |   Tables   |  Superworm  |   Waxworm   |
+|-----------------------|:-----------:|--------------:|-----------:|------------:|------------:|
+| Weight (mg/insect)                 |  349 | 78  | 558 | 235 |
+| Moisture (g/kg)                    |  725 | 689 | 630 | 641 |
+| Crude Protein (g/kg)               |  165 | 186 | 186 | 144 |
+| Crude Fat (g/kg)                   |  79  | 82  | 14.4| 19.4|
+| Metabolizable Energy (kcal/kg)     | 1375 | 1520| 2069| 2322|
+| Metabolizable Energy (kcal/insect) |  480 | 119 | 1154| 546 |
+| Calcium (mg/kg)                    |  366 | 156 | 262 | 203 |
 
-
-Cricket
-Mealworm
-Superworm
-Waxworm
-Weight (mg/insect)
-349
-78
-558
-235
-Moisture (g/kg)
-725
-689
-630
-641
-Crude Protein (g/kg)
-165
-186
-186
-144
-Crude Fat (g/kg)
-79
-82
-14.4
-19.4
-NFE (g/kg)
-1
-9
-7
--2
-Total Dietary Fiber (g/kg)
-10.9
-12.9
-14.4
-<7.5
-Acid Detergent Fiber (g/kg)
-17.8
-22.3
-23.4
-15.2
-Ash (g/kg)
-12.2
-11.3
-9.3
-8.0
-Metabolizable Energy (kcal/kg)
-1375
-1520
-2069
-2322
-Metabolizable Energy (kcal/insect)
-480
-119
-1154
-546
-Calcium (mg/kg)
-366
-156
-262
-203
-Phosphorus (mg/kg)
-2,190
-2,640
-2,090
-1,930
-Magnesium (mg/kg)
-193
-620
-435
-266
-Sodium (mg/kg)
-1,110
-225
-385
-<123
-Potassium (mg/kg)
-2,850
-3,350
-2,860
-2,310
-Chloride (mg/kg)
-2,210
-1,760
-1,630
-760
-Iron (mg/kg)
-17.5
-20.7
-19.9
-9.6
-Zinc (mg/kg)
-54.3
-49.5
-30.2
-25.9
-Copper (mg/kg)
-6.3
-8.3
-3.6
-3.3
-Manganese (mg/kg)
-8.7
-3.2
-3.7
-2.7
-Iodine (mg/kg)
-0.145
-<0.10
-<0.10
-<0.10
-Selenium (mg/kg)
-0.133
-0.123
-0.103
-0.177
 
 
 
