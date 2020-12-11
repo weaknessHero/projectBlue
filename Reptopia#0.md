@@ -239,7 +239,8 @@ https://m.blog.naver.com/dalsapcho/20144939371
 
 
 *웹 배경 사진 자료
- - Jungle
+
+- Jungle
 ![jg1](/img/green-trees.jpg)
 ![jg2](/img/Jungle.jpg)
 ![jg3](/img/Jungle-Book.jpg)
@@ -257,7 +258,7 @@ https://m.blog.naver.com/dalsapcho/20144939371
 ![sw3](/img/swamp_alligator.jpg)
 
 
- - Underwater
+- Underwater
 ![uw1](/img/underwater jungle.jpg)
 ![uw2](/img/underwater.jpg)
 ![uw3](/img/underwaterfish.jpg)
