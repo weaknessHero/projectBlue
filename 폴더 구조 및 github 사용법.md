@@ -24,7 +24,7 @@ git status (현재 상태 보기)
 ### 로컬 -> 원격
 로컬 저장소( 컴퓨터의 폴더 )의 변경사항을 원격 저장소( GIT HUB )에 적용하려면 변경사항을 BASH에 먼저 알려야 한다.
 
-$git remote add origin https://github.com/CGToolHomepage/index
+$git remote add origin https://github.com/weaknessHero/projectBlue/
  원격 저장소 추가( origin )
 
 $ git add * (추가할 파일)(*은 모든 파일을 뜻한다)
