@@ -91,7 +91,7 @@ window.onload = function(){
         }
     
         this.collision = function(objArray){
-            //오브젝트들 사이에서 충돌 구현. ---개발중--- 정리필요
+            //오브젝트들 사이에서 충돌 구현.
             
             objArray = objects;
             var xsign = 1;
@@ -109,13 +109,13 @@ window.onload = function(){
                             if( objS.p2[1] + objS.dy < this.points[i][1]+this.dy & this.points[i][1]+this.dy < objS.p3[1] + objS.dy){
                                 bounce(this, objS);
                                 return n;
-                                ///////////////////////////////////////////////////////////////////////////////
+                                ///////////////////////////////////////////////////////////////////////////////this의 꼭짓점들이 objS 안에 들어가는지 확인
                             }
                         if( this.p1[0] + this.dx < objS.points[i][0]+objS.dx & objS.points[i][0]+objS.dx < this.p2[0] + this.dx)
                             if( this.p2[1] + this.dy < objS.points[i][1]+objS.dy & objS.points[i][1]+objS.dy < this.p3[1] + this.dy){
                                 bounce(objS, this);
                                 return n;
-                                ///////////////////////////////////////////////////////////////////////////////
+                                ///////////////////////////////////////////////////////////////////////////////objS의 꼭짓점들이 this 안에 들어가는지 확인
                             }
                     }
 
@@ -304,9 +304,9 @@ window.onload = function(){
         obj2.dx = b2*obj2.elasticity;
         
         [obj1, obj2].forEach(obj =>{
-            obj.stickObj();
+            obj.stickObj();                 //속도가 1 미만이면 움직이지 않음.(무한 충돌 방지)
             if(obj.type=='wall')
-                obj.stop();
+                obj.stop();                 //벽일 경우 움직이지 않음.
         })
     }
 
