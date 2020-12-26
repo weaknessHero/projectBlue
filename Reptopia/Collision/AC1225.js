@@ -25,7 +25,8 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
     var BGC = [30, 30, 30];       //'Backgound Color' 초기 배경색 rgb값.
     loop();                       //무한 루프 실행.
 
-    
+
+
 
     function loop(){    //메인 루프
 
@@ -37,17 +38,17 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
                 objects.push(rndobj);                           //랜덤 오브젝트 1개 생성.
             }
         
-        if(t%900 == 0)objects.splice(1, 28);                    //600프레임 마다 오브젝트들 초기화(바닥, 마지막 obj 제외)
-
+        if(t%900 == 0)objects.splice(1, 28);                    //일정 프레임 수 마다 오브젝트들 초기화(바닥, 마지막 obj 제외)
+        
         BGC = fadeColor(2, BGC);                                //배경색을 바꿈.
         ctx.fillStyle=arrToRGB(BGC);
         ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);    //배경을 칠함.
         
         objects.forEach(obj => {                                //모든 오브젝트에 아래 함수들을 실행.
-            obj.draw();         //그림 (원래만 맨 마지막 순서가 맞지만, 이전 프레임의 위치에 그리게 해도 영향은 없다. checkCollision 이후에 draw를 하면 코드가 길어지가 때문에 이렇게 함.)
-            obj.fadeColor(10);  //색 변화
-            obj.gravity();      //중력
-            obj.airresist();    //공기저항
+            obj.draw();                 //그림
+            obj.fadeColor(5);           //색 변화
+            obj.gravity();              //중력
+            obj.airresist();            //공기저항
         });                                                     //과정 간결화 ---개발중---
         
         checkCollision();
@@ -77,19 +78,18 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
         this.p1     = [this.x, this.y];
         this.p2     = [this.x + this.width, this.y];
         this.p3     = [this.x + this.width, this.y + this.height];
-        this.p4     = [this.x, this.y + this.height];           //오브젝트의 꼭짓점들. collision(충돌) 함수 구현에 필요.
+        this.p4     = [this.x, this.y + this.height];       //오브젝트의 꼭짓점들. collision(충돌) 함수 구현에 필요.
         this.points = [this.p1, this.p2, this.p3, this.p4]; //꼭짓점들을 for문으로 돌리기위해 배열에 넣었다.
-    
+        
         this.accelerateMoveDraw = function(dx, dy, dr){
             //가속, 이동, 그리기를 묶어놓은 함수. 삭제 가능.
-
+            
             this.accelerate(dx, dy, dr);
             this.move();
             this.draw();
         }
-    
-        this.accelerate = function(dx, dy, dr){
-            //가속 함수. x/y/r의 순간변화량을 바꾼다.
+        
+        this.accelerate = function(dx, dy, dr){     //가속 함수. x/y/r의 순간변화량을 바꾼다.
 
             this.dx += dx;
             this.dy += dy;
@@ -97,9 +97,6 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
 
             if(this.type == 'wall')this.stop();        //타입이 wall일 경우 가속하지 않음.
         }
-
-        this.stop = function()
-        {this.dx = 0;this.dy = 0;this.dr = 0;}  //오브젝트를 정지하는 함수.
 
         this.move = function(){         //오브젝트의 좌표와 각도를 순간 변화량 만큼 변환하는 함수.
             if(this.type == 'wall')return 0;
@@ -110,14 +107,42 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
 
             this.movePoints();          //오브젝트의 꼭짓점들도 움직여준다.
         }
+
+        this.movePoints = function(){                               //꼭짓점들을 이동시키는 함수.
+            this.p1     = [this.x, this.y];
+            this.p2     = [this.x + this.width, this.y];
+            this.p3     = [this.x + this.width, this.y + this.height];
+            this.p4     = [this.x, this.y + this.height];
+            this.points = [this.p1, this.p2, this.p3, this.p4];     //오브젝트의 좌표, 너비, 높이를 참조해 꼭짓점 위치 설정.
+        }
+        
+        this.stop = function()
+        {this.dx = 0;this.dy = 0;this.dr = 0;}  //오브젝트를 정지하는 함수.
+
+        this.stickObj = function(){     //속력이 1보다 작을 경우 정지시킴 <이름 수정>
+            if(-1 < this.dx & this.dx < 1)this.dx = 0;
+            if(-1 < this.dy & this.dy < 1)this.dy = 0;
+            if(-1 < this.dr & this.dr < 1)this.dr = 0;
+        }
+        
+        this.gravity = function()       //중력 구현 함수.
+            {if(this.type != 'wall')this.accelerate(0, this.m*3.5, 0);}
+
+        this.airresist = function(){    //공기저항 구현 함수. ---개발중--- 저항 면적에 비례하여 저항 상승
+            this.dx *= 0.99;
+            this.dr *= 0.98;
+            this.dy *= 0.99;
+        }
+
+        this.fadeColor = function(w){this.color = fadeColor(w, this.color);}
     
-        this.collision = function(objArray){
-            //오브젝트들 사이에서 충돌 구현.
+        this.collision = function(objArray){    //오브젝트들 사이에서 충돌 구현.
             
             for(let n = 0; n<objArray.length; n++){
                 objS = objArray[n];                                                         //Sub object.
 
-                if(objS != this){for(let i =0; i<4; i++){
+                if(objS != this){for(let i = 0; i<4; i++){
+                    if(this.z == objS.z){
 
                         if( objS.p1[0] + objS.dx < this.points[i][0]+this.dx & this.points[i][0]+this.dx < objS.p2[0] + objS.dx)
                             if( objS.p2[1] + objS.dy < this.points[i][1]+this.dy & this.points[i][1]+this.dy < objS.p3[1] + objS.dy){
@@ -126,9 +151,9 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
                             }//this의 꼭짓점들이 objS 안에 들어가는지 확인
                         if( this.p1[0] + this.dx < objS.points[i][0]+objS.dx & objS.points[i][0]+objS.dx < this.p2[0] + this.dx)
                             if( this.p2[1] + this.dy < objS.points[i][1]+objS.dy & objS.points[i][1]+objS.dy < this.p3[1] + this.dy){
-                                bounce(objS, this);
+                                bounce(objS, this); 
                                 return n;
-                            }//objS의 꼭짓점들이 this 안에 들어가는지 확인
+                            }}//objS의 꼭짓점들이 this 안에 들어가는지 확인
 
             }}}//for문을 object의 개수의 제곱 번 돌면서 한 오브젝트를 두 번 검사함. 두 번 하지 않으면 한 오브젝트가 다른 오브젝트에 완전 포함될 경우 충돌 감지를 못함.
             return -1;
@@ -136,29 +161,21 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
 
         this.draw = function(){                                                 //오브젝트를 그린다. 오브젝트의 위치(x, y), 너비와 높이, 각도가 적용된다.
 
-
             ctx.save();                                                         //2d context가 가진 스타일을 저장.
             
+            //오브젝트 회전
             ctx.translate(this.x+this.width*0.5, this.y+this.height);           //canvas의 중심축을 (x, y)만큼 이동시킨다.
             ctx.rotate(this.r);                                                 //canvas의 중심축을 (r)만큼 회전시킨다.
             ctx.translate( -(this.x+this.width*0.5), -(this.y+this.height));
             //오브젝트의 위치만큼 중심축을 이동시키고(중심축을 오브젝트 위치에 놓고), 중심축을 오브젝트의 각도만큼 회전시키고,
             //다시 이동시켰던 (x, y)만큼 되돌아간다(회전된 상태에서). 이렇게 하면 회전한 오브젝트를 그릴 수 있다.
-    
+            
             ctx.fillStyle = arrToRGB(this.color);                               //오브젝트의 색깔을 설정한다.
             ctx.fillRect(this.x, this.y, this.width*this.z, this.height*this.z);//오브젝트를 그린다.
             this.drawPoints();                                                  //꼭짓점을 그린다.
-    
+            
             ctx.rotate(-this.r);                                                //돌렸던 canvas를 다시 원래대로 돌려놓는다.
             ctx.restore();                                                      //저장한 2d context 스타일을 불러옴.
-        }
-    
-        this.movePoints = function(){                               //꼭짓점들을 이동시키는 함수.
-            this.p1     = [this.x, this.y];
-            this.p2     = [this.x + this.width, this.y];
-            this.p3     = [this.x + this.width, this.y + this.height];
-            this.p4     = [this.x, this.y + this.height];
-            this.points = [this.p1, this.p2, this.p3, this.p4];     //오브젝트의 좌표, 너비, 높이를 참조해 꼭짓점 위치 설정.
         }
 
         this.drawPoints = function(){                       //꼭짓점들을 그리는 함수.
@@ -176,27 +193,9 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
                 ctx.fillRect(this.points[i][0], this.points[i][1], pWidth*this.z, pHeight*this.z);
             }
         }
-
-        this.stickObj = function(){
-            if(-1 < this.dx & this.dx < 1)this.dx = 0;
-            if(-1 < this.dy & this.dy < 1)this.dy = 0;
-            if(-1 < this.dr & this.dr < 1)this.dr = 0;
-        }
-    
-        this.gravity = function(){  //중력 구현 함수.
-            if(this.type != 'wall')this.accelerate(0, this.m*3.5, 0);      //3.5 * 질량만큼 가속함. 현실에서는 9.8 * 질량이지만 이는 지구의 질량과 반지름에 의해 결정된 중력가속도 값(만유인력)으로, 다른 환경이라고 가정하고 중력가속도를 3.5로 잡았음.
-        }
-    
-        this.airresist = function(){    //공기저항 구현 함수. ---개발중--- !저항 면적에 비례하여 저항 상승
-            this.dx *= 0.99;
-            this.dr *= 0.98;
-            this.dy *= 0.99;
-        }
-
-        this.fadeColor = function(w){this.color = fadeColor(w, this.color);}
     }
 
-    function checkCollision(){  //object.collision() 반복 호출하여 충돌 구현
+    function checkCollision(){  //object.collision() 반복 호출하여 충돌 구현 <충돌한 객체들에게 재귀함수 호출>
         var crashed = [];var lim = 0;
 
         for(let i = 0; i < objects.length; i++){
@@ -236,20 +235,14 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
             else if(rnd <= 0.2) {rgb[i] -= Math.random()*weight;break;} //가중치를 각 r/g/b 값에서 빼거나 더함.
         }
         for(var i = 0; i < 3; i++){
-            if(rgb[i]>255)
-                rgb[i] = 255;
-            if(rgb[i] < 0)
-                rgb[i] = 0;
+            if(rgb[i]>255)rgb[i] = 255;
+            if(rgb[i] < 0)rgb[i] = 0;
         }                               //rgb값이 255를 넘거나 0보다 작아지지 않게 제어함.
-    
         return rgb;                     //rgb 배열을 리턴
     }
     
     function arrToRGB(rgbArr)           //배열을 rgb문자열로 변환하여 리턴.
     {return 'rgb(' + rgbArr[0] + ',' + rgbArr[1] + ',' + rgbArr[2] + ')';}
-    
-
-    //항상 힘으로 생각하기.
 
     function bounce(obj1, obj2){
         //작용 반작용
@@ -268,10 +261,10 @@ window.onload = function(){     //페이지가 로드되면, html을 읽을 때,
         obj1.dx = b1*obj1.elasticity;
         obj2.dx = b2*obj2.elasticity;
         
+        
         [obj1, obj2].forEach(obj =>{
             obj.stickObj();                 //속도가 1 미만이면 움직이지 않음.(무한 충돌 방지)
             if(obj.type=='wall')obj.stop();                 //벽일 경우 움직이지 않음.
         })
     }
-
 }
