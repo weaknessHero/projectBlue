@@ -107,7 +107,7 @@ function Object(type, x, y, z, mess, width, height, color){
 
     this.collision = function(objArray, recursed = 0){    //오브젝트들 사이에서 충돌 구현. 재귀호출로 연쇄충돌 구현.
         //무한 리커젼 탈출
-        if(recursed>4){console.log("collision escaped.");return 0;}
+        if(recursed>3){console.log("ce." + recursed);return 0;}
 
         for(let n = 0; n<objArray.length; n++){
             objS = objArray[n];
@@ -116,20 +116,20 @@ function Object(type, x, y, z, mess, width, height, color){
                 if(this.z == objS.z){
 
                     //this의 꼭짓점들이 objS 안에 들어가는지 확인
-                    if(objS.p1[0] + objS.dx < this.points[i][0] + this.dx & this.points[i][0] + this.dx < objS.p2[0] + objS.dx)
-                        if( objS.p2[1] + objS.dy < this.points[i][1] + this.dy & this.points[i][1] + this.dy < objS.p3[1] + objS.dy){
+                    if((objS.p1[0] + objS.dx < this.points[i][0] + this.dx) & (this.points[i][0] + this.dx < objS.p2[0] + objS.dx))
+                        if((objS.p2[1] + objS.dy < this.points[i][1] + this.dy) & (this.points[i][1] + this.dy < objS.p3[1] + objS.dy)){
                             bounce(this, objS);
-                            this.collision(objArray, ++recursed);
-                            objS.collision(objArray, ++recursed);
+                            this.collision(objArray, recursed+1);
+                            objS.collision(objArray, recursed+1);
                             return 1;
                         }
                             
                     //objS의 꼭짓점들이 this 안에 들어가는지 확인
-                    if(this.p1[0] + this.dx < objS.points[i][0]+objS.dx & objS.points[i][0] + objS.dx < this.p2[0] + this.dx)
-                        if( this.p2[1] + this.dy < objS.points[i][1]+objS.dy & objS.points[i][1] + objS.dy < this.p3[1] + this.dy){
+                    if((this.p1[0] + this.dx < objS.points[i][0] + objS.dx) & (objS.points[i][0] + objS.dx < this.p2[0] + this.dx))
+                        if((this.p2[1] + this.dy < objS.points[i][1]+objS.dy) & (objS.points[i][1] + objS.dy < this.p3[1] + this.dy)){
                             bounce(this, objS);
-                            this.collision(objArray, ++recursed);
-                            objS.collision(objArray, ++recursed);
+                            this.collision(objArray, recursed+1);
+                            objS.collision(objArray, recursed+1);
                             return 1;
                         }
         }}}}

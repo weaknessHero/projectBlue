@@ -19,9 +19,9 @@ document.body.appendChild(canvasEl);
 var objects = [];               //모든 object를 포괄하는 배열
 var frame = 0;
 var BGC = [30, 30, 30];         //'Backgound Color' 배경색 초기 rgb값
-var floor = new Object('wall', 0, canvasEl.height - 50, 1, 10000, canvasEl.width, 50, [30, 20, 0]); //땅 생성
+var floorObject = new Object('wall', 0, canvasEl.height - 50, 1, 10000, canvasEl.width, 50, [30, 20, 0]); //땅 생성
 
-objects.push(floor);
+objects.push(floorObject);
 
 loop();
 
@@ -54,7 +54,7 @@ function loop(){  //메인 루프
 }
 
 
-////////함수////////
+//////함수//////
 
 function arrToRGB(rgbArr){  //배열을 rgb문자열로 변환
     return 'rgb(' + rgbArr[0] + ',' + rgbArr[1] + ',' + rgbArr[2] + ')';
@@ -88,19 +88,20 @@ function createRandomObject(){  //무작위 오브젝트를 생성하여 리턴.
 }
 
 function bounce(obj1, obj2){  //작용 반작용
-    //상하 반작용
-    let b1 = (((obj1.m-obj2.m) * obj1.dy) + ((2*obj2.m) * obj2.dy)) / (obj1.m+obj2.m);
-    let b2 = (((obj2.m-obj1.m) * obj2.dy) + ((2*obj1.m) * obj1.dy)) / (obj2.m+obj1.m);
-
-    obj1.dy = b1*obj1.elasticity;
-    obj2.dy = b2*obj2.elasticity;
-
     //좌우 반작용
-    b1 = (((obj1.m-obj2.m) * obj1.dx) + ((2*obj2.m) * obj2.dx)) / (obj1.m+obj2.m);
-    b2 = (((obj2.m-obj1.m) * obj2.dx) + ((2*obj1.m) * obj1.dx)) / (obj2.m+obj1.m);
+    let dxAfterBounce1 = (((obj1.m-obj2.m) * obj1.dx) + ((2*obj2.m) * obj2.dx)) / (obj1.m+obj2.m);
+    let dxAfterBounce2 = (((obj2.m-obj1.m) * obj2.dx) + ((2*obj1.m) * obj1.dx)) / (obj2.m+obj1.m);
 
-    obj1.dx = b1*obj1.elasticity;
-    obj2.dx = b2*obj2.elasticity;
+    obj1.dx = dxAfterBounce1*obj1.elasticity;
+    obj2.dx = dxAfterBounce2*obj2.elasticity;
+
+
+    //상하 반작용
+    let dyAfterBounce1 = (((obj1.m-obj2.m) * obj1.dy) + ((2*obj2.m) * obj2.dy)) / (obj1.m+obj2.m);
+    let dyAfterBounce2 = (((obj2.m-obj1.m) * obj2.dy) + ((2*obj1.m) * obj1.dy)) / (obj2.m+obj1.m);
+
+    obj1.dy = dyAfterBounce1*obj1.elasticity;
+    obj2.dy = dyAfterBounce2*obj2.elasticity;
     
     //진동 방지 및 wall type 예외처리.
     [obj1, obj2].forEach(obj =>{
