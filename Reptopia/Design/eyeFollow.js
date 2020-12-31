@@ -7,14 +7,13 @@ canvasEl.height = innerHeight-120;
 document.body.appendChild(canvasEl);
 
 canvasEl.addEventListener("pointermove", mouseMove);
-canvasEl.addEventListener("pointerup", mouseMove);
 
 var eyes = [];
+var mx = 0;
+var my = 0;
 
 frame = 0;
 loop();
-
-//부드러운 구현 (dx, dy 추가해야할듯?)
 
 function Eye(x, y, radian1, radian2, color1, color2){
     this.x = x;
@@ -38,11 +37,6 @@ function Eye(x, y, radian1, radian2, color1, color2){
         this.dx = (((this.r2-this.r1)-distance([this.x, this.y], [this.pinX, this.pinY]))/(this.r2-this.r1)) * (aimX - this.x) * this.v;
         this.dy = (((this.r2-this.r1)-distance([this.x, this.y], [this.pinX, this.pinY]))/(this.r2-this.r1)) * (aimY - this.y) * this.v;
 
-        if(this.dx > this.r2) this.dx /= 2;
-        if(this.dx < -this.r2) this.dx /= 2;
-        if(this.dy > this.r2) this.dy /= 2;
-        if(this.dy < -this.r2) this.dy /= 2;
-
         this.x += this.dx;
         this.y += this.dy;
     }
@@ -60,8 +54,8 @@ function Eye(x, y, radian1, radian2, color1, color2){
     }
 
     this.toCenter = function(){
-        this.x += (this.pinX-this.x)/200;
-        this.y += (this.pinY-this.y)/200;
+        this.x += (this.pinX-this.x)/100;
+        this.y += (this.pinY-this.y)/100;
     }
 }
 
@@ -69,11 +63,12 @@ function loop(){
     frame++;
 
     if(eyes.length<300) eyes.push(randomEye());
-    if(frame%500==0) eyes.splice(0, eyes.length-1);
+    if(frame%1500==0) eyes.splice(0, eyes.length-1);
 
     ctx.fillStyle = "gray";
     ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
 
+    eyes.forEach(function(eye){eye.look(mx-9, my-90);});
     eyes.forEach(function(obj){obj.draw();});
     eyes.forEach(function(obj){obj.toCenter();});
 
@@ -81,7 +76,8 @@ function loop(){
 };
 
 function mouseMove(event){
-    eyes.forEach(function(eye){eye.look(event.pageX-9, event.pageY-90);});
+    mx = event.pageX;
+    my = event.pageY;
 }
 
 function distance(location1, location2){
