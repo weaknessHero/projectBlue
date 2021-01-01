@@ -65,10 +65,10 @@ function randomEye(){ //무작위 눈 생성
     let x = Math.random()*canvasEl.width;
     let y = Math.random()*canvasEl.height;
     let blackRadian = Math.random()*canvasEl.height/20 + 10;
-    let r2 = Math.random()*canvasEl.height/6 + 10;
+    let whiteRadian = Math.random()*canvasEl.height/6 + 10;
     let rndRGB1 = [Math.random()*100, Math.random()*100, Math.random()*100];
     let rndRGB2 = [Math.random()*100 + 155, Math.random()*100 + 155, Math.random()*100 + 155];
-    return new Eye(x, y, blackRadian, r2, rndRGB1,  rndRGB2);
+    return new Eye(x, y, blackRadian, whiteRadian, rndRGB1,  rndRGB2);
 }
 
 //눈 프로토타입
@@ -86,9 +86,11 @@ function Eye(x, y, blackRadian, whiteRadian, blackColor, whiteColor){
     this.dy = 0;
 
     //검은자 크기 제한 (흰자 크기에 따라)
-    if(blackRadian > whiteRadian * 3/4) this.r1 = whiteRadian * 3/4;
+    if(blackRadian > whiteRadian * 3/4) this.blackRadian = whiteRadian * 3/4;
     else this.blackRadian = blackRadian;
-    this.r2 = whiteRadian;
+    
+    this.whiteRadian = whiteRadian;
+    this.blackRadianB = this.blackRadian;
 
     //색 설정
     this.blackColor = arrToRGB(blackColor);
@@ -96,12 +98,12 @@ function Eye(x, y, blackRadian, whiteRadian, blackColor, whiteColor){
     let eyelidDarkness = 1.5 + Math.random()*8; //눈꺼풀 명도 조정 상수
     this.eyelidCol = arrToRGB([whiteColor[0]/eyelidDarkness, whiteColor[1]/eyelidDarkness, whiteColor[2]/eyelidDarkness]);
 
-    this.v = (this.r2 - this.blackRadian)/1200 + 0.001; //검은자 속력 상수
+    this.v = (this.whiteRadian - this.blackRadian)/1200 + 0.001; //검은자 속력 상수
 
     this.look = function(aimX, aimY){ //aimX, aimY에 다가감
         let d = distance([this.x, this.y], [this.centerX, this.centerY]);
-        this.dx = (1 - d/(this.r2-this.blackRadian)) * (aimX - this.x) * this.v;
-        this.dy = (1 - d/(this.r2-this.blackRadian)) * (aimY - this.y) * this.v;
+        this.dx = (1 - d/(this.whiteRadian-this.blackRadian)) * (aimX - this.x) * this.v;
+        this.dy = (1 - d/(this.whiteRadian-this.blackRadian)) * (aimY - this.y) * this.v;
 
         this.x += this.dx;
         this.y += this.dy;
@@ -114,20 +116,20 @@ function Eye(x, y, blackRadian, whiteRadian, blackColor, whiteColor){
 
     this.blinking = false; //깜빡이는지 여부
     this.blinkTime = 0; //깜빡이기 시작한 시간
-    this.blinkingVel = 0; //깜빡이는 속도
+    this.blinkingFrame = 0; //깜빡이는 시간
     
     this.blink = function(frame){ //깜빡임
         if(!this.blinking){
             this.blinking = true;
             this.blinkTime = frame;
-            this.blinkingVel = 2 + Math.random()*24;
+            this.blinkingFrame = 3 + Math.random()*14;
         }
     }
 
     this.draw = function(){ //검은자, 흰자, [눈꺼풀] 그림
         ctx.fillStyle = this.whiteColor;
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, 0, Math.PI*2, false);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, 0, Math.PI*2, false);
         ctx.fill();
 
         ctx.fillStyle = this.blackColor;
@@ -139,10 +141,18 @@ function Eye(x, y, blackRadian, whiteRadian, blackColor, whiteColor){
 
         if(this.blinking){ //깜빡임 적용
             let t = frame - this.blinkTime;
-            let v = this.blinkingVel;
-            if(t < v) this.close(t, v);
-            else if(t < 2*v) this.open(t, v);
-            else if(t > 2.5*v) this.blinking = false;
+            let v = this.blinkingFrame;
+            if(t < v){
+                this.close(t, v);
+                if(this.blackRadian > 11)
+                    this.blackRadian -= 10 / v;
+            }
+            else if(t < 2*v){
+                this.open(t, v);
+                if(this.blackRadian < this.blackRadianB)
+                    this.blackRadian += 10 / v;
+            }
+            else if(t > 2.5*v) {this.blinking = false;};
         }
 
     }
@@ -150,40 +160,40 @@ function Eye(x, y, blackRadian, whiteRadian, blackColor, whiteColor){
     this.open = function(t, v){ // 눈 뜨기
         //상좌
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, Math.PI + Math.PI * 1/2 * (t-v)/v, -Math.PI * 1/2 * (t-v)/v, false);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, Math.PI + Math.PI * 1/2 * (t-v)/v, -Math.PI * 1/2 * (t-v)/v, false);
         ctx.fill();
         //상우
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, -Math.PI * 1/2 * (t-v)/v, - Math.PI + Math.PI * 1/2 * (t-v)/v, true);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, -Math.PI * 1/2 * (t-v)/v, - Math.PI + Math.PI * 1/2 * (t-v)/v, true);
         ctx.fill();
 
         //하좌
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, Math.PI - Math.PI * 1/2 * (t-v)/v, Math.PI * 1/2 * (t-v)/v, true);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, Math.PI - Math.PI * 1/2 * (t-v)/v, Math.PI * 1/2 * (t-v)/v, true);
         ctx.fill();
         //상우
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, Math.PI * 1/2 * (t-v)/v, Math.PI - Math.PI * 1/2 * (t-v)/v, false);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, Math.PI * 1/2 * (t-v)/v, Math.PI - Math.PI * 1/2 * (t-v)/v, false);
         ctx.fill();
     }
 
     this.close = function(t, v){ // 눈 감기
         //상좌
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, Math.PI * 3/2 - Math.PI * 1/2 * t/v, Math.PI * 3/2 + Math.PI * 1/2 * t/v, false);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, Math.PI * 3/2 - Math.PI * 1/2 * t/v, Math.PI * 3/2 + Math.PI * 1/2 * t/v, false);
         ctx.fill();
         //상우
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, -Math.PI * 1/2 + Math.PI * 1/2 * t/v, -Math.PI * 1/2 - Math.PI * 1/2 * t/v, true);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, -Math.PI * 1/2 + Math.PI * 1/2 * t/v, -Math.PI * 1/2 - Math.PI * 1/2 * t/v, true);
         ctx.fill();
 
         //하좌
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, Math.PI * 1/2 + Math.PI * 1/2 * t/v, Math.PI * 1/2 - Math.PI * 1/2 * t/v, true);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, Math.PI * 1/2 + Math.PI * 1/2 * t/v, Math.PI * 1/2 - Math.PI * 1/2 * t/v, true);
         ctx.fill();
         //하우
         ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.r2, Math.PI * 1/2 - Math.PI * 1/2 * t/v, Math.PI * 1/2 + Math.PI * 1/2 * t/v, false);
+        ctx.arc(this.centerX, this.centerY, this.whiteRadian, Math.PI * 1/2 - Math.PI * 1/2 * t/v, Math.PI * 1/2 + Math.PI * 1/2 * t/v, false);
         ctx.fill();
     }
 }
