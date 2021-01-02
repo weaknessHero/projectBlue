@@ -26,7 +26,7 @@ function loop(){ //메인 루프
     canvasEl.height = innerHeight-120;
     frame++;
 
-    if(eyes.length<30) eyes.push(randomEye());
+    if(eyes.length<50) eyes.push(randomEye());
 
     ctx.fillStyle = arrToRGB(backgroundColor);
     ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
@@ -211,9 +211,13 @@ function mouseMove(event){ //마우스 움직임 이벤트 발생 시 호출
     my = event.pageY;
     
     //배경 색을 마우스 x, y에 비례하게 바꿈
-    backgroundColor[0] = (event.pageX-9)/(canvasEl.width)*255;
-    backgroundColor[1] = (event.pageX+event.pageY-99)/(canvasEl.width)*255;
-    backgroundColor[2] = (event.pageY-90)/(canvasEl.height)*255;
+    backgroundColor[0] = (event.pageX-9-canvasEl.width/2)/(canvasEl.width)*100;
+    backgroundColor[1] = (event.pageX+event.pageY-99-canvasEl.width/2)/(canvasEl.width)*100;
+    backgroundColor[2] = (event.pageY-90-canvasEl.height/2)/(canvasEl.height)*100;
+    for(let c = 0; c<3; c++){
+        if(backgroundColor[c]<0)
+            backgroundColor[c] *= -1;
+    }
 }
 
 function randomEye(){ //무작위 눈 생성
