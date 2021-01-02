@@ -68,17 +68,20 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
     let eyelidDarkness = 1.1 + Math.random()*5; //눈꺼풀 명도 조정 상수
     this.eyelidCol = arrToRGB([whiteColor[0]/eyelidDarkness, whiteColor[1]/eyelidDarkness, whiteColor[2]/eyelidDarkness]);
 
-    this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.0001; //검은자 속력 상수
+    this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.01; //검은자 속력 상수
 
     this.look = function(aimX, aimY){ //aimX, aimY에 다가감
         let d = distance([this.x, this.y], [this.centerX, this.centerY]);
         this.dx = (1 - d/(this.whiteRadius-this.secondBlackRadius)) * (aimX - this.x) * this.f;
         this.dy = (1 - d/(this.whiteRadius-this.secondBlackRadius)) * (aimY - this.y) * this.f;
 
+        if(this.dx > 3) this.dx = 3;
+        if(this.dy > 3) this.dy = 3;
+
         this.x += this.dx;
         this.y += this.dy;
     }
-    
+
     this.toCenter = function(){ //중심점으로 끌어당김
         this.x += (this.centerX-this.x)/40;
         this.y += (this.centerY-this.y)/40;
@@ -123,6 +126,7 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
         ctx.beginPath();
         ctx.arc(this.centerX, this.centerY, this.whiteRadius, Math.PI*1/4, Math.PI*3/4, false);
         ctx.fill();
+
         if(this.blinking){
             let t = frame - this.blinkStartTime; //깜빡이기 시작한 후 흐른 프레임 수
             let f = this.blinkEndTime; //깜빡이는데 걸리는 총 프레임 수
@@ -143,7 +147,6 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
             }
             else if(t > 1.5*f) {this.blinking = false;};
         }
-
     }
 
     this.open = function(t, f){ // 눈 뜨기. arc : startRadian과 endRadian 사이 호를 채움. true:시계반대방향, false:시계방향
