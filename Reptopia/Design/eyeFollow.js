@@ -26,7 +26,7 @@ function loop(){ //메인 루프
     canvasEl.height = innerHeight-120;
     frame++;
 
-    if(eyes.length<50) eyes.push(randomEye());
+    if(eyes.length<30) eyes.push(randomEye());
 
     ctx.fillStyle = arrToRGB(backgroundColor);
     ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
@@ -34,7 +34,6 @@ function loop(){ //메인 루프
     eyes.forEach(function(eye){eye.look(mx-9, my-90);});
     eyes.forEach(function(obj){obj.draw();});
     eyes.forEach(function(obj){obj.toCenter();});
-
     requestAnimationFrame(loop);
 }
 
@@ -65,10 +64,9 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
     //색 설정
     this.blackColor = arrToRGB(blackColor);
     this.whiteColor = arrToRGB(whiteColor);
-    let eyelidDarkness = 1.1 + Math.random()*5; //눈꺼풀 명도 조정 상수
-    this.eyelidCol = arrToRGB([whiteColor[0]/eyelidDarkness, whiteColor[1]/eyelidDarkness, whiteColor[2]/eyelidDarkness]);
+    this.eyelidCol = arrToRGB([Math.random()*40,Math.random()*40,Math.random()*40]);
 
-    this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.01; //검은자 속력 상수
+    this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.001; //검은자 속력 상수
 
     this.look = function(aimX, aimY){ //aimX, aimY에 다가감
         let d = distance([this.x, this.y], [this.centerX, this.centerY]);
@@ -95,12 +93,28 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
         if(!this.blinking){
             this.blinking = true;
             this.blinkStartTime = frame;
-            this.blinkEndTime = 8 + Math.random()*24;
+            this.blinkEndTime = 10 + Math.random()*40;
+        }
+    }
+
+    this.drawEyelid = function(eyelidWidth){
+        if(eyelidWidth >= 180) eyelidWidth = 180;
+        ctx.fillStyle = this.eyelidCol;
+    
+        for(let d=-5; d+eyelidWidth<=190; d+=7){
+            ctx.beginPath();
+            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d+eyelidWidth), false);
+            ctx.fill();
+        }
+        for(let d=-5; d+eyelidWidth<=190; d+=7){
+            ctx.beginPath();
+            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, Math.PI + degreeToRadian(d), Math.PI + degreeToRadian(d+eyelidWidth), false);
+            ctx.fill();
         }
     }
 
     this.draw = function(){ //검은자, 흰자, (눈꺼풀) 그림
-        //흰자 그림
+        //흰자 그림 ---명암 적용---
         ctx.fillStyle = this.whiteColor;
         ctx.beginPath();
         ctx.arc(this.centerX, this.centerY, this.whiteRadius, 0, Math.PI*2, false);
@@ -119,94 +133,30 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
         ctx.fill();
 
         //눈꺼풀 그림
-        ctx.fillStyle = this.eyelidCol;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, Math.PI*5/4, Math.PI*7/4, false);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, Math.PI*1/4, Math.PI*3/4, false);
-        ctx.fill();
+        this.drawEyelid(70);
 
         if(this.blinking){
             let t = frame - this.blinkStartTime; //깜빡이기 시작한 후 흐른 프레임 수
             let f = this.blinkEndTime; //깜빡이는데 걸리는 총 프레임 수
 
             if(t < f/2){
-                this.close(t, f/2);
+                this.drawEyelid(2*t/f * 180);
+                //검은자 1, 2 크기 조절
                 if(this.blackRadius < this.blackRadiusB)
-                    this.blackRadius += 10 / f;
+                    this.blackRadius += 9 / f;
                 if(this.secondBlackRadius > 11)
-                    this.secondBlackRadius -= 10 / f;
+                    this.secondBlackRadius -= 9 / f;
             }
             else if(t < f){
-                this.open(t, f/2);
+                this.drawEyelid((f-t)/(f/2) * 180);
+                //검은자 1, 2 크기 조절
                 if(this.blackRadius > 11)
-                    this.blackRadius -= 10 / f;
+                    this.blackRadius -= 9 / f;
                 if(this.secondBlackRadius < this.secondBlackRadiusB)
-                    this.secondBlackRadius += 10 / (f/2);
+                    this.secondBlackRadius += 9 / (f/2);
             }
-            else if(t > 1.5*f) {this.blinking = false;};
+            else if(t > 1.2*f) {this.blinking = false;};
         }
-    }
-
-    this.open = function(t, f){ // 눈 뜨기. arc : startRadian과 endRadian 사이 호를 채움. true:시계반대방향, false:시계방향
-        //상좌
-        let startRadian = Math.PI + Math.PI * 1/2 * (t-f)/f;
-        let endRadian = -Math.PI * 1/2 * (t-f)/f;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, startRadian, endRadian, false);
-        ctx.fill();
-
-        //상우
-        startRadian = -Math.PI * 1/2 * (t-f)/f;
-        endRadian = -Math.PI + Math.PI * 1/2 * (t-f)/f;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, startRadian, endRadian, true);
-        ctx.fill();
-
-        //하좌
-        startRadian = Math.PI - Math.PI * 1/2 * (t-f)/f;
-        endRadian = Math.PI * 1/2 * (t-f)/f;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, startRadian, endRadian, true);
-        ctx.fill();
-
-        //상우
-        startRadian = Math.PI * 1/2 * (t-f)/f;
-        endRadian = Math.PI - Math.PI * 1/2 * (t-f)/f;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, startRadian, endRadian, false);
-        ctx.fill();
-    }
-
-    this.close = function(t, f){ // 눈 감기
-        //상좌
-        startRadian = Math.PI * 3/2 - Math.PI * 1/2 * t/f;
-        endRadian = Math.PI * 3/2 + Math.PI * 1/2 * t/f;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, startRadian, endRadian, false);
-        ctx.fill();
-
-        //상우
-        startRadian = -Math.PI * 1/2 + Math.PI * 1/2 * t/f;
-        endRadian = -Math.PI * 1/2 - Math.PI * 1/2 * t/f;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, startRadian, endRadian, true);
-        ctx.fill();
-
-        //하좌
-        startRadian = Math.PI * 1/2 + Math.PI * 1/2 * t/f;
-        endRadian = Math.PI * 1/2 - Math.PI * 1/2 * t/f;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, startRadian, endRadian, true);
-        ctx.fill();
-
-        //하우
-        startRadian = Math.PI * 1/2 - Math.PI * 1/2 * t/f;
-        endRadian = Math.PI * 1/2 + Math.PI * 1/2 * t/f;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, startRadian, endRadian, false);
-        ctx.fill();
     }
 }
 
@@ -235,7 +185,7 @@ function randomEye(){ //무작위 눈 생성
     let blackRadius = Math.random()*15 + 7;
     let whiteRadius = Math.random()*50 + 45;
     let rndRGB1 = [Math.random()*100, Math.random()*100, Math.random()*100];
-    let rndRGB2 = [Math.random()*100 + 155, Math.random()*100 + 155, Math.random()*100 + 155];
+    let rndRGB2 = [Math.random()*30 + 205, Math.random()*30 + 205, Math.random()*30 + 205];
     return new Eye(x, y, blackRadius, whiteRadius, rndRGB1,  rndRGB2);
 }
 
@@ -246,4 +196,8 @@ function distance(location1, location2){ //location1과 location2 사이의 거�
 function arrToRGB(arr){ //배열을 rgb문자열로 변환
     let result = "rgb(" + arr[0] + "," + arr[1] + "," + arr[2] + ")";
     return result;
+}
+
+function degreeToRadian(degree){
+    return Math.PI * degree/180;
 }
