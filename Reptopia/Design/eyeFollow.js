@@ -116,8 +116,14 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
         ctx.fill();
 
         //눈꺼풀 그림
+        ctx.fillStyle = this.eyelidCol;
+        ctx.beginPath();
+        ctx.arc(this.centerX, this.centerY, this.whiteRadius, Math.PI*5/4, Math.PI*7/4, false);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.centerX, this.centerY, this.whiteRadius, Math.PI*1/4, Math.PI*3/4, false);
+        ctx.fill();
         if(this.blinking){
-            ctx.fillStyle = this.eyelidCol;
             let t = frame - this.blinkStartTime; //깜빡이기 시작한 후 흐른 프레임 수
             let f = this.blinkEndTime; //깜빡이는데 걸리는 총 프레임 수
 
