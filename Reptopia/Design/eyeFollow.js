@@ -10,31 +10,37 @@ document.body.appendChild(canvasEl);
 canvasEl.addEventListener("mousemove", mouseMove);
 canvasEl.addEventListener("click", blinkEyes);
 
+var img = document.getElementById("myImage");
+
 var eyes = []; //모든 눈을 담는 배열
 
 //Mouse x, y
 var mx = 0;
 var my = 0;
 
-var backgroundColor = [0,0,0];
 var frame = 0; //현재 프레임 수
 
 loop();
 
 function loop(){ //메인 루프
-    canvasEl.width = innerWidth-50;
-    canvasEl.height = innerHeight-120;
     frame++;
 
     if(eyes.length<30) eyes.push(randomEye());
 
-    ctx.fillStyle = arrToRGB(backgroundColor);
-    ctx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+    checkResize();
+    
+    ctx.drawImage(img, 0, 0);
 
     eyes.forEach(function(eye){eye.look(mx-9, my-90);});
     eyes.forEach(function(obj){obj.draw();});
     eyes.forEach(function(obj){obj.toCenter();});
     requestAnimationFrame(loop);
+
+}
+
+function sunlight(frame, img){ //--개발중--
+    let imageData = ctx.getImageData(0,0, canvasEl.width, canvasEl.height);
+    console.dir(imageData);
 }
 
 
@@ -66,9 +72,11 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
     this.whiteColor = arrToRGB(whiteColor);
     this.eyelidCol = arrToRGB([Math.random()*40,Math.random()*40,Math.random()*40]);
 
+    this.looking = true;
     this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.001; //검은자 속력 상수
 
     this.look = function(aimX, aimY){ //aimX, aimY에 다가감
+        if(this.looking){
         let d = distance([this.x, this.y], [this.centerX, this.centerY]);
         this.dx = (1 - d/(this.whiteRadius-this.secondBlackRadius)) * (aimX - this.x) * this.f;
         this.dy = (1 - d/(this.whiteRadius-this.secondBlackRadius)) * (aimY - this.y) * this.f;
@@ -78,11 +86,18 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
 
         this.x += this.dx;
         this.y += this.dy;
+        }
     }
 
-    this.toCenter = function(){ //중심점으로 끌어당김
+    this.toCenter = function(x=0){ //중심점으로 끌어당김
+        if(x==0){
         this.x += (this.centerX-this.x)/40;
         this.y += (this.centerY-this.y)/40;
+        }
+        else{
+            this.x += (this.centerX-this.x);
+            this.y += (this.centerY-this.y);
+        }
     }
 
     this.blinking = false; //깜빡이는지 여부
@@ -98,15 +113,15 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
     }
 
     this.drawEyelid = function(eyelidWidth){
-        if(eyelidWidth >= 180) eyelidWidth = 180;
+        if(eyelidWidth>180) eyelidWidth = 180;
         ctx.fillStyle = this.eyelidCol;
-    
-        for(let d=-5; d+eyelidWidth<=190; d+=7){
+
+        for(let d=-5; d+eyelidWidth<=190; d+=5){
             ctx.beginPath();
-            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d+eyelidWidth), false);
+            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d + eyelidWidth), false);
             ctx.fill();
         }
-        for(let d=-5; d+eyelidWidth<=190; d+=7){
+        for(let d=-5; d+eyelidWidth<=190; d+=5){
             ctx.beginPath();
             ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, Math.PI + degreeToRadian(d), Math.PI + degreeToRadian(d+eyelidWidth), false);
             ctx.fill();
@@ -143,17 +158,13 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
                 this.drawEyelid(2*t/f * 180);
                 //검은자 1, 2 크기 조절
                 if(this.blackRadius < this.blackRadiusB)
-                    this.blackRadius += 9 / f;
-                if(this.secondBlackRadius > 11)
-                    this.secondBlackRadius -= 9 / f;
+                    this.blackRadius += 4 / f;
             }
             else if(t < f){
                 this.drawEyelid((f-t)/(f/2) * 180);
                 //검은자 1, 2 크기 조절
-                if(this.blackRadius > 11)
-                    this.blackRadius -= 9 / f;
-                if(this.secondBlackRadius < this.secondBlackRadiusB)
-                    this.secondBlackRadius += 9 / (f/2);
+                if(this.blackRadius > 5)
+                    this.blackRadius -= 4 / f;
             }
             else if(t > 1.2*f) {this.blinking = false;};
         }
@@ -168,14 +179,18 @@ function mouseMove(event){ //마우스 움직임 이벤트 발생 시 호출
     //mx, my에 마우스 위치 저장
     mx = event.pageX;
     my = event.pageY;
-    
-    //배경 색을 마우스 x, y에 비례하게 바꿈
-    backgroundColor[0] = (event.pageX-9-canvasEl.width/2)/(canvasEl.width)*100;
-    backgroundColor[1] = (event.pageX+event.pageY-99-canvasEl.width/2)/(canvasEl.width)*100;
-    backgroundColor[2] = (event.pageY-90-canvasEl.height/2)/(canvasEl.height)*100;
-    for(let c = 0; c<3; c++){
-        if(backgroundColor[c]<0)
-            backgroundColor[c] *= -1;
+}
+
+function checkResize(){
+    if(canvasEl.width != innerWidth-50){
+        let dRate = (innerWidth-50)/canvasEl.width;
+        eyes.forEach(eye => {eye.centerX *= dRate;eye.toCenter(1);});
+        canvasEl.width = innerWidth-50;
+    }
+    if(canvasEl.height != innerHeight-120 & innerHeight-120 > 0){
+        let dRate = (innerHeight-120)/canvasEl.height;
+        eyes.forEach(eye => {eye.centerY *= dRate;eye.toCenter(1);});
+        canvasEl.height = innerHeight-120;
     }
 }
 
