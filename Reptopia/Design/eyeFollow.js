@@ -1,32 +1,36 @@
+//Element setting
 var canvasEl = document.getElementsByTagName('canvas')[0];
 var ctx = canvasEl.getContext("2d");
-
 canvasEl.width = innerWidth;
 canvasEl.height = innerHeight;
 
-//마우스 이벤트 감지
-document.body.addEventListener("mousemove", mouseMove);
+//이벤트 감지
+document.body.addEventListener("mousemove", look);
 document.body.addEventListener("click", blinkEyes);
-document.body.addEventListener("dblclick", dblclick);
+document.body.addEventListener("dblclick", lookatMe);
 window.addEventListener("resize", resize);
 
 var img = document.getElementById("myImage");
-
-var eyes = []; //모든 눈을 담는 배열
-
+//모든 눈을 담는 배열
+var eyes = [];
 //Mouse x, y
-var mx = canvasEl.width/2;
-var my = canvasEl.height/2;
+var mx;
+var my;
+//현재까지의 프레임 수
+var frame = 0;
 
-var frame = 0; //현재 프레임 수
-
+setting();
 loop();
+
+function setting(){ //Initial setting
+    for(let temp = 0; temp < 66; temp++)
+        eyes.push(randomEye());
+}
 
 function loop(){ //메인 루프
     frame++;
     ctx.drawImage(img, 0, 0);
-
-    if(eyes.length<10) eyes.push(randomEye());
+    //sunlight(frame)
 
     eyes.forEach(function(eye){eye.look(mx-9, my-90);});
     eyes.forEach(function(obj){obj.draw();});
@@ -35,14 +39,13 @@ function loop(){ //메인 루프
 
 }
 
-function sunlight(frame, img){ //--개발중--
+function sunlight(frame){ //--개발중--
     let imageData = ctx.getImageData(0,0, canvasEl.width, canvasEl.height);
     console.dir(imageData);
 }
 
 
-function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프로토타입
-    this.looking = false;
+function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor){ //눈 프로토타입
 
     //검은자 x, y
     this.x = x;
@@ -65,25 +68,40 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
     if(this.secondBlackRadius > whiteRadius * 3/4) this.secondBlackRadius = whiteRadius * 3/4; //흰자 크기에 따라 검은자 크기 제한
     this.secondBlackRadiusB = this.secondBlackRadius; //두 번째 검은자 백업
 
+    //looking 사거리
+    this.range = this.secondBlackRadius * 20;
+    this.looking = false;
+    this.reactingTime = 10 + Math.random()*20;
+    this.slowDownCount = 0;
+
     //색 설정
     this.blackColor = arrToRGB(blackColor);
     this.whiteColor = arrToRGB(whiteColor);
-    this.eyelidCol = arrToRGB([Math.random()*40,Math.random()*40,Math.random()*40]);
+    this.eyelidCol = arrToRGB(eyelidColor);
 
     this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.001; //검은자 속력 상수
 
     this.look = function(aimX, aimY){ //aimX, aimY에 다가감
         if(this.looking){
+            let limit = this.whiteRadius-this.secondBlackRadius;
             let d = distance([this.x, this.y], [this.centerX, this.centerY]);
-            this.dx = (1 - d/(this.whiteRadius-this.secondBlackRadius)) * (aimX - this.x) * this.f;
-            this.dy = (1 - d/(this.whiteRadius-this.secondBlackRadius)) * (aimY - this.y) * this.f;
+            this.dx = (1 - d/limit) * (aimX - this.x) * this.f;
+            this.dy = (1 - d/limit) * (aimY - this.y) * this.f;
+            
+            if(this.slowDownCount>0){ //객체의 반응 속도, 반응한 시간에 따른 속도조절
+                this.dx *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
+                this.dy *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
+                this.slowDownCount --;
+            }
 
-            if(this.dx > 3) this.dx = 3;
-            if(this.dy > 3) this.dy = 3;
+            if(Math.abs(this.dx) > limit) this.looking = false;
+            else this.x += this.dx
 
-            this.x += this.dx;
-            this.y += this.dy;
-    }
+            if(Math.abs(this.dy) > limit) this.looking = false;
+            else this.y += this.dy
+
+            // --자연스러운 속도제한--
+        }
     }
 
     this.toCenter = function(f=0){ //중심점으로 끌어당김 f:중앙 강제 고정 옵션
@@ -109,18 +127,19 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
         }
     }
 
-    this.drawEyelid = function(eyelidWidth){ // 눈꺼풀 그림
-        if(eyelidWidth>180) eyelidWidth = 180;
+    this.drawEyelid = function(eyelidWidthRadius){ // 눈꺼풀 그림
+        if(eyelidWidthRadius>180) eyelidWidthRadius = 180;
         ctx.fillStyle = this.eyelidCol;
 
-        for(let d=-5; d+eyelidWidth<=190; d+=5){ // 위
+        //eyelidWidthRadius에 비례한 두께 만큼 눈꺼풀 그림.
+        for(let d=-5; d+eyelidWidthRadius<=185; d+=5){ // 위
             ctx.beginPath();
-            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d + eyelidWidth), false);
+            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d + eyelidWidthRadius), false);
             ctx.fill();
         }
-        for(let d=-5; d+eyelidWidth<=190; d+=5){ // 아래
+        for(let d=-5; d+eyelidWidthRadius<=185; d+=5){ // 아래
             ctx.beginPath();
-            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, Math.PI + degreeToRadian(d), Math.PI + degreeToRadian(d+eyelidWidth), false);
+            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, Math.PI + degreeToRadian(d), Math.PI + degreeToRadian(d+eyelidWidthRadius), false);
             ctx.fill();
         }
     }
@@ -143,47 +162,54 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor){ //눈 프�
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.blackRadius, 0, Math.PI*2, false);
         ctx.fill();
-
+        
+        //눈꺼풀 그림
         this.drawEyelid(70);
         if(this.blinking){
             let t = frame - this.blinkStartTime; //깜빡이기 시작한 후 흐른 프레임 수
             let f = this.blinkEndTime; //깜빡이는데 걸리는 총 프레임 수
-            if(t < f/2){
-                this.drawEyelid(2*t/f * 180);
-                //검은자 1 크기 조절
-                if(this.blackRadius + 4/f < this.secondBlackRadius) this.blackRadius += 4/f;
+            if(t < f/2){ //눈을 감는 동안
+                this.drawEyelid(t/(f/2) * 180);
+                if(this.blackRadius + 4/f < this.secondBlackRadius) this.blackRadius += 4/f; //검은자 1 크기 조절
             }
-            else if(t < f){
+            else if(t < f){ //눈을 뜨는 동안
                 this.drawEyelid((f-t)/(f/2) * 180);
-                //검은자 1 크기 조절
-                if(this.blackRadius - 8/f > this.blackRadiusB) this.blackRadius -= 8/f;
+                if(this.blackRadius - 8/f > this.blackRadiusB) this.blackRadius -= 8/f; //검은자 1 크기 조절
                 else this.blackRadius = this.blackRadiusB;
             }
-            else if(t > 1.2*f) {this.blinking = false;};
+            else if(t > 1.2*f) {this.blinking = false;}; //눈을 뜨고 난 후 쿨타임
         }
     }
 }
 
 function blinkEyes(){ //마우스 클릭 시 호출
-    eyes.forEach(function(eye){eye.blink(frame);}); //모든 눈 깜빡임
+    eyes.forEach(function(eye){if(eye.looking) eye.blink(frame);}); //모든 눈 깜빡임
 }
 
-function dblclick(){ //마우스 더블 클릭 시 호출
+function lookatMe(){ //마우스 더블 클릭 시 호출
     eyes.forEach(eye=>{eye.looking=false;eye.toCenter();});
     console.log("dbclicked");
 }
 
-function mouseMove(event){ //마우스 움직임 시 호출
-    eyes.forEach(eye=>eye.looking = true);
+function look(event){ //마우스 움직임 시 호출
     mx = event.pageX+9;
     my = event.pageY+90;
+    eyes.forEach(function(eye){
+        if((Math.abs(mx - eye.centerX) < eye.range) & (Math.abs(my - eye.centerY) < eye.range)){ //반응 사거리 구현
+            if(!eye.looking){
+                eye.slowDownCount = eye.reactingTime; //반응속도 구현
+                eye.looking = true;
+            }
+        }
+        else eye.looking = false;
+    });
 }
 
 function resize(){ //창 크기 변경 시 호출
     if(canvasEl.width != innerWidth){
         let wRate = (innerWidth)/canvasEl.width;
         let hRate = (innerHeight)/canvasEl.height;
-        eyes.forEach(eye => {eye.centerX *= wRate;eye.centerY *= hRate;eye.toCenter(1);});
+        eyes.forEach(eye => {eye.looking=false; eye.centerX *= wRate;eye.centerY *= hRate;eye.toCenter(1);});
         canvasEl.width = innerWidth;
         canvasEl.height = innerHeight;
     }
@@ -193,10 +219,11 @@ function randomEye(){ //무작위 눈 생성
     let x = Math.random()*canvasEl.width;
     let y = Math.random()*canvasEl.height;
     let blackRadius = Math.random()*6 + 7;
-    let whiteRadius = Math.random()*19 + 16;
+    let whiteRadius = Math.random()*24 + 16;
     let rndRGB1 = [Math.random()*100, Math.random()*100, Math.random()*100];
     let rndRGB2 = [Math.random()*30 + 205, Math.random()*30 + 205, Math.random()*30 + 205];
-    return new Eye(x, y, blackRadius, whiteRadius, rndRGB1,  rndRGB2);
+    let rndRGB3 = [Math.random()*40,Math.random()*40,Math.random()*40];
+    return new Eye(x, y, blackRadius, whiteRadius, rndRGB1,  rndRGB2, rndRGB3);
 }
 
 function distance(location1, location2){ //location1과 location2 사이의 거리를 계산
