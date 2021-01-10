@@ -23,8 +23,7 @@ setting();
 loop();
 
 function setting(){ //Initial setting
-    for(let temp = 0; temp < 26; temp++)
-        eyes.push(randomEye());
+    for(let temp = 0; temp < 26; temp++) eyes.push(randomEye()); // 26개의 랜덤 객체
 }
 
 function loop(){ //메인 루프
@@ -46,64 +45,59 @@ function sunlight(frame){ //--개발중--
 
 
 function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor){ //눈 프로토타입
+    //중심점 x, y
+    this.centerX = x;
+    this.centerY = y;
 
     //검은자 x, y
     this.x = x;
     this.y = y;
 
-    //중심점 x, y
-    this.centerX = this.x;
-    this.centerY = this.y;
+    //Size
+    this.blackRadius = blackRadius;
+    this.whiteRadius = whiteRadius;
+    this.secondBlackRadius = (this.whiteRadius + this.blackRadius) / 2; //검은자 크기
+    if(this.secondBlackRadius > whiteRadius * 3/4) this.secondBlackRadius = whiteRadius * 3/4; //검은자 크기 제한
+    this.blackRadiusB = this.blackRadius; //백업
+    this.secondBlackRadiusB = this.secondBlackRadius;
 
-    //검은자의 속력
+    //검은자 속력
     this.dx = 0;
     this.dy = 0;
 
-    //검은자, 흰자 크기
-    this.blackRadius = blackRadius;
+    //검은자 속력 고유값
+    this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.001;
 
-    this.whiteRadius = whiteRadius;
-    this.blackRadiusB = this.blackRadius; //동공 백업
-    this.secondBlackRadius = (this.whiteRadius + this.blackRadius) / 2; //동공 크기
-    if(this.secondBlackRadius > whiteRadius * 3/4) this.secondBlackRadius = whiteRadius * 3/4; //검은자 크기 제한
-    this.secondBlackRadiusB = this.secondBlackRadius; //검은자 백업
-
-    //looking 사거리
-    this.range = this.secondBlackRadius * 20;
+    //Look
     this.looking = false;
-    this.reactingTime = 10 + Math.random()*20;
+    this.range = this.secondBlackRadius * 20; //감지 거리
+    this.reactingTime = 10 + Math.random()*20; //반응속도
     this.slowDownCount = 0;
     
-    //눈꺼풀 두께 변수
+    //눈꺼풀 두께 비례 각도
     this.eyelidWidthRadius = 60;
 
-    //색 설정
+    //Color
     this.blackColor = arrToRGB(blackColor);
     this.whiteColor = arrToRGB(whiteColor);
     this.eyelidCol = arrToRGB(eyelidColor);
 
-    this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.001; //검은자 속력 상수
-
-    this.look = function(aimX, aimY){ //aimX, aimY에 다가감
+    this.look = function(aimX, aimY){ //검은자가 aimX, aimY에 다가감
+        let limit = this.whiteRadius - this.secondBlackRadius;
         if(this.looking){
-            let limit = this.whiteRadius-this.secondBlackRadius;
             let d = distance([this.x, this.y], [this.centerX, this.centerY]);
             this.dx = (1 - d/limit) * (aimX - this.x) * this.f;
             this.dy = (1 - d/limit) * (aimY - this.y) * this.f;
             
-            if(this.slowDownCount>0){ //객체의 반응 속도, 반응한 시간에 따른 속도조절
+            if(this.slowDownCount>0){ //반응 속도에 따른 속도 조절
                 this.dx *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
                 this.dy *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
                 this.slowDownCount --;
             }
             if(distance([this.centerX, this.centerY], [this.x + this.dx, this.y + this.dy]) < limit){
-                if(Math.abs(this.dx) > limit) this.looking = false;
-                else this.x += this.dx
-                if(Math.abs(this.dy) > limit) this.looking = false;
-                else this.y += this.dy
+                this.x += this.dx;
+                this.y += this.dy;
             }
-
-            // --자연스러운 속도제한--
         }
     }
 
@@ -234,7 +228,7 @@ function randomEye(){ //무작위 눈 생성
 }
 
 function distance(location1, location2){ //location1 - location2 거리 계산
-    return Math.sqrt(((location1[0]-location2[0])**2 + (location1[1] - location2[1])**2));
+    return Math.abs(Math.sqrt(((location1[0]-location2[0])**2 + (location1[1] - location2[1])**2)));
 }
 
 function arrToRGB(arr){ //배열 -> rgb문자열
