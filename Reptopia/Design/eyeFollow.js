@@ -27,7 +27,7 @@ function setting(){ //Initial setting
 
 function loop(){ //메인 루프
     frame++;
-    ctx.fillStyle = '#444';
+    ctx.fillStyle = 'black';
     ctx.fillRect(0,0, canvasEl.width, canvasEl.height);
 
     eyes.forEach(function(eye){eye.look(mx-9, my-90);});

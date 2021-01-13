@@ -1,41 +1,25 @@
 <!DOCTYPE html>
 <head>
-    <meta charset="UTF-8">
-    <title>canvas test</title>
-    <script src="eyeFollow.js" defer></script>
-    <link rel="stylesheet" type="text/css" href="base.css" />
+   <meta charset="UTF-8">
+   <title>canvas test</title>
+   <script src="eyeFollow.js" defer></script>
+   <script src="slider.js" defer></script>
+   <link rel="stylesheet" type="text/css" href="base.css" />
 </head>
 <body>
-    <canvas></canvas>
-    <div id="slider">
-        <input type="radio" name="slider" id="slide1" checked>
-        <input type="radio" name="slider" id="slide2">
-        <input type="radio" name="slider" id="slide3">
-        <div id="slides">
-           <div id="overflow">
-              <div class="inner">
-                 <div class="slide slide_1">
-                    <div class="slide-content">
-                       <h2>Creature</h2>
-                    </div>
-                 </div>
-                 <div class="slide slide_2">
-                    <div class="slide-content">
-                       <h2>Store</h2>
-                    </div>
-                 </div>
-                 <div class="slide slide_3">
-                    <div class="slide-content">
-                       <h2>Work</h2>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        </div>
-        <div id="controls">
-           <label for="slide1"></label>
-           <label for="slide2"></label>
-           <label for="slide3"></label>
-        </div>
-     </div>
+   <canvas></canvas>
+   <div id="slider">
+      <input type="radio" name="slider" id="slide1" checked>
+      <input type="radio" name="slider" id="slide2">
+      <input type="radio" name="slider" id="slide3">
+      <div id="slides">
+         <div id="overflow">
+            <div class="inner">
+               <input class="slide slide_1" type="button" value="Creature" onclick="check(1)">
+               <input class="slide slide_2" type="button" value="Store" onclick="check(2)">
+               <input class="slide slide_3" type="button" value="Work" onclick="check(3)">
+            </div>
+         </div>
+      </div>
+   </div>
 </body>
