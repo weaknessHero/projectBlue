@@ -34,16 +34,16 @@ function loop(){ //메인 루프
     eyes.forEach(function(obj){obj.draw();});
     eyes.forEach(function(obj){obj.toCenter();});
     requestAnimationFrame(loop);
-
 }
-
-function sunlight(frame){ //--개발중--
-    let imageData = ctx.getImageData(0,0, canvasEl.width, canvasEl.height);
-    console.dir(imageData);
-}
-
 
 function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor){ //눈 프로토타입
+    /*
+        + Eye shape to ellipse.
+        + Eyelid skin texture.
+        + Iris pattern.
+        + Vein in lens.
+    */
+
     //중심점 x, y
     this.centerX = x;
     this.centerY = y;
