@@ -10,10 +10,11 @@ canvas{
 }
 #slider {
   position: absolute;
-  top: 30%;
+  top: 40%;
   left: 12%;
   width: 76%;
-	margin: 0;
+  margin: 0;
+  min-width: 610px;
 }
 #slider input[type=radio] {
   display: none;
@@ -45,7 +46,7 @@ canvas{
   transition: margin-left 500ms cubic-bezier(0.050, 0.000, 0.150, 1.000);
   width: 200%;
   line-height: 0;
-  height: 300px;
+  height: 200%;
 }
 #slides .slide {
   width: 25%;
@@ -60,11 +61,12 @@ canvas{
 input[type=button] {
   background: none;
   border: none;
-  font-size: 52px;
+  font-size: 400%;
   outline: none;
+  cursor: pointer;
 }
 #slides .slide_1 {
-  color: rgb(0, 58, 26);
+  color: rgb(6, 104, 50);
 }
 #slides .slide_2 {
   color: rgb(85, 102, 1);
