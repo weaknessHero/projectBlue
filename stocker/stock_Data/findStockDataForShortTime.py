@@ -30,26 +30,11 @@ cmd 를 이용하여 pip install pykrx을 같은 위치에 설치해준다
 import pandas as pd
 from pykrx import stock
 import numpy as np
-import datetime 
 from datetime import date
 import time
 
 firstTickerSymbol='000020'
 
-
-def returnDay():
-    """
-    금일 날짜 반환 
-    주말엔 주가 정보 변화가 없으니 주말을 제거하여 불필요한 데이터 움직임을 방지
-    """
-    now = date.today()
-    if(time.localtime().tm_wday>4): #금요일보다 이후의 요일일 경우 금요일로 취급
-        weekday = time.localtime().tm_wday - 4 #금요일에서 넘은 수치마다 증가시킴
-        now = now + datetime.timedelta(days=-weekday) 
-    
-    formatData= now.strftime("%Y%m%d") #양식 변경 
-    
-    return formatData
 
 def main():
     """
@@ -63,7 +48,9 @@ def main():
     tickerSymbolList = df['stockCodeData'].values
     
     
-    Day = returnDay()
+    Day = date.today() # 1.3.4
+    Day = Day.strftime("%Y%m%d") # 1.3.4 불필요한 함수 제거 날짜 양식 변경 
+    
     dataColumns=np.concatenate(([firstTickerSymbol], tickerSymbolList))    
     data = stock.get_market_ohlcv_by_date("19560303", Day , firstTickerSymbol)['종가']
     print('please wait for 10~20 minute')
