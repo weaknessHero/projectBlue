@@ -66,24 +66,11 @@ def main():
     Day = returnDay()
     dataColumns=np.concatenate(([firstTickerSymbol], tickerSymbolList))    
     data = stock.get_market_ohlcv_by_date("19560303", Day , firstTickerSymbol)['종가']
-    i = 1
-    downloadSize = dataColumns.size
-    downloadStr = "[I          ]"
+    print('please wait for 10~20 minute')
     
-    print(downloadStr)
     for x in tickerSymbolList:
-        i= i + 1
-        lastTime = time.time()
         df = stock.get_market_ohlcv_by_date("19560303", Day , x)    #주가 데이터 반환
         data = pd.concat([data,df['종가']],axis=1)                  #종가 데이터 수집
-        
-        if 0 == i%250 :
-            downloadStr=downloadStr.replace(' ','I' ,1)
-            
-        print("stock Code :", x  ,"The delay time of get the stock Data :", time.time() - lastTime)
-        print("\n", i, '/', downloadSize, '\n', downloadStr, '\n')
-
-            
 
 
     data.columns=dataColumns
