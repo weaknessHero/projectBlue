@@ -1,7 +1,7 @@
-function drawWave(wave){ //최대 반지름: canvas.width의 1/5, 초기 두께 : 15, 총 시간: 30 frame
+function drawWave(wave){ //1.2.3
     let t = frame-wave[2];
 
-    ctx.strokeStyle = "rgb(217, 190, 130)";
+    ctx.strokeStyle = "white";
     ctx.lineWidth = 15 - t*0.5;
 
     ctx.beginPath();

@@ -8,45 +8,28 @@ canvas{
   top:0;
   z-index:-1;
 }
-#slider {
+#slides {
   position: absolute;
   top: 40%;
   left: 12%;
   width: 76%;
-  margin: 0;
   min-width: 610px;
-}
-#slider input[type=radio] {
-  display: none;
-}
-#slider label {
-  cursor:pointer;
-  text-decoration: none;
-}
-#slides {
+  margin: 0;
   padding: 0;
   border: 0px;
-  position: relative;
   z-index: 1;
 }
 #overflow {
   width: 100%;
   overflow: hidden;
 }
-#slide1:checked ~ #slides .inner {
-  margin-left: 25%;
-}
-#slide2:checked ~ #slides .inner {
-  margin-left: -25%;
-}
-#slide3:checked ~ #slides .inner {
-  margin-left: -75%;
-}
 #slides .inner {
   transition: margin-left 500ms cubic-bezier(0.050, 0.000, 0.150, 1.000);
   width: 200%;
   line-height: 0;
   height: 200%;
+  margin-left: -25%;
+  position: relative;
 }
 #slides .slide {
   width: 25%;
