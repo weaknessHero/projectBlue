@@ -26,7 +26,7 @@ setting();
 loop();
 
 function setting(){ //Initial setting
-    for(let temp = 0; temp < 26; temp++) eyes.push(randomEye()); // 26개의 랜덤 객체
+    for(let temp = 0; temp < 15; temp++) eyes.push(randomEye()); // 26개의 랜덤 객체
 }
 
 function loop(){ //메인 루프
