@@ -1,62 +1,60 @@
-/*
-    1.2.4 무한 슬라이더
+/*  slider.js
+    2021.01.19
+    Slider of main categories of Reptopia.
+*/
+/*  1.2.4
+        1 Recreated.
 */
 var beforeN = 1;
-var dm = 0;
+var d = 0;
 var margin = -25;
 var leftA = 0;
 
 function check(n){
     inner = document.getElementsByClassName("inner")[0];
-
     if(n==1){
         if(beforeN == 3){
-            dm = -50;
-            makeElement(2, false);
+            d = -50;
+            createSlide(2, false);
             inner.removeChild(inner.children[0]);
         }
         else if(beforeN == 2){
-            dm = +50;
-            makeElement(3, true);
+            d = +50;
+            createSlide(3, true);
             inner.removeChild(inner.children[3]);
         }
     }
     else if(n == 2){
         if(beforeN == 1){
-            dm = -50;
-            makeElement(3, false);
+            d = -50;
+            createSlide(3, false);
             inner.removeChild(inner.children[0]);
         }
         else if(beforeN == 3){
-            dm = +50;
-            makeElement(1, true);
+            d = +50;
+            createSlide(1, true);
             inner.removeChild(inner.children[3]);
         }
     }
     else if(n==3){
         if(beforeN == 2){
-            dm = -50;
-            makeElement(1, false);
+            d = -50;
+            createSlide(1, false);
             inner.removeChild(inner.children[0]);
         }
         if(beforeN == 1){
-            dm = +50;
-            makeElement(2, true);
+            d = +50;
+            createSlide(2, true);
             inner.removeChild(inner.children[3]);
         }
     }
-    leftA -= dm;
-    margin += dm;
-    inner.setAttribute("style", 'left :' + String(leftA) + '%; margin-left :' + String(margin) + '%;');
     beforeN = n;
-}
-function deleteElement(left = false){
-    inner = document.getElementsByClassName("inner")[0]
-    if(left) inner.removeChild(inner.children[0]);
-    else inner.removeChild(inner.children[4]);
+    leftA -= d;
+    margin += d;
+    inner.setAttribute("style", 'left :' + String(leftA) + '%; margin-left :' + String(margin) + '%;');
 }
 
-function makeElement(n, left = false){
+function createSlide(n, left = false){ //'n'슬라이드를 left/right side에 생성
     if(n == 1){
         newEl = document.createElement("input");
         newEl.setAttribute("class", "slide slide_1");
