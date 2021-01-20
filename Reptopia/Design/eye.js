@@ -30,8 +30,10 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
     this.whiteRadius = whiteRadius;
     this.secondBlackRadius = (this.whiteRadius + this.blackRadius) / 2; //검은자 크기
     if(this.secondBlackRadius > whiteRadius * 3/4) this.secondBlackRadius = whiteRadius * 3/4; //검은자 크기 제한
-    this.blackRadiusB = this.blackRadius; //백업
+    //백업
+    this.blackRadiusB = this.blackRadius;
     this.secondBlackRadiusB = this.secondBlackRadius;
+    this.whiteRadiusB = this.whiteRadius;
 
     //검은자 속력
     this.dx = 0;
@@ -53,11 +55,17 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
     this.blinkDelay = 0; //파동 시작점과 거리에 비례
     
     //눈꺼풀 두께 비례 각도
-    this.eyelidWidthRadius = 60;
+    this.eyelidWidthRadius = 180;
 
     this.blackColor = arrToRGB(blackColor);
     this.whiteColor = arrToRGB(whiteColor);
     this.eyelidCol = arrToRGB(eyelidColor);
+
+    this.init = function(f){ //Draw creating eye.
+        this.whiteRadius = this.whiteRadiusB * frame/f;
+        this.blackRadius = this.blackRadiusB * frame/f;
+        this.secondBlackRadius = this.secondBlackRadiusB * frame/f;
+    }
 
     //main looping functions
     this.update = function(){
@@ -150,18 +158,18 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
                 let f = this.blinkTotalFrame;
                 if(t <= f/2) this.closeEye(t, f/2, 180);
                 else if(t <= f) this.openEye(t, f, 180);
-                else {this.eyelidWidthRadius = 60;this.blinking = false;}
+                else {this.eyelidWidthRadius = 75; this.blinking = false;}
             }
         }
     }
 
     this.closeEye = function(t, f, widthRadius){
-        this.eyelidWidthRadius = 60 + t/f * widthRadius;
+        this.eyelidWidthRadius = 75 + t/f * widthRadius;
         if(this.blackRadius + 4/f < this.secondBlackRadius) this.blackRadius += 4/f; //동공 크기 조절
     }
 
     this.openEye = function(t, f, widthRadius){
-        this.eyelidWidthRadius = 60 + (f - t)/(f/2) * widthRadius;
+        this.eyelidWidthRadius = 75 + (f - t)/(f/2) * widthRadius;
         if(this.blackRadius - 8/f > this.blackRadiusB) this.blackRadius -= 8/f; //동공 크기 조절
         else this.blackRadius = this.blackRadiusB;
     }
