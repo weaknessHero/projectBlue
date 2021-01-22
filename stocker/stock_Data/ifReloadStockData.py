@@ -4,6 +4,11 @@ Created on Fri Jan 15 02:26:54 2021
 
 @author: user
 """
+"""
+    파일 양식 제작
+    update.txt와 stock_code_data 생성
+"""
+
 import pandas as pd
 import numpy as np
 import csv
@@ -20,7 +25,8 @@ def reduceStockData():
     print(data.reset_index(drop=True))
     print(type(data.values))
     df=pd.DataFrame(data.values)
-#    print(df)
-    df.to_csv('stock_Code_Data.csv', mode='w')
+    df.to_csv('stock_code_data.csv', mode='w')
+    f= open('update.txt','w')
+    f.close()
     
 reduceStockData()
