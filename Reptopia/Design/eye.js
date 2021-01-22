@@ -1,5 +1,5 @@
 /*  eye.js
-    2021.01.19
+    2021.01.22
     Reptopia의 배경에 나타나는 Eye 객체와, 그걸 다루는 함수들.
 */
 /*  1.3.4
@@ -7,7 +7,8 @@
         2 더블클릭 기능 삭제: 의도치 않게 발동하는 경우 발생. Reptopia의 목적에 맞지 않는 기능.
         3 일부 주석 삭제(Eye, centerXY, range, reactingTime, ...): 변수명과 코드 흐름으로 해석 가능한 부분.
         4 Eye.update() 추가: loop에 들어가는 Eye 함수를 통합: canvas.js의 loop()에 들어갈 함수가 많을 것으로 예상되어 간소화함.
-        5 randomEye() 수정: 눈 전체가 창 안에 완전히 들어오도록(경계에 걸쳐지지 않도록) 수정
+        5 randomEye() 수정: 눈 전체가 창 안에 완전히 들어오도록(경계에 걸쳐지지 않도록) 수정. 동공 크기 폭 향상.
+        6 동공 크기 조절 삭제: 과한 디테일(메모리 대비 사용자 경험이 떨어짐.)
 */
 
 function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor){
@@ -40,12 +41,12 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
     this.dy = 0;
 
     //검은자 속력 고유값
-    this.f = (this.whiteRadius - this.blackRadius)/1200 + 0.001;
+    this.f = (this.whiteRadius - this.blackRadius)/1000 + 0.0001;
 
     //Look
     this.looking = false;
-    this.range = 250 + this.secondBlackRadius;
-    this.reactingTime = 10 + Math.random()*20;
+    this.range = 350 + this.secondBlackRadius;
+    this.reactingTime = reactFrame + Math.random()*10;
     this.slowDownCount = 0;
 
     //Blink
@@ -86,10 +87,8 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
             this.slowDownCount -= 1;
         }
 
-        if(distance([this.centerX, this.centerY], [this.x + this.dx, this.y + this.dy]) < limit){
-            this.x += this.dx;
-            this.y += this.dy;
-        }
+        this.x += this.dx;
+        this.y += this.dy;
     }
 
     this.toCenter = function(f=0){ //중심점으로 끌어당김 f:중앙 강제 고정 옵션
@@ -98,8 +97,8 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
             this.y += (this.centerY-this.y) / 40;
         }
         else{
-            this.x += (this.centerX-this.x) * 0.98;
-            this.y += (this.centerY-this.y) * 0.98;
+            this.x += (this.centerX-this.x);
+            this.y += (this.centerY-this.y);
         }
     }
 
@@ -108,7 +107,7 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
             this.blinkDelay = delay - this.whiteRadius/(canvasEl.width/5)*30;
             this.blinking = true;
             this.blinkStartFrame = frame + this.blinkDelay;
-            this.blinkTotalFrame = 15 + Math.random() * 15;
+            this.blinkTotalFrame = blinkFrame + Math.random() * 10;
         }
     }
 
@@ -165,19 +164,16 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
 
     this.closeEye = function(t, f, widthRadius){
         this.eyelidWidthRadius = 75 + t/f * widthRadius;
-        if(this.blackRadius + 4/f < this.secondBlackRadius) this.blackRadius += 4/f; //동공 크기 조절
     }
 
     this.openEye = function(t, f, widthRadius){
         this.eyelidWidthRadius = 75 + (f - t)/(f/2) * widthRadius;
-        if(this.blackRadius - 8/f > this.blackRadiusB) this.blackRadius -= 8/f; //동공 크기 조절
-        else this.blackRadius = this.blackRadiusB;
     }
 }
 
 function randomEye(){ //무작위 눈 생성
-    let blackRadius = Math.random() * 6 + 7;
-    let whiteRadius = Math.random() * 24 + 16;
+    let blackRadius = (Math.random() * 18 + 4) * sizeRate;
+    let whiteRadius = (Math.random() * 24 + 26) * sizeRate;
     let x = Math.random()*canvasEl.width;
     let y = Math.random()*canvasEl.height;
     if(x-whiteRadius<0) x = whiteRadius;
@@ -186,6 +182,6 @@ function randomEye(){ //무작위 눈 생성
     if(y+whiteRadius>canvasEl.height) y = canvasEl.height - whiteRadius;
     let rndRGB1 = [Math.random() * 100, Math.random() * 100, Math.random() * 100];
     let rndRGB2 = [Math.random() * 30 + 205, Math.random() * 30 + 205, Math.random() * 30 + 205];
-    let rndRGB3 = [Math.random() * 40, Math.random() * 40, Math.random() * 40];
+    let rndRGB3 = [Math.random() * 60, Math.random() * 60, Math.random() * 60];
     return new Eye(x, y, blackRadius, whiteRadius, rndRGB1,  rndRGB2, rndRGB3);
 }
