@@ -10,7 +10,6 @@
         3 일부 주석 삭제(Eye, centerXY, range, reactingTime, ...): 변수명과 코드 흐름으로 해석 가능한 부분.
         4 Eye.update() 추가: loop에 들어가는 Eye 함수를 통합: canvas.js의 loop()에 들어갈 함수가 많을 것으로 예상되어 간소화함.
         5 randomEye() 수정: 눈 전체가 창 안에 완전히 들어오도록(경계에 걸쳐지지 않도록) 수정. 동공 크기 폭 향상.
-        6 동공 크기 조절 삭제: 과한 디테일(메모리 대비 사용자 경험이 떨어짐.)
 */
 
 function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor){
@@ -163,8 +162,14 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
             else{
                 let t = frame - this.blinkStartFrame; //깜빡이기 시작한 후 흐른 프레임 수
                 let f = this.blinkTotalFrame;
-                if(t <= f/2) this.closeEye(t, f/2, 180);
-                else if(t <= f) this.openEye(t, f, 180);
+                if(t <= f/2) {
+                    this.closeEye(t, f/2, 180);
+                    this.blackRadius += this.secondBlackRadius * 0.01;
+                }
+                else if(t <= f) {
+                    this.openEye(t, f, 180);
+                    this.blackRadius -= this.secondBlackRadius * 0.01;
+                }
                 else {this.eyelidWidthRadius = 75; this.blinking = false;}
             }
         }

@@ -1,6 +1,6 @@
 /*
     slider.js
-    2021.01.19
+    2021.01.23
     Slider of main categories of Reptopia.
 */
 /*
@@ -11,6 +11,12 @@ var beforeN = 1;
 var d = 0;
 var margin = -25;
 var leftA = 0;
+
+window.onload = setupSlider;
+
+function setupSlider(){
+    resizeFontSize(innerWidth, innerHeight);
+}
 
 function check(n){
     inner = document.getElementsByClassName("inner")[0];
@@ -78,10 +84,17 @@ function createSlide(n, left = false){ //'n'슬라이드를 left/right side에 �
     else if(n == 3){
         newEl = document.createElement("input");
         newEl.setAttribute("class", "slide slide_3");
-        newEl.setAttribute("type", "button");
+        newEl.setAttribute("type", "button");6
         newEl.setAttribute("value", "Work");
         newEl.setAttribute("onclick", "check(3)");
         if(left) inner.insertBefore(newEl, inner.firstChild);
         else inner.appendChild(newEl);
     }
+}
+
+function resizeFontSize(width, height){
+    inner = document.getElementsByClassName('inner')[0];
+    let sliders = inner.children;
+    for(let i=0; i<sliders.length; i++)
+        sliders[i].setAttribute("style", "font-size: "+ String((width+height)/30) + "px;");
 }

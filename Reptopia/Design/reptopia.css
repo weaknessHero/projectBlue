@@ -23,7 +23,6 @@ canvas{
   top: 40%;
   left: 12%;
   width: 76%;
-  min-width: 610px;
   margin: 0;
   padding: 0;
   border: 0px;
@@ -54,7 +53,6 @@ canvas{
 input[type=button] {
   background: none;
   border: none;
-  font-size: 400%;
   outline: none;
   cursor: pointer;
 }

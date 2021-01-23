@@ -1,6 +1,6 @@
 /*
     canvas.js
-    2021.01.22
+    2021.01.23
     Reptopia의 canvas 메인 자바스크립트.
 */
 /*
@@ -40,16 +40,16 @@ const reactFrame = 10 * timeSlow;
 const waveWidth = 20;
 const waveFrame = 20 * timeSlow;
 const sizeRate =  (canvasEl.width + canvasEl.height)/3000;
-const eyeRange = 20;
+const eyeRange = 25;
 
 
 //main
-setup();
+setupCanvas();
 init();
 loop();
 
 
-function setup(){ //초기 세팅
+function setupCanvas(){ //초기 세팅
     for(let temp = 0; temp < 40; temp++) eyes.push(randomEye()); //랜덤 눈알 객체
 }
 function init(){ //Initial setting
@@ -108,6 +108,7 @@ function resize(){ //창 크기 변경 시 호출
         });
         canvasEl.width = innerWidth; canvasEl.height = innerHeight;
     }
+    resizeFontSize(innerWidth, innerHeight); //글자 크기
 }
 
 
