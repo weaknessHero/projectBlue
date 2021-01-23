@@ -63,8 +63,9 @@ function check(n){
 }
 
 function createSlide(n, left = false){ //'n'슬라이드를 left/right side에 생성
+    let newEl = document.createElement("input");
+    newEl.setAttribute("style", "font-size: "+ String((canvasEl.width+canvasEl.height)/30) + "px;");
     if(n == 1){
-        newEl = document.createElement("input");
         newEl.setAttribute("class", "slide slide_1");
         newEl.setAttribute("type", "button");
         newEl.setAttribute("value", "Creature");
@@ -73,7 +74,6 @@ function createSlide(n, left = false){ //'n'슬라이드를 left/right side에 �
         else inner.appendChild(newEl);
     }
     else if(n == 2){
-        newEl = document.createElement("input");
         newEl.setAttribute("class", "slide slide_2");
         newEl.setAttribute("type", "button");
         newEl.setAttribute("value", "Store");
@@ -82,7 +82,6 @@ function createSlide(n, left = false){ //'n'슬라이드를 left/right side에 �
         else inner.appendChild(newEl);
     }
     else if(n == 3){
-        newEl = document.createElement("input");
         newEl.setAttribute("class", "slide slide_3");
         newEl.setAttribute("type", "button");6
         newEl.setAttribute("value", "Work");
