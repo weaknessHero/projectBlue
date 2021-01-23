@@ -1,8 +1,10 @@
-/*  canvas.js
+/*
+    canvas.js
     2021.01.22
     Reptopia의 canvas 메인 자바스크립트.
 */
-/*  1.3.4
+/*
+    1.3.4
         1 함수 구조: 흐름을 읽기 쉽도록 수정: setup(), init(), loop() 활용
         2 loop(): 파동 구현 파트 추가.
         3 constants.
@@ -31,13 +33,14 @@ var frame = 0;
 
 //상수
 const timeSlow = 1;
-const waveFrame = 20 * timeSlow;
 const blinkFrame = 18 * timeSlow;
-const initFrame = 35 * timeSlow;
+const initFrameA = 35 * timeSlow;
+const initFrameB = 10 * timeSlow;
 const reactFrame = 10 * timeSlow;
-
 const waveWidth = 20;
+const waveFrame = 20 * timeSlow;
 const sizeRate =  (canvasEl.width + canvasEl.height)/3000;
+const eyeRange = 20;
 
 
 //main
@@ -50,9 +53,9 @@ function setup(){ //초기 세팅
     for(let temp = 0; temp < 40; temp++) eyes.push(randomEye()); //랜덤 눈알 객체
 }
 function init(){ //Initial setting
-    if(frame < initFrame-10) eyes.forEach(eye=>eye.init(initFrame-10));
-    else if(frame > initFrame) return 0;
-    if(frame > (initFrame-10)/2) eyes.forEach(eye=>eye.eyelidWidthRadius -= 105/((initFrame/2)+5));
+    if(frame < initFrameA-initFrameB) eyes.forEach(eye=>eye.init(initFrameA-initFrameB)); //
+    else if(frame > initFrameA) return 0;
+    if(frame > (initFrameA-initFrameB)/2) eyes.forEach(eye=>eye.eyelidWidthRadius -= 105/((initFrameA+initFrameB)/2));
     requestAnimationFrame(init);
 }
 function loop(){ //메인 루프

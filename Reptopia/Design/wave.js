@@ -1,8 +1,10 @@
-/*  wave.js
+/*
+    wave.js
     2021.01.22
     Wave. One of interactive functions in Reptopia.
 */
-/*  1.3.4
+/*
+    1.3.4
         1 Created.
 */
 

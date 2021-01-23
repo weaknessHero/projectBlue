@@ -1,8 +1,10 @@
-/*  eye.js
+/*
+    eye.js
     2021.01.22
     Reptopia의 배경에 나타나는 Eye 객체와, 그걸 다루는 함수들.
 */
-/*  1.3.4
+/*
+    1.3.4
         1 Eye.range: 눈 크기 뿐만 아니라 현재 화면 너비와도 비례하게 수정.
         2 더블클릭 기능 삭제: 의도치 않게 발동하는 경우 발생. Reptopia의 목적에 맞지 않는 기능.
         3 일부 주석 삭제(Eye, centerXY, range, reactingTime, ...): 변수명과 코드 흐름으로 해석 가능한 부분.
@@ -41,11 +43,11 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
     this.dy = 0;
 
     //검은자 속력 고유값
-    this.f = (this.whiteRadius - this.blackRadius)/1000 + 0.0001;
+    this.f = (this.whiteRadius - this.blackRadius)/1500 + 0.0001;
 
     //Look
     this.looking = false;
-    this.range = 350 + this.secondBlackRadius;
+    this.range = eyeRange * this.secondBlackRadius;
     this.reactingTime = reactFrame + Math.random()*10;
     this.slowDownCount = 0;
 
@@ -62,7 +64,7 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
     this.whiteColor = arrToRGB(whiteColor);
     this.eyelidCol = arrToRGB(eyelidColor);
 
-    this.init = function(f){ //Draw creating eye.
+    this.init = function(f){ //눈 생성.
         this.whiteRadius = this.whiteRadiusB * frame/f;
         this.blackRadius = this.blackRadiusB * frame/f;
         this.secondBlackRadius = this.secondBlackRadiusB * frame/f;
@@ -78,14 +80,20 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
     this.look = function(aimX, aimY){
         let limit = this.whiteRadius - this.secondBlackRadius; //최대 이동 거리
         let d = distance([this.x, this.y], [this.centerX, this.centerY]);
+        let sign = 1;
         this.dx = (1 - d/limit) * (aimX - this.x) * this.f;
         this.dy = (1 - d/limit) * (aimY - this.y) * this.f;
-
+        
         if(this.slowDownCount>0){ //반응 속도에 따른 속도 조절
             this.dx *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
             this.dy *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
             this.slowDownCount -= 1;
         }
+        if(this.dx < 0) sign = -1; else sign = 1;
+        if(Math.abs(this.dx) > limit) this.dx *= limit/this.dx * sign;
+        
+        if(this.dy < 0) sign = -1; else sign = 1;
+        if(Math.abs(this.dy) > limit) this.dy *= limit/this.dy * sign;
 
         this.x += this.dx;
         this.y += this.dy;
@@ -93,8 +101,8 @@ function Eye(x, y, blackRadius, whiteRadius, blackColor, whiteColor, eyelidColor
 
     this.toCenter = function(f=0){ //중심점으로 끌어당김 f:중앙 강제 고정 옵션
         if(f==0){
-            this.x += (this.centerX-this.x) / 40;
-            this.y += (this.centerY-this.y) / 40;
+            this.x += (this.centerX-this.x) / 20;
+            this.y += (this.centerY-this.y) / 20;
         }
         else{
             this.x += (this.centerX-this.x);

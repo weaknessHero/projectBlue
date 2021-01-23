@@ -1,8 +1,10 @@
-/*  slider.js
+/*
+    slider.js
     2021.01.19
     Slider of main categories of Reptopia.
 */
-/*  1.2.4
+/*
+    1.2.4
         1 Recreated.
 */
 var beforeN = 1;
