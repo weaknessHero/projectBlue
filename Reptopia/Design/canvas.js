@@ -1,14 +1,11 @@
 /*
     canvas.js
-    2021.01.23
+    2021.01.24
     Reptopia의 canvas 메인 자바스크립트.
 */
 /*
-    1.3.4
-        1 함수 구조: 흐름을 읽기 쉽도록 수정: setup(), init(), loop() 활용
-        2 loop(): 파동 구현 파트 추가.
-        3 constants.
-        4 resize(): 너비 뿐만 아니라 높이도 반응하도록 수정. 눈알 크기도 창 크기에 비례하도록 수정.
+    1.3.5
+        resize(): Eye의 변경된 변수명 반영.
 */
 
 //Element setting
@@ -47,7 +44,7 @@ const eyeRange = 25;
 setupCanvas();
 init();
 loop();
-
+ar = [1,2,3];
 
 function setupCanvas(){ //초기 세팅
     for(let temp = 0; temp < 40; temp++) eyes.push(randomEye()); //랜덤 눈알 객체
@@ -101,8 +98,8 @@ function resize(){ //창 크기 변경 시 호출
     if(canvasEl.width != innerWidth | canvasEl.height != innerHeight){
         eyes.forEach(eye => {
             eye.whiteRadius *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
-            eye.blackRadius *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
-            eye.secondBlackRadius *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
+            eye.pupilRadius *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
+            eye.irisRadius *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
             eye.looking=false; eye.centerX *= innerWidth / canvasEl.width; eye.centerY *= innerHeight / canvasEl.height;
             eye.toCenter(1);
         });
@@ -113,12 +110,12 @@ function resize(){ //창 크기 변경 시 호출
 
 
 
-function distance(location1, location2){ //location1 - location2 거리 계산
+function distance(location1, location2){
     return Math.abs(Math.sqrt(((location1[0]-location2[0])**2 + (location1[1]-location2[1])**2)));
 }
-function arrToRGB(arr){ //배열 -> rgb문자열
+function arrToRGB(arr){
     return "rgb(" + arr[0] + "," + arr[1] + "," + arr[2] + ")";
 }
-function degreeToRadian(degree){ //각도 -> 라디안
+function degreeToRadian(degree){
     return Math.PI * degree/180;
 }

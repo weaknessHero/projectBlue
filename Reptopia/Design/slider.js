@@ -1,11 +1,11 @@
 /*
     slider.js
-    2021.01.23
+    2021.01.24
     Slider of main categories of Reptopia.
 */
 /*
-    1.2.4
-        1 Recreated.
+    1.3.5
+        1 가운데 슬라이드 클릭 시 오작동 해결.
 */
 var beforeN = 1;
 var d = 0;
@@ -31,6 +31,7 @@ function check(n){
             createSlide(3, true);
             inner.removeChild(inner.children[3]);
         }
+        else return 0;
     }
     else if(n == 2){
         if(beforeN == 1){
@@ -43,6 +44,7 @@ function check(n){
             createSlide(1, true);
             inner.removeChild(inner.children[3]);
         }
+        else return 0;
     }
     else if(n==3){
         if(beforeN == 2){
@@ -50,11 +52,12 @@ function check(n){
             createSlide(1, false);
             inner.removeChild(inner.children[0]);
         }
-        if(beforeN == 1){
+        else if(beforeN == 1){
             d = +50;
             createSlide(2, true);
             inner.removeChild(inner.children[3]);
         }
+        else return 0;
     }
     beforeN = n;
     leftA -= d;
