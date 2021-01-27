@@ -1,16 +1,24 @@
-/*  reptopia.css
+/*
+    reptopia.css
     2021.01.19
     All styles in Reptopia.
 */
-/*  1.3.4
-        1 Slider transition 속도 미세 조정.
-        2 Slider javascript 구현으로 인한 미사용 tag 삭제.
+/*
+    1.3.4
+        1 Slider transition 속도 미세 조정. 더 느낌있게?
+        2 Slider javascript 구현으로, 불필요 tag 삭제.
 */
+html {
+  width: 100%;
+  height: 100%;
+}
 body {
   margin:0;
   padding:0;
+  width: 100%;
+  height: 100%;
 }
-canvas{
+#background {
   position:absolute;
   left:0;
   top:0;
@@ -21,11 +29,11 @@ canvas{
   top: 40%;
   left: 12%;
   width: 76%;
-  min-width: 610px;
   margin: 0;
   padding: 0;
   border: 0px;
   z-index: 1;
+  transition: top 400ms ease-out;
 }
 #overflow {
   width: 100%;
@@ -52,7 +60,6 @@ canvas{
 input[type=button] {
   background: none;
   border: none;
-  font-size: 400%;
   outline: none;
   cursor: pointer;
 }
@@ -64,4 +71,22 @@ input[type=button] {
 }
 #slides .slide_3 {
   color: rgb(136, 78, 27);
+}
+#cages{
+  padding: 1%;
+  position: absolute;
+  top: 90%;
+  left: 5%;
+  height: 0%;
+  width: 90%;
+  transition: top 800ms ease-out, height 800ms ease-out;
+  z-index: 2;
+}
+#cage{
+  position: relative;
+  height: 0%;
+  width: 30%;
+  transition: height 800ms ease-out;
+  z-index: 2;
+  border-radius: 1%;
 }
