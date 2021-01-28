@@ -1,9 +1,11 @@
-/*  wave.js
+/*
+    wave.js
     2021.01.22
     Wave. One of interactive functions in Reptopia.
 */
-/*  1.3.4
-        1 Created.
+/*
+    1.3.5
+        ctx.strokeStyle = "red": 파동 색 변경.
 */
 
 function drawWave(wave){
@@ -11,7 +13,7 @@ function drawWave(wave){
 
     let t = frame - wave['frame'];
 
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = "red";
     ctx.lineWidth = waveWidth - waveWidth/waveFrame * t; //시간과 두께 반비례.
 
     ctx.beginPath();

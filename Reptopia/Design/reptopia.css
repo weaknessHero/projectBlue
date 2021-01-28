@@ -4,9 +4,8 @@
     All styles in Reptopia.
 */
 /*
-    1.3.4
-        1 Slider transition 속도 미세 조정. 더 느낌있게?
-        2 Slider javascript 구현으로, 불필요 tag 삭제.
+    1.3.5
+        1 #cages, #cage, #arrow: 생성됨.
 */
 html {
   width: 100%;
@@ -33,7 +32,7 @@ body {
   padding: 0;
   border: 0px;
   z-index: 1;
-  transition: top 400ms ease-out;
+  transition: top 600ms ease-out;
 }
 #overflow {
   width: 100%;
@@ -79,14 +78,28 @@ input[type=button] {
   left: 5%;
   height: 0%;
   width: 90%;
-  transition: top 800ms ease-out, height 800ms ease-out;
+  transition: top 600ms ease-out, height 600ms ease-out;
   z-index: 2;
 }
-#cage{
+.cage{
   position: relative;
   height: 0%;
   width: 30%;
-  transition: height 800ms ease-out;
+  transition: height 600ms ease-out;
   z-index: 2;
-  border-radius: 1%;
+  border-radius: 2%;
+  padding: 0.2%;
+  opacity: 0.9;
+}
+#arrow{
+  position: absolute;
+  height: 5%;
+  width: height;
+  top: 90%;
+  left: 47.5%;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 400ms ease-in, opacity 400ms ease-in;
+  cursor: pointer;
+  z-index: 3;
 }

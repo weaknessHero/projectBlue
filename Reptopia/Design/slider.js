@@ -39,7 +39,7 @@ function check(n){
     }
     else {
         hideSlides();
-        if(n==1) showCreatures();
+        if(n==1) showCages();
         else if(n==2) openStore();
         else if(n==3) showWorkplace();
         return 0;
@@ -72,32 +72,19 @@ function resizeFontSize(width, height){
     inner = document.getElementsByClassName('inner')[0];
     let sliders = inner.children;
     for(let i=0; i<sliders.length; i++)
-        sliders[i].setAttribute("style", "font-size: "+ String((width+height)/30) + "px;");
+        sliders[i].setAttribute("style", "font-size: "+ String((width+height)/32) + "px;");
 }
 
 function hideSlides(){
     let slides = document.getElementById("slides");
     slides.setAttribute("style", 'top: -15%');
+    document.getElementById("arrow").setAttribute("style", "visibility : visible; opacity: 1;");
 }
 
-function showCreatures(){
-    cage = document.createElement("canvas");
-    cage.id = "cage";
-
-    cages = document.getElementById("cages");
-    cages.appendChild(cage);
-    cages.setAttribute("style", "top: 5%; height: 90%");
-    cage.setAttribute("style", "height: 30%;");
-
-    var newCtx = cage.getContext("2d");
-    canvasLoop(cage, newCtx);
-
-    function canvasLoop(){
-        newCtx.fillStyle = 'green';
-        newCtx.fillRect(0,0, cage.width, cage.height);
-    
-        requestAnimationFrame(canvasLoop);
-    }
+function showSlides(){
+    hideCages();
+    let slides = document.getElementById("slides");
+    slides.setAttribute("style", 'top: 40%');
 }
 
 function openStore(){

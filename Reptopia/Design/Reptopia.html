@@ -15,14 +15,24 @@
    <meta charset="UTF-8">
    <title>canvas test</title>
    <script src="slider.js"></script>
-   <script src="cage.js"></script>
+   <script src="cage.js"></script>  
    <script src="canvas.js" defer></script>
    <script src="eye.js"></script>
    <script src="wave.js"></script>
    <link rel="stylesheet" type="text/css" href="reptopia.css" />
 </head>
 <body>
-   <div id="cages"></div>
+   <div id="cages">
+      <canvas class="cage"></canvas>
+      <canvas class="cage"></canvas>
+      <canvas class="cage"></canvas>
+      <canvas class="cage"></canvas>
+      <canvas class="cage"></canvas>
+      <canvas class="cage"></canvas>
+      <canvas class="cage"></canvas>
+      <canvas class="cage"></canvas>
+      <canvas class="cage"></canvas>
+   </div>
    <canvas id="background"></canvas>
    <div id="slides">
       <div id="overflow">
@@ -33,5 +43,6 @@
          </div>
       </div>
    </div>
+   <img id="arrow" src="imgs/arrow.png" onclick="showSlides()"></img>
 </body>
 </html>

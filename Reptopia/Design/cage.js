@@ -8,21 +8,30 @@
         1 created.
 */
 function showCages(){
-    cage = document.createElement("canvas");
-    cage.id = "cage";
-
     cages = document.getElementById("cages");
-    cages.appendChild(cage);
-    cages.setAttribute("style", "top: 5%; height: 90%");
-    cage.setAttribute("style", "height: 30%;");
-
-    var newCtx = cage.getContext("2d");
-    canvasLoop(cage, newCtx);
-
+    cages.setAttribute("style", "top: 5%; height: 80%");
+    cageList = document.getElementsByClassName("cage");
+    ctxs = [];
+    for(i=0;i<cageList.length;i++){
+        cageList[i].setAttribute("style", "height: 30%;");
+        ctxs.push(cageList[i].getContext("2d"));
+    }
+    canvasLoop();
+    
     function canvasLoop(){
-        newCtx.fillStyle = 'green';
-        newCtx.fillRect(0,0, cage.width, cage.height);
+        for(j=0;j<ctxs.length;j++){
+            ctxs[j].fillStyle = 'green';
+            ctxs[j].fillRect(0,0, cageList[j].width, cageList[j].height);
+        }
     
         requestAnimationFrame(canvasLoop);
     }
+}
+
+function hideCages(){
+    cages = document.getElementById("cages");
+    cages.setAttribute("style", "top: 90%; height: 0%");
+    document.getElementById("arrow").setAttribute("style", "visibility : invisible; opacity: 0;");
+    cageList = document.getElementsByClassName("cage");
+    for(i=0;i<cageList.length;i++){cageList[i].setAttribute("style", "height: 0%;");}
 }
