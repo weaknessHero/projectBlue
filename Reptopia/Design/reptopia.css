@@ -97,9 +97,7 @@ input[type=button] {
   width: height;
   top: 90%;
   left: 47.5%;
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 400ms ease-in, opacity 400ms ease-in;
+  transition: opacity 250ms ease-out;
   cursor: pointer;
   z-index: 3;
 }

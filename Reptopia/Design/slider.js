@@ -78,7 +78,7 @@ function resizeFontSize(width, height){
 function hideSlides(){
     let slides = document.getElementById("slides");
     slides.setAttribute("style", 'top: -15%');
-    document.getElementById("arrow").setAttribute("style", "visibility : visible; opacity: 1;");
+    document.getElementById("arrow").setAttribute("style", "opacity: 1;");
 }
 
 function showSlides(){

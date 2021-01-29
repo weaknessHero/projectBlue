@@ -31,7 +31,7 @@ function showCages(){
 function hideCages(){
     cages = document.getElementById("cages");
     cages.setAttribute("style", "top: 90%; height: 0%");
-    document.getElementById("arrow").setAttribute("style", "visibility : invisible; opacity: 0;");
+    document.getElementById("arrow").setAttribute("style", "opacity: 0;");
     cageList = document.getElementsByClassName("cage");
     for(i=0;i<cageList.length;i++){cageList[i].setAttribute("style", "height: 0%;");}
 }
