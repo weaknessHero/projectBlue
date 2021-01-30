@@ -64,7 +64,7 @@ def main():
         print("It's has a history log")
         update(lastUpdateDate)
     else : #날짜 데이터가 없으면 초기값으로 지정
-        print('***********************************\n\nplease wait for 10~20 minute\npress mousse show the download percent\n\n***********************************')
+        print('***********************************\n\nplease wait for 10~20 minute\npress mouse show the download percent\n\n***********************************')
         download()
         
 def update(lastUpdateDate):
