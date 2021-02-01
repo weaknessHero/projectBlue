@@ -5,23 +5,24 @@
 */
 /*
     1.3.6
-        1 cageAnimations.push(requestAnimationFrame(canvasLoop)): 애니메이션 프레임 객체를 변수에 할당(배열)
+        1 cageAnimations.push(requestAnimationFrame(canvasLoop)): 애니메이션 프레임 객체를 ctxList에 push.
 */
 function showCages(){
     cages = document.getElementById("cages");
     cages.setAttribute("style", "top: 5%; height: 80%");
     cageList = document.getElementsByClassName("cage");
-    ctxs = [];
+    ctxList = [];
     for(i=0;i<cageList.length;i++){
         cageList[i].setAttribute("style", "height: 30%;");
-        ctxs.push(cageList[i].getContext("2d"));
+        ctxList.push(cageList[i].getContext("2d"));
     }
+
     canvasLoop();
     
     function canvasLoop(){
-        for(j=0;j<ctxs.length;j++){
-            ctxs[j].fillStyle = 'green';
-            ctxs[j].fillRect(0,0, cageList[j].width, cageList[j].height);
+        for(j=0;j<ctxList.length;j++){
+            ctxList[j].fillStyle = 'green';
+            ctxList[j].fillRect(0,0, cageList[j].width, cageList[j].height);
             if(frame%100 == 0)
                 console.log(String(j) + ' is running');
         }

@@ -71,7 +71,7 @@ function resizeFontSize(width, height){
     inner = document.getElementsByClassName('inner')[0];
     let sliders = inner.children;
     for(let i=0; i<sliders.length; i++)
-        sliders[i].setAttribute("style", "font-size: "+ String((width+height)/32) + "px;");
+        sliders[i].setAttribute("style", "font-size: "+ String((width+height)/30) + "px;");
 }
 
 function hideSlides(){
