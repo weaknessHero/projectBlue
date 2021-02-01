@@ -4,10 +4,9 @@
     Slider of main categories of Reptopia.
 */
 /*
-    1.3.5
-        1 가운데 슬라이드 클릭 시 오작동 해결.
-        2 check(n), createSlide(n, left): 중복 코드 축약.
-        3 hideSlides(), showCreatures(), openStore(), showWorkplace(): Created.
+    1.3.6
+        1 showSlides(): cancelAnimationFrame 추가
+
 */
 var beforeN = 1;
 var d = 0;
@@ -50,7 +49,7 @@ function check(n){
     inner.setAttribute("style", 'left :' + String(leftA) + '%; margin-left :' + String(margin) + '%;');
 }
 
-function createSlide(n, left = false){ //'n'슬라이드를 left/right side에 생성
+function createSlide(n, left = false){
     let newEl = document.createElement("input");
     let newElAttributes = {"class":"", "type":"", "value":"", "onclick":""};
     
@@ -83,6 +82,7 @@ function hideSlides(){
 
 function showSlides(){
     hideCages();
+    cageAnimations.forEach(cageAnim=>cancelAnimationFrame(cageAnim));
     let slides = document.getElementById("slides");
     slides.setAttribute("style", 'top: 40%');
 }

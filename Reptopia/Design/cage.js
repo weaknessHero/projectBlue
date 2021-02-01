@@ -4,8 +4,8 @@
     Canvas element for cages.
 */
 /*
-    1.3.5
-        1 created.
+    1.3.6
+        1 cageAnimations.push(requestAnimationFrame(canvasLoop)): 애니메이션 프레임 객체를 변수에 할당(배열)
 */
 function showCages(){
     cages = document.getElementById("cages");
@@ -22,9 +22,11 @@ function showCages(){
         for(j=0;j<ctxs.length;j++){
             ctxs[j].fillStyle = 'green';
             ctxs[j].fillRect(0,0, cageList[j].width, cageList[j].height);
+            if(frame%100 == 0)
+                console.log(String(j) + ' is running');
         }
-    
-        requestAnimationFrame(canvasLoop);
+        
+        cageAnimations.push(requestAnimationFrame(canvasLoop));
     }
 }
 

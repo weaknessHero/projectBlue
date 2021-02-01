@@ -80,6 +80,7 @@ input[type=button] {
   width: 90%;
   transition: top 600ms ease-out, height 600ms ease-out;
   z-index: 2;
+  -webkit-user-select: none;
 }
 .cage{
   position: relative;

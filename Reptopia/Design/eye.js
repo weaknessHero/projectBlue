@@ -4,12 +4,8 @@
     Reptopia의 배경에 나타나는 Eye 객체와, 그걸 다루는 함수들.
 */
 /*
-    1.3.5
-        1 변수명 수정: blackRadius -> pupilRadius, secondBlackRadius -> irisRadius, ...
-        2 Eye.pupilShape 추가: 수직 동공 구현
-        3 Eye.draw(): 홍채 명암 표현 추가. 본의 아니게 홍채 결도 표현됨.
-        4 Eye.blinkWidth: 깜빡이는 정도 추가. -> Eye.blink(): 파동 시작점과의 거리에 따른 깜빡임 정도 구현.
-        5 randomEye(): 색상 밝게 조정.
+    1.3.6
+        1 눈 떨림 현상 제거: Eye.look()에서 d/limit의 최대치를 1로 제한함.
 */
 
 function Eye(x, y, pupilRadius, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
@@ -83,20 +79,16 @@ function Eye(x, y, pupilRadius, whiteRadius, irisColor, whiteColor, eyelidColor,
     this.look = function(aimX, aimY){
         let limit = this.whiteRadius - this.irisRadius; //최대 이동 거리
         let d = distance([this.x, this.y], [this.centerX, this.centerY]);
-        let sign = 1;
-        this.dx = (1 - d/limit) * (aimX - this.x) * this.f;
-        this.dy = (1 - d/limit) * (aimY - this.y) * this.f;
+        let dDivLimit = d/limit;
+        if(dDivLimit > 1) dDivLimit = 1;
+        this.dx = (1 - dDivLimit) * (aimX - this.x) * this.f;
+        this.dy = (1 - dDivLimit) * (aimY - this.y) * this.f;
         
         if(this.slowDownCount>0){ //반응 속도에 따른 속도 조절
             this.dx *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
             this.dy *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
             this.slowDownCount -= 1;
         }
-        if(this.dx < 0) sign = -1; else sign = 1;
-        if(Math.abs(this.dx) > limit) this.dx *= limit/this.dx * sign;
-        
-        if(this.dy < 0) sign = -1; else sign = 1;
-        if(Math.abs(this.dy) > limit) this.dy *= limit/this.dy * sign;
 
         this.x += this.dx;
         this.y += this.dy;
