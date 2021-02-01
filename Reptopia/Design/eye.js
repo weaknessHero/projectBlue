@@ -5,10 +5,10 @@
 */
 /*
     1.3.6
-        1 눈 떨림 현상 수정: Eye.look()의 this.dx = (1 - dDivLimit) * (aimX - this.x) * this.f; 에서 d/limit가 1보다 커지는 경우가 생겨 dx의 부호가 반대가 되어 순간이동했었음. -> dDivLimit의 최대치를 1로 제한함으로써 해결.
+        1 눈 떨림 현상 방지: Eye.look()의 this.dx = (1 - dDivLimit) * (aimX - this.x) * this.f; 에서 d/limit가 1보다 커지는 경우가 생겨 dx의 부호가 반대가 되어 순간이동했었음. -> dDivLimit의 최대치를 1로 제한함으로써 해결.
 */
 
-function Eye(x, y, pupilRadius, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
+function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
     /* TODO
         + Eye shape to ellipse.
         + Eyelid skin texture.
@@ -25,11 +25,11 @@ function Eye(x, y, pupilRadius, whiteRadius, irisColor, whiteColor, eyelidColor,
     this.y = y;
 
     //Size
-    this.pupilRadius = pupilRadius;
     this.whiteRadius = whiteRadius;
-    this.irisRadius = (this.whiteRadius + this.pupilRadius) / 2; //검은자 크기
-    if(this.irisRadius > whiteRadius * 3/4) this.irisRadius = whiteRadius * 3/4; //검은자 크기 제한
-    //if(this.pupilShape == 'vertical') this.pupilRadius = this.irisRadius;
+    if(this.pupilShape == 'circle') this.pupilRadius = whiteRadius/2;
+    else if(this.pupilShape == 'vertical') this.pupilRadius = 3*whiteRadius/4;
+    this.irisRadius = (this.whiteRadius + this.pupilRadius) / 2; //홍채 크기
+    if(this.irisRadius > whiteRadius * 3/4) this.irisRadius = whiteRadius * 3/4; //홍채 크기 제한
 
     //백업
     this.pupilRadiusB = this.pupilRadius;
@@ -124,57 +124,57 @@ function Eye(x, y, pupilRadius, whiteRadius, irisColor, whiteColor, eyelidColor,
 
     this.drawEyelid = function(){ // 눈꺼풀 그림
         if(this.eyelidWidthRadius>180) this.eyelidWidthRadius = 180;
-        ctx.fillStyle = arrToRGB(this.eyelidCol);
+        ctxBackground.fillStyle = arrToRGB(this.eyelidCol);
 
         //this.eyelidWidthRadius에 비례한 두께로 눈꺼풀 그림.
         for(let d = -5; d + this.eyelidWidthRadius <= 185; d += 5){ // 위
-            ctx.beginPath();
-            ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d + this.eyelidWidthRadius), false);
-            ctx.fill();
+            ctxBackground.beginPath();
+            ctxBackground.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d + this.eyelidWidthRadius), false);
+            ctxBackground.fill();
         }
         for(let d = -5; d + this.eyelidWidthRadius <= 185; d += 5){ // 아래
-            ctx.beginPath();
-            ctx.arc(this.centerX, this.centerY, this.whiteRadius + 1, Math.PI + degreeToRadian(d), Math.PI + degreeToRadian(d + this.eyelidWidthRadius), false);
-            ctx.fill();
+            ctxBackground.beginPath();
+            ctxBackground.arc(this.centerX, this.centerY, this.whiteRadius + 1, Math.PI + degreeToRadian(d), Math.PI + degreeToRadian(d + this.eyelidWidthRadius), false);
+            ctxBackground.fill();
         }
     }
 
     this.draw = function(){ //검은자, 흰자, (눈꺼풀) 그림
         //흰자 그림 ---명암 적용---
-        ctx.fillStyle = arrToRGB(this.whiteColor);
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.whiteRadius, 0, Math.PI * 2, false);
-        ctx.fill();
+        ctxBackground.fillStyle = arrToRGB(this.whiteColor);
+        ctxBackground.beginPath();
+        ctxBackground.arc(this.centerX, this.centerY, this.whiteRadius, 0, Math.PI * 2, false);
+        ctxBackground.fill();
 
         //두 번째 검은자 그림
-        ctx.fillStyle = arrToRGB(this.irisColor);
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.irisRadius, 0, Math.PI * 2, false);
-        ctx.fill();
+        ctxBackground.fillStyle = arrToRGB(this.irisColor);
+        ctxBackground.beginPath();
+        ctxBackground.arc(this.x, this.y, this.irisRadius, 0, Math.PI * 2, false);
+        ctxBackground.fill();
 
         //홍채 그라데이션
         var gradation = 1;
-        ctx.lineWidth = 1;
-        for(let tempR = 0; tempR < this.irisRadius-this.pupilRadius; tempR+=ctx.lineWidth){
+        ctxBackground.lineWidth = 1;
+        for(let tempR = 0; tempR < this.irisRadius-this.pupilRadius; tempR+=ctxBackground.lineWidth){
             gradation = tempR/this.irisRadius;
-            ctx.strokeStyle = arrToRGB([this.irisColor[0] * gradation, this.irisColor[1] * gradation, this.irisColor[2] * gradation]);
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.irisRadius-tempR, 0, Math.PI * 2, false);
-            ctx.stroke();
+            ctxBackground.strokeStyle = arrToRGB([this.irisColor[0] * gradation, this.irisColor[1] * gradation, this.irisColor[2] * gradation]);
+            ctxBackground.beginPath();
+            ctxBackground.arc(this.x, this.y, this.irisRadius-tempR, 0, Math.PI * 2, false);
+            ctxBackground.stroke();
         }
 
 
         //검은자 그림
-        ctx.fillStyle = "black";
+        ctxBackground.fillStyle = "black";
         if(this.pupilShape == 'circle'){
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.pupilRadius, 0, Math.PI * 2, false);
-            ctx.fill();
+            ctxBackground.beginPath();
+            ctxBackground.arc(this.x, this.y, this.pupilRadius, 0, Math.PI * 2, false);
+            ctxBackground.fill();
         }
         else if(this.pupilShape == 'vertical'){
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.pupilRadius, 0, Math.PI * 2, false);
-            ctx.fill();
+            ctxBackground.beginPath();
+            ctxBackground.arc(this.x, this.y, this.pupilRadius, 0, Math.PI * 2, false);
+            ctxBackground.fill();
         }
         //눈꺼풀 그림
         this.drawEyelid(this.eyelidWidthRadius);
@@ -208,7 +208,6 @@ function Eye(x, y, pupilRadius, whiteRadius, irisColor, whiteColor, eyelidColor,
 
 function randomEye(){ //무작위 눈 생성
     let whiteRadius = (Math.random() * 24 + 26) * sizeRate;
-    let pupilRadius = whiteRadius/2;
     let x = Math.random()*canvasEl.width;
     let y = Math.random()*canvasEl.height;
 
@@ -221,5 +220,5 @@ function randomEye(){ //무작위 눈 생성
     let whiteColor = [Math.random() * 30 + 205, Math.random() * 30 + 205, Math.random() * 30 + 205];
     let eyelidColor = [Math.random() * 160, Math.random() * 160, Math.random() * 160];
     let shape = ['circle', 'vertical'][Math.floor(Math.random()*2)];
-    return new Eye(x, y, pupilRadius, whiteRadius, irisColor, whiteColor, eyelidColor, shape);
+    return new Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape);
 }

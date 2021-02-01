@@ -5,7 +5,7 @@
 */
 /*
     1.3.5
-        ctx.strokeStyle = "red": 파동 색 변경.
+        ctxBackground.strokeStyle = "red": 파동 색 변경.
 */
 
 function drawWave(wave){
@@ -13,12 +13,12 @@ function drawWave(wave){
 
     let t = frame - wave['frame'];
 
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = waveWidth - waveWidth/waveFrame * t; //시간과 두께 반비례.
+    ctxBackground.strokeStyle = "red";
+    ctxBackground.lineWidth = waveWidth - waveWidth/waveFrame * t; //시간과 두께 반비례.
 
-    ctx.beginPath();
-    ctx.arc(wave['x'], wave['y'], t*(canvasEl.width+canvasEl.height)/(waveFrame*10), 0, 360); //시간과 반지름 비례.
-    ctx.stroke();
+    ctxBackground.beginPath();
+    ctxBackground.arc(wave['x'], wave['y'], t*(canvasEl.width+canvasEl.height)/(waveFrame*10), 0, 360); //시간과 반지름 비례.
+    ctxBackground.stroke();
 
     if(frame - wave['frame'] >= waveFrame-2) wave['end'] = true; //제거 파트
 }

@@ -24,16 +24,16 @@ function check(n){
     inner = document.getElementsByClassName("inner")[0];
     if(beforeN == n-1 | beforeN == n+2){
         d = -50;
-        let Nslide = n+1;
-        if(Nslide == 4) Nslide = 1;
-        createSlide(Nslide, false);
+        let newSlide = n+1;
+        if(newSlide == 4) newSlide = 1;
+        createSlide(newSlide, false);
         inner.removeChild(inner.children[0]);
     }
     else if(beforeN == n+1 | beforeN == n-2){
         d = +50;
-        let Nslide = n-1;
-        if(Nslide == 0) Nslide = 3;
-        createSlide(Nslide, true);
+        let newSlide = n-1;
+        if(newSlide == 0) newSlide = 3;
+        createSlide(newSlide, true);
         inner.removeChild(inner.children[3]);
     }
     else {

@@ -13,7 +13,7 @@
 var canvasEl = document.getElementById("background");
 canvasEl.width = innerWidth;
 canvasEl.height = innerHeight;
-var ctx = canvasEl.getContext("2d");
+var ctxBackground = canvasEl.getContext("2d");
 
 //Event Listeners
 document.body.addEventListener("mousemove", look);
@@ -49,7 +49,6 @@ const eyeRange = 25;
 setupCanvas();
 init();
 backgroundLoop();
-ar = [1,2,3];
 
 function setupCanvas(){ //초기 세팅
     for(let temp = 0; temp < 30; temp++) eyes.push(randomEye()); //랜덤 눈알 객체
@@ -64,8 +63,8 @@ function backgroundLoop(){ //Background animation
     frame += 1;
 
     //Background
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0,0, canvasEl.width, canvasEl.height);
+    ctxBackground.fillStyle = 'black';
+    ctxBackground.fillRect(0,0, canvasEl.width, canvasEl.height);
 
     waves.forEach(wave => drawWave(wave));
 
