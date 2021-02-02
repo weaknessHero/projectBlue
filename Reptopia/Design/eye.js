@@ -176,10 +176,10 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
             //동공 그림
             ctxBackground.fillStyle = "black";
             ctxBackground.beginPath();
-            ctxBackground.arc(this.x-this.pupilRadius/1.4, this.y, this.pupilRadius, -Math.PI/4, Math.PI/4, false);
+            ctxBackground.arc(this.x-this.pupilRadius*1.63, this.y, this.pupilRadius*2, -Math.PI/5, Math.PI/5, false);
             ctxBackground.fill();
             ctxBackground.beginPath();
-            ctxBackground.arc(this.x+this.pupilRadius/1.4, this.y, this.pupilRadius, Math.PI * 3/4, Math.PI*5/4, false);
+            ctxBackground.arc(this.x+this.pupilRadius*1.63, this.y, this.pupilRadius*2, Math.PI * 4/5, Math.PI*6/5, false);
             ctxBackground.fill();
         }
 
