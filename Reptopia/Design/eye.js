@@ -7,6 +7,7 @@
     1.3.6
         1 눈 떨림 현상 방지: Eye.look()의 this.dx = (1 - dDivLimit) * (aimX - this.x) * this.f; 에서 d/limit가 1보다 커지는 경우가 생겨 dx의 부호가 반대가 되어 순간이동했었음. -> dDivLimit의 최대치를 1로 제한함으로써 해결.
         2 눈 깜빡임 속도 조정
+        3 VERTICAL PUPIL 초안.
 */
 
 function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
