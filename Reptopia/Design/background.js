@@ -35,7 +35,7 @@ var cageAnimations = [];
 
 //상수
 const timeSlow = 1;
-const blinkFrame = 8 * timeSlow;
+const blinkVelocity = 5 * timeSlow;
 const initFrameA = 35 * timeSlow;
 const initFrameB = 10 * timeSlow;
 const reactFrame = 10 * timeSlow;
