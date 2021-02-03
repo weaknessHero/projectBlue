@@ -7,7 +7,8 @@
     1.3.6
         1 눈 떨림 현상 방지: Eye.look()의 this.dx = (1 - dDivLimit) * (aimX - this.x) * this.f; 에서 d/limit가 1보다 커지는 경우가 생겨 dx의 부호가 반대가 되어 순간이동했었음. -> dDivLimit의 최대치를 1로 제한함으로써 해결.
         2 눈 깜빡임 속도 조정
-        3 VERTICAL PUPIL 초안.
+        3 VERTICAL PUPIL 초안 구현
+        4 randomEye(): 눈이 겹치지 않게 생성되게 함.
 */
 
 function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
@@ -120,6 +121,7 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
                 this.blinking = true;
                 this.blinkStartFrame = frame;
                 this.blinkTotalFrame = blinkVelocity + 10;
+                this.blinkWidth = 180;
             }
         }
     }
@@ -217,6 +219,19 @@ function randomEye(){ //무작위 눈 생성
     let whiteRadius = (Math.random() * 24 + 26) * sizeRate;
     let x = Math.random()*canvasEl.width;
     let y = Math.random()*canvasEl.height;
+
+    //눈이 겹치지 않게 생성
+    let change = true;
+    while(change){
+        change = false
+        eyes.forEach(function(eye){
+            if(distance([eye.centerX, eye.centerY], [x, y])<whiteRadius+eye.whiteRadius){
+                x = Math.random()*canvasEl.width;
+                y = Math.random()*canvasEl.height;
+                change = true;
+            }
+        })
+    }
 
     if(x-whiteRadius<0) x = whiteRadius;
     if(x+whiteRadius>canvasEl.width) x = canvasEl.width - whiteRadius;
