@@ -124,7 +124,7 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
                 this.blinkWidth = 180;
             }
         }
-    }
+    }   
 
     this.drawEyelid = function(){ // 눈꺼풀 그림
         if(this.eyelidWidthRadius>180) this.eyelidWidthRadius = 180;
@@ -241,6 +241,6 @@ function randomEye(){ //무작위 눈 생성
     let irisColor = [Math.random() * 230 + 20, Math.random() * 230 + 20, Math.random() * 230 + 20];
     let whiteColor = [Math.random() * 30 + 205, Math.random() * 30 + 205, Math.random() * 30 + 205];
     let eyelidColor = [Math.random() * 160, Math.random() * 160, Math.random() * 160];
-    let shape = ['circle', 'vertical'][Math.floor(Math.random()*2)];
+    let shape = ['circle', 'circle', 'vertical'][Math.floor(Math.random()*3)];
     return new Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape);
 }

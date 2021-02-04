@@ -21,7 +21,7 @@ document.body.addEventListener("click", mouseClick);
 window.addEventListener("resize", resize);
 
 //객체를 총괄하는 배열
-var eyes = [], waves = [];
+var eyes = [], waves = [], objects = [];
 
 //Mouse x, y
 var mx, my;
