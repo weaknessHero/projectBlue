@@ -18,29 +18,31 @@ function showCages(){
         ctxList.push(cageList[i].getContext("2d"));
     }
 
-    for(cageNum=0;cageNum<ctxList.length;cageNum++)
-        objects.push([new Object(ctxList[cageNum], 'wall', 0, cageList[cageNum].height - 20, 1, 1000, cageList[cageNum].width, 50, [30, 20, 0]), randomObject(cageList[cageNum], ctxList[cageNum])]);
+    for(cageN=0;cageN<ctxList.length;cageN++)
+        objects.push([
+            new ObjectR(cageList[cageN], ctxList[cageN], 'wall', 0, cageList[cageN].height - 30, 1, 10000,
+            cageList[cageN].width, 30, [30, 20, 0]),
+            randomCreautre(cageList[cageN], ctxList[cageN])
+        ]);
     
-    canvasLoop();
+    cageLoop();
     
-    function canvasLoop(){
-        for(cageNum=0;cageNum<ctxList.length;cageNum++){
-            ctxList[cageNum].fillStyle = 'green';
-            ctxList[cageNum].fillRect(0,0, cageList[cageNum].width, cageList[cageNum].height);
+    function cageLoop(){//케이지 루프
+        for(cageN=0;cageN<ctxList.length;cageN++){
+            ctxList[cageN].fillStyle = 'green';
+            ctxList[cageN].fillRect(0,0, cageList[cageN].width, cageList[cageN].height);
 
-            if(frame%100 == 0) objects[cageNum].push(randomObject(cageList[cageNum], ctxList[cageNum]));
-            objects[cageNum].forEach(obj => obj.update());
-            for(let i=0; i<objects[cageNum].length; i++){
-                //충돌 확인
-                if(objects[cageNum][i].collision(objects[cageNum])==0) break;          //무한리커젼 탈출
-                objects[cageNum][i].move();
+            if(frame%100 == 0) objects[cageN][1].setMovingCase(); //랜덤 움직임 설정
+
+            for(let i=0; i<objects[cageN].length; i++){
+                if(objects[cageN][i].collision(objects[cageN])==0) break;
+                objects[cageN][i].move();
             }
 
-            if(frame%100 == 0)
-                console.log(String(cageNum) + ' is running');
+            objects[cageN].forEach(obj => obj.update());
         }
         
-        cageAnimations.push(requestAnimationFrame(canvasLoop));
+        cageAnimations.push(requestAnimationFrame(cageLoop));
     }
 }
 

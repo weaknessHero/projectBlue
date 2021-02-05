@@ -6,10 +6,11 @@
 /*
     1.3.6
         1 연동됨.
+        2 Object 하위 프로토타입 Creature: 랜덤 움직임 초안 구현.
 */
 
-function Object(ctx, type, x, y, z, mess, width, height, color){
-
+function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
+    this.canvas = canvas;
     this.ctx = ctx;
 
     ////특성////
@@ -47,18 +48,19 @@ function Object(ctx, type, x, y, z, mess, width, height, color){
         this.draw();                 //그림
         this.gravity();              //중력
         this.airresist();            //공기저항
+        this.checkIn();
     }
 
     this.stop = function(){
         this.dx = 0;this.dy = 0;this.dr = 0;
     }
-
-    this.fadeObjColor = function(w){    //오브젝트 서서히 색변화
-        this.color = fadeColor(w, this.color);
-    }
     
-    this.gravity = function(){       //중력 구현
+    this.gravity = function(){
         if(this.type != 'wall')this.dy += this.m*1.5;
+    }
+
+    this.friction = function(){
+        this.dx *= 0.1;
     }
 
     this.airresist = function(){     //공기저항 구현 ---개발중--- 저항 면적에 비례하여 저항 상승하도록
@@ -153,15 +155,94 @@ function Object(ctx, type, x, y, z, mess, width, height, color){
         }}}}
         return -1;
     }
+
+    this.checkIn = function(){
+        if(this.x < 0 | this.x > this.canvas.width - this.width)
+            this.dx *= -1;
+    }
 }
+
+function Creature(canvas, ctx, type, x, y, z, mess, width, height, color){
+    this.canvas = canvas;
+    this.ctx = ctx;
+
+    this.type       = type;
+    this.m          = mess;
+    this.width      = width;
+    this.height     = height;
+    this.color      = color;
+    this.elasticity = 0.3;
+
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.r = 0;
+
+    this.dx = 0;
+    this.dy = 0;
+    this.dz = 0;
+    this.dr = 0;
+
+    this.p1     = [this.x, this.y];
+    this.p2     = [this.x + this.width, this.y];
+    this.p3     = [this.x + this.width, this.y + this.height];
+    this.p4     = [this.x, this.y + this.height];
+    this.points = [this.p1, this.p2, this.p3, this.p4];
+    
+    this.moveLeft = function(){
+        this.dx -= Math.random()*2;
+    }
+    this.moveRight = function(){
+        this.dx += Math.random()*2;
+    }
+    this.jump = function(){
+        this.dy -= Math.random()*8;
+    }
+    this.stay = function(){
+    }
+
+    this.movingCase = this.stay;
+    
+    this.update = function(){
+        this.gravity();
+        this.airresist();
+        this.movingCase.call();
+        this.checkIn();
+        this.draw();
+    }
+
+    this.setMovingCase = function(){
+        let moveCase = Math.floor(Math.random()*10);
+        if(moveCase <= 3){
+            if(Math.floor(Math.random()*2)<1){
+                this.movingCase = this.moveLeft;
+                this.moveLeft();
+            }
+            else{
+                this.movingCase = this.moveRight;
+                this.moveRight();
+            }
+        }
+        else if (moveCase <= 4){
+            this.movingCase = this.jump;
+            this.jump();
+        }
+        else{
+            this.movingCase = this.stay;
+            this.stay();
+        }
+    
+    }
+}
+Creature.prototype = new ObjectR(); //Object prototype와 chain(상속)
 
 function bounce(obj1, obj2){  //작용 반작용
     //좌우 반작용
-    let dxAfterBounce1 = (((obj1.m-obj2.m) * obj1.dx) + ((2*obj2.m) * obj2.dx)) / (obj1.m+obj2.m);
-    let dxAfterBounce2 = (((obj2.m-obj1.m) * obj2.dx) + ((2*obj1.m) * obj1.dx)) / (obj2.m+obj1.m);
-
-    obj1.dx = dxAfterBounce1*obj1.elasticity;
-    obj2.dx = dxAfterBounce2*obj2.elasticity;
+    //let dxAfterBounce1 = (((obj1.m-obj2.m) * obj1.dx) + ((2*obj2.m) * obj2.dx)) / (obj1.m+obj2.m);
+    //let dxAfterBounce2 = (((obj2.m-obj1.m) * obj2.dx) + ((2*obj1.m) * obj1.dx)) / (obj2.m+obj1.m);
+//
+    //obj1.dx = dxAfterBounce1*obj1.elasticity;
+    //obj2.dx = dxAfterBounce2*obj2.elasticity;
 
 
     //상하 반작용
@@ -174,7 +255,7 @@ function bounce(obj1, obj2){  //작용 반작용
     //진동 방지 및 wall type 예외처리.
     [obj1, obj2].forEach(obj =>{
         obj.stopVibration();
-        if(obj.type=='wall')obj.stop();
+        if(obj.type=='wall') obj.stop();
     })
 }
 
@@ -184,9 +265,22 @@ function randomObject(canvas, ctx){  //무작위 오브젝트를 생성하여 �
     var z = 1;
 
     var mess   = Math.floor(Math.random()*0.3)+0.5;
-    var width  = Math.floor(Math.random()*20+8);
-    var height = Math.floor(Math.random()*16+8);
+    var width  = Math.floor(Math.random()*30+5);
+    var height = Math.floor(Math.random()*25+5);
     var color  = [Math.random()*80, Math.random()*80, Math.random()*255];
 
-    return new Object(ctx, 'object', x, y, z, mess, width, height, color);
+    return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
+}
+
+function randomCreautre(canvas, ctx){  //무작위 오브젝트를 생성하여 리턴. Math.random() (0~1 리턴) 이용
+    var x = Math.floor(Math.random()*canvas.width);
+    var y = 1;
+    var z = 1;
+
+    var mess   = Math.floor(Math.random()*0.3)+0.5;
+    var width  = Math.floor(Math.random()*30+5);
+    var height = Math.floor(Math.random()*25+5);
+    var color  = [Math.random()*80, Math.random()*80, Math.random()*255];
+
+    return new Creature(canvas, ctx, 'Creautre', x, y, z, mess, width, height, color);
 }
