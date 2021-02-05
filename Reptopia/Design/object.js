@@ -157,8 +157,10 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     }
 
     this.checkIn = function(){
-        if(this.x < 0 | this.x > this.canvas.width - this.width)
-            this.dx *= -1;
+        if(this.x < 0)
+            this.dx = 1;
+        else if(this.x > this.canvas.width - this.width)
+            this.dx = -1;
     }
 }
 
@@ -260,27 +262,25 @@ function bounce(obj1, obj2){  //작용 반작용
 }
 
 function randomObject(canvas, ctx){  //무작위 오브젝트를 생성하여 리턴. Math.random() (0~1 리턴) 이용
-    var x = Math.floor(Math.random()*canvas.width);
-    var y = 0;
-    var z = 1;
-
     var mess   = Math.floor(Math.random()*0.3)+0.5;
-    var width  = Math.floor(Math.random()*30+5);
-    var height = Math.floor(Math.random()*25+5);
+    var width  = Math.floor(Math.random()*25+10);
+    var height = Math.floor(Math.random()*20+5);
     var color  = [Math.random()*80, Math.random()*80, Math.random()*255];
+    var x = Math.floor(Math.random()*canvas.width) - width;
+    var y = 1;
+    var z = 1;
 
     return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
 }
 
 function randomCreautre(canvas, ctx){  //무작위 오브젝트를 생성하여 리턴. Math.random() (0~1 리턴) 이용
-    var x = Math.floor(Math.random()*canvas.width);
+    var mess   = Math.floor(Math.random()*0.3)+0.5;
+    var width  = Math.floor(Math.random()*25+10);
+    var height = Math.floor(Math.random()*20+5);
+    var color  = [Math.random()*80, Math.random()*80, Math.random()*255];
+    var x = Math.floor(Math.random()*canvas.width) - width;
     var y = 1;
     var z = 1;
-
-    var mess   = Math.floor(Math.random()*0.3)+0.5;
-    var width  = Math.floor(Math.random()*30+5);
-    var height = Math.floor(Math.random()*25+5);
-    var color  = [Math.random()*80, Math.random()*80, Math.random()*255];
 
     return new Creature(canvas, ctx, 'Creautre', x, y, z, mess, width, height, color);
 }

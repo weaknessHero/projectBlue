@@ -22,6 +22,7 @@ function showCages(){
         objects.push([
             new ObjectR(cageList[cageN], ctxList[cageN], 'wall', 0, cageList[cageN].height - 30, 1, 10000,
             cageList[cageN].width, 30, [30, 20, 0]),
+            
             randomCreautre(cageList[cageN], ctxList[cageN])
         ]);
     
@@ -32,7 +33,7 @@ function showCages(){
             ctxList[cageN].fillStyle = 'green';
             ctxList[cageN].fillRect(0,0, cageList[cageN].width, cageList[cageN].height);
 
-            if(frame%100 == 0) objects[cageN][1].setMovingCase(); //랜덤 움직임 설정
+            if(frame%10 == 0) objects[cageN][1].setMovingCase(); //랜덤 움직임 설정
 
             for(let i=0; i<objects[cageN].length; i++){
                 if(objects[cageN][i].collision(objects[cageN])==0) break;
