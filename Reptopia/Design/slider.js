@@ -82,7 +82,6 @@ function hideSlides(){
 
 function showSlides(){
     hideCages();
-    cageAnimations.forEach(cageAnim=>cancelAnimationFrame(cageAnim));
     let slides = document.getElementById("slides");
     slides.setAttribute("style", 'top: 40%');
 }

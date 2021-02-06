@@ -33,7 +33,7 @@ function showCages(){
             ctxList[cageN].fillStyle = 'green';
             ctxList[cageN].fillRect(0,0, cageList[cageN].width, cageList[cageN].height);
 
-            if(frame%10 == 0) objects[cageN][1].setMovingCase(); //랜덤 움직임 설정
+            if(frame%10 == 0) objects[cageN][objects[cageN].length-1].setMovingCase(); //랜덤 움직임 설정
 
             for(let i=0; i<objects[cageN].length; i++){
                 if(objects[cageN][i].collision(objects[cageN])==0) break;
@@ -48,6 +48,7 @@ function showCages(){
 }
 
 function hideCages(){
+    cageAnimations.forEach(cageAnim=>cancelAnimationFrame(cageAnim));
     cages = document.getElementById("cages");
     cages.setAttribute("style", "top: 90%; height: 0%");
     document.getElementById("arrow").setAttribute("style", "opacity: 0;");

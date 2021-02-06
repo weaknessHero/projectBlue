@@ -87,7 +87,7 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
         this.dx = (1 - dDivLimit) * (aimX - this.x) * this.f;
         this.dy = (1 - dDivLimit) * (aimY - this.y) * this.f;
         
-        if(this.slowDownCount>0){ //반응 속도에 따른 속도 조절
+        if(this.slowDownCount>0){ //반응 속도에 따른 속도 조절. 초기값 : this.reactingTime
             this.dx *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
             this.dy *= (this.reactingTime-this.slowDownCount)/this.reactingTime;
             this.slowDownCount -= 1;
@@ -199,9 +199,13 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
                 }
                 else if(t <= f) {
                     this.openEye(t, f, this.blinkWidth);
-                    this.pupilRadius -= this.irisRadius * 0.01;
+                    this.pupilRadius -= (this.pupilRadius - this.pupilRadiusB) * (t/(f/2) - 1);
                 }
-                else {this.eyelidWidthRadius = 75; this.blinking = false; this.blinkWidth = 180;}
+                else {
+                    this.eyelidWidthRadius = 75;
+                    this.blinking = false;
+                    this.blinkWidth = 180;
+                }
             }
         }
     }

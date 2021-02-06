@@ -106,10 +106,16 @@ function resize(){ //창 크기 변경 시 호출
             eye.whiteRadius *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
             eye.pupilRadius *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
             eye.irisRadius *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
-            eye.looking=false; eye.centerX *= innerWidth / canvasEl.width; eye.centerY *= innerHeight / canvasEl.height;
+            eye.whiteRadiusB *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
+            eye.pupilRadiusB *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
+            eye.irisRadiusB *= (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
+            eye.looking=false;
+            eye.centerX *= innerWidth / canvasEl.width;
+            eye.centerY *= innerHeight / canvasEl.height;
             eye.toCenter(1);
         });
-        canvasEl.width = innerWidth; canvasEl.height = innerHeight;
+        canvasEl.width = innerWidth;
+        canvasEl.height = innerHeight;
     }
     resizeFontSize(innerWidth, innerHeight); //글자 크기
 }
