@@ -4,45 +4,54 @@
     Canvas element for cages.
 */
 /*
-    1.3.6
-        1 cageAnimations.push(requestAnimationFrame(canvasLoop)): 애니메이션 프레임 객체를 ctxList에 push.
-        2 canvasLoop 내에 object 구현.
+    1.3.7
 */
+
 function showCages(){
     cages = document.getElementById("cages");
     cages.setAttribute("style", "top: 5%; height: 80%");
+    
     cageList = document.getElementsByClassName("cage");
     ctxList = [];
+
     for(i=0;i<cageList.length;i++){
         cageList[i].setAttribute("style", "height: 30%;");
-        ctxList.push(cageList[i].getContext("2d"));
+        let newCtx = cageList[i].getContext("2d");
+        newCtx.font = '12px Arial';
+        ctxList.push(newCtx);
     }
 
     for(cageN=0;cageN<ctxList.length;cageN++)
-        objects.push([
-            new ObjectR(cageList[cageN], ctxList[cageN], 'wall', 0, cageList[cageN].height - 30, 1, 10000,
-            cageList[cageN].width, 30, [30, 20, 0]),
-            
-            randomCreautre(cageList[cageN], ctxList[cageN])
-        ]);
+        objects.push([ new ObjectR( cageList[cageN],ctxList[cageN],
+                    'wall',0,cageList[cageN].height-30,1,10000,
+                    cageList[cageN].width,30,[30,20,0] ),
+                    randomObject('creature', cageList[cageN],ctxList[cageN])
+                ]);
     
     cageLoop();
     
-    function cageLoop(){//케이지 루프
+
+
+    function cageLoop(){
         for(cageN=0;cageN<ctxList.length;cageN++){
-            ctxList[cageN].fillStyle = 'green';
-            ctxList[cageN].fillRect(0,0, cageList[cageN].width, cageList[cageN].height);
+            let canvas = cageList[cageN];
+            let ctx = ctxList[cageN];
+            let cageObjects = objects[cageN];
 
-            if(frame%10 == 0) objects[cageN][objects[cageN].length-1].setMovingCase(); //랜덤 움직임 설정
+            ctx.fillStyle = 'green';
+            ctx.fillRect(0,0, canvas.width, canvas.height);
 
-            for(let i=0; i<objects[cageN].length; i++){
-                if(objects[cageN][i].collision(objects[cageN])==0) break;
-                objects[cageN][i].move();
+            for(let i=0; i<cageObjects.length; i++){
+                if(cageObjects[i].collision(cageObjects)==0) break;
+                cageObjects[i].move();
+                
+                if(cageObjects[i].type == 'creature'){
+                    ctx.fillStyle = 'white';
+                    ctx.fillText('speed : ' + String(cageObjects[i].speed), 3, 12);
+                }
             }
-
-            objects[cageN].forEach(obj => obj.update());
+            cageObjects.forEach(obj => obj.update());
         }
-        
         cageAnimations.push(requestAnimationFrame(cageLoop));
     }
 }

@@ -4,11 +4,7 @@
     Reptopia의 배경에 나타나는 Eye 객체와, 그걸 다루는 함수들.
 */
 /*
-    1.3.6
-        1 눈 떨림 현상 방지: Eye.look()의 this.dx = (1 - dDivLimit) * (aimX - this.x) * this.f; 에서 d/limit가 1보다 커지는 경우가 생겨 dx의 부호가 반대가 되어 순간이동했었음. -> dDivLimit의 최대치를 1로 제한함으로써 해결.
-        2 눈 깜빡임 속도 조정
-        3 VERTICAL PUPIL 초안 구현
-        4 randomEye(): 눈이 겹치지 않게 생성되게 함.
+    1.3.7
 */
 
 function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
@@ -143,21 +139,21 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
         }
     }
 
-    this.draw = function(){ //검은자, 흰자, (눈꺼풀) 그림
-        //흰자 그림 ---명암 적용---
+    this.draw = function(){
+        //흰자 ---명암---
         ctxBackground.fillStyle = arrToRGB(this.whiteColor);
         ctxBackground.beginPath();
         ctxBackground.arc(this.centerX, this.centerY, this.whiteRadius, 0, Math.PI * 2, false);
         ctxBackground.fill();
 
-        //홍채 그림
+        //홍채
         if(this.pupilShape == 'circle'){
             ctxBackground.fillStyle = arrToRGB(this.irisColor);
             ctxBackground.beginPath();
             ctxBackground.arc(this.x, this.y, this.irisRadius, 0, Math.PI * 2, false);
             ctxBackground.fill();
 
-            //홍채 그라데이션
+            //그라데이션
             var gradation = 1;
             ctxBackground.lineWidth = 1;
             for(let tempR = 0; tempR < this.irisRadius-this.pupilRadius; tempR+=ctxBackground.lineWidth){
@@ -168,14 +164,14 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
                 ctxBackground.stroke();
             }
 
-            //동공 그림
+            //동공
             ctxBackground.fillStyle = "black";
             ctxBackground.beginPath();
             ctxBackground.arc(this.x, this.y, this.pupilRadius, 0, Math.PI * 2, false);
             ctxBackground.fill();
         }
         else if(this.pupilShape == 'vertical'){
-            //동공 그림
+            //동공
             ctxBackground.fillStyle = "black";
             ctxBackground.beginPath();
             ctxBackground.arc(this.x-this.pupilRadius*1.63, this.y, this.pupilRadius*2, -Math.PI/5, Math.PI/5, false);
@@ -185,7 +181,7 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
             ctxBackground.fill();
         }
 
-        //눈꺼풀 그림
+        //눈꺼풀
         this.drawEyelid(this.eyelidWidthRadius);
         if(this.blinking){
             if(this.blinkDelay > 0)
@@ -194,11 +190,11 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
                 let t = frame - this.blinkStartFrame; //깜빡이기 시작한 후 흐른 프레임 수
                 let f = this.blinkTotalFrame;
                 if(t <= f/2) {
-                    this.closeEye(t, f/2, this.blinkWidth);
+                    this.eyelidWidthRadius = 75 + t/(f/2) * this.blinkWidth;
                     this.pupilRadius += this.irisRadius * 0.01;
                 }
                 else if(t <= f) {
-                    this.openEye(t, f, this.blinkWidth);
+                    this.eyelidWidthRadius = 75 + (f - t)/(f/2) * this.blinkWidth;
                     this.pupilRadius -= (this.pupilRadius - this.pupilRadiusB) * (t/(f/2) - 1);
                 }
                 else {
@@ -209,22 +205,13 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
             }
         }
     }
-
-    this.closeEye = function(t, f, widthRadius){
-        this.eyelidWidthRadius = 75 + t/f * widthRadius;
-    }
-
-    this.openEye = function(t, f, widthRadius){
-        this.eyelidWidthRadius = 75 + (f - t)/(f/2) * widthRadius;
-    }
 }
 
-function randomEye(){ //무작위 눈 생성
+function randomEye(){
     let whiteRadius = (Math.random() * 24 + 26) * sizeRate;
     let x = Math.random()*canvasEl.width;
     let y = Math.random()*canvasEl.height;
 
-    //눈이 겹치지 않게 생성
     let change = true;
     while(change){
         change = false

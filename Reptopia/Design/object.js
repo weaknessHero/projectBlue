@@ -4,9 +4,8 @@
     Object engine.
 */
 /*
-    1.3.6
-        1 연동됨.
-        2 Object 하위 프로토타입 Creature: 랜덤 움직임 초안 구현.
+    1.3.7
+        1 bounce(obj1, obj2): ObjectR.bounce(obj)로 수정(prototype 내부로 들임)
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -23,13 +22,11 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     this.color      = color;                            //rgb(배열)
     this.elasticity = 0.3;                              //탄성도.
 
-    //좌표, 각도
     this.x = x;
     this.y = y;
     this.z = z;
     this.r = 0;
 
-    //좌표, 각도 순간변화량
     this.dx = 0;
     this.dy = 0;
     this.dz = 0;
@@ -43,11 +40,12 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     this.points = [this.p1, this.p2, this.p3, this.p4]; //꼭짓점 배열
     
 
-    ////함수////
+
     this.update = function(){
-        this.draw();                 //그림
-        this.gravity();              //중력
-        this.airresist();            //공기저항
+        this.draw();
+        this.gravity();
+        this.airresist();
+        this.friction();
         this.checkIn();
     }
 
@@ -56,17 +54,24 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     }
     
     this.gravity = function(){
-        if(this.type != 'wall')this.dy += this.m*1.5;
+        if(this.type != 'wall')this.dy += this.m;
     }
 
     this.friction = function(){
-        this.dx *= 0.1;
+        this.dx *= 0.9;
     }
 
     this.airresist = function(){     //공기저항 구현 ---개발중--- 저항 면적에 비례하여 저항 상승하도록
         this.dx *= 0.99;
         this.dr *= 0.98;
         this.dy *= 0.99;
+    }
+
+    this.checkIn = function(){
+        if(this.x < 0)
+            this.dx = 1;
+        else if(this.x > this.canvas.width - this.width)
+            this.dx = -1;
     }
 
     this.stopVibration = function(){ //진동 정지
@@ -125,30 +130,26 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
             this.ctx.fillRect(this.points[i][0], this.points[i][1], pWidth*this.z, pHeight*this.z);
     }}
 
-    this.collision = function(objArray, recursed = 0){    //오브젝트들 사이에서 충돌 구현. 재귀호출로 연쇄충돌 구현.
-        //무한 리커젼 탈출
+    this.collision = function(objArray, recursed = 0){
         if(recursed>3) return 0;
 
         for(let n = 0; n<objArray.length; n++){
             objS = objArray[n];
-
             if(objS != this){for(let i = 0; i<4; i++){
                 if(this.z == objS.z){
 
                     //this의 꼭짓점들이 objS 안에 들어가는지 확인
                     if((objS.p1[0] + objS.dx < this.points[i][0] + this.dx) & (this.points[i][0] + this.dx < objS.p2[0] + objS.dx))
                         if((objS.p2[1] + objS.dy < this.points[i][1] + this.dy) & (this.points[i][1] + this.dy < objS.p3[1] + objS.dy)){
-                            bounce(this, objS);
+                            this.bounce(objS);
                             this.collision(objArray, recursed+1);
-                            objS.collision(objArray, recursed+1);
                             return 1;
                         }
                             
                     //objS의 꼭짓점들이 this 안에 들어가는지 확인
                     if((this.p1[0] + this.dx < objS.points[i][0] + objS.dx) & (objS.points[i][0] + objS.dx < this.p2[0] + this.dx))
                         if((this.p2[1] + this.dy < objS.points[i][1]+objS.dy) & (objS.points[i][1] + objS.dy < this.p3[1] + this.dy)){
-                            bounce(this, objS);
-                            this.collision(objArray, recursed+1);
+                            objS.bounce(this);
                             objS.collision(objArray, recursed+1);
                             return 1;
                         }
@@ -156,15 +157,31 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
         return -1;
     }
 
-    this.checkIn = function(){
-        if(this.x < 0)
-            this.dx = 1;
-        else if(this.x > this.canvas.width - this.width)
-            this.dx = -1;
+    this.bounce = function(obj){
+        //좌우 반작용
+        //let dxAfterBounce1 = (((this.m-obj.m) * this.dx) + ((2*obj.m) * obj.dx)) / (this.m+obj.m);
+        //let dxAfterBounce2 = (((obj.m-this.m) * obj.dx) + ((2*this.m) * this.dx)) / (obj.m+this.m);
+    //
+        //this.dx = dxAfterBounce1*this.elasticity;
+        //obj.dx = dxAfterBounce2*obj.elasticity;
+    
+    
+        //상하 반작용
+        let dyAfterBounce1 = (((this.m-obj.m) * this.dy) + ((2*obj.m) * obj.dy)) / (this.m+obj.m);
+        let dyAfterBounce2 = (((obj.m-this.m) * obj.dy) + ((2*this.m) * this.dy)) / (obj.m+this.m);
+    
+        this.dy = dyAfterBounce1*this.elasticity;
+        obj.dy = dyAfterBounce2*obj.elasticity;
+        
+        //진동 방지 및 wall type 예외처리.
+        [this, obj].forEach(obj =>{
+            obj.stopVibration();
+            if(obj.type=='wall') obj.stop();
+        })
     }
 }
 
-function Creature(canvas, ctx, type, x, y, z, mess, width, height, color){
+function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed){
     this.canvas = canvas;
     this.ctx = ctx;
 
@@ -174,6 +191,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color){
     this.height     = height;
     this.color      = color;
     this.elasticity = 0.3;
+    this.speed = speed;
 
     this.x = x;
     this.y = y;
@@ -192,13 +210,13 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color){
     this.points = [this.p1, this.p2, this.p3, this.p4];
     
     this.moveLeft = function(){
-        this.dx -= Math.random()*2;
+        this.dx -= Math.random() * this.speed;
     }
     this.moveRight = function(){
-        this.dx += Math.random()*2;
+        this.dx += Math.random() * this.speed;
     }
     this.jump = function(){
-        this.dy -= Math.random()*8;
+        this.dy -= Math.random() * this.speed + 1;
     }
     this.stay = function(){
     }
@@ -206,8 +224,10 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color){
     this.movingCase = this.stay;
     
     this.update = function(){
+        if(frame % Math.floor(200/this.speed) == 0) this.setMovingCase();
         this.gravity();
         this.airresist();
+        this.friction();
         this.movingCase.call();
         this.checkIn();
         this.draw();
@@ -236,51 +256,21 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color){
     
     }
 }
+
 Creature.prototype = new ObjectR(); //Object prototype와 chain(상속)
 
-function bounce(obj1, obj2){  //작용 반작용
-    //좌우 반작용
-    //let dxAfterBounce1 = (((obj1.m-obj2.m) * obj1.dx) + ((2*obj2.m) * obj2.dx)) / (obj1.m+obj2.m);
-    //let dxAfterBounce2 = (((obj2.m-obj1.m) * obj2.dx) + ((2*obj1.m) * obj1.dx)) / (obj2.m+obj1.m);
-//
-    //obj1.dx = dxAfterBounce1*obj1.elasticity;
-    //obj2.dx = dxAfterBounce2*obj2.elasticity;
+function randomObject(type, canvas, ctx){
+    let mess   = Math.floor(Math.random()*2) + 1;
+    let width  = Math.floor(Math.random()*25) + 10;
+    let height = Math.floor(Math.random()*20) + 5;
+    let color  = [Math.random()*80, Math.random()*80, Math.random()*255];
+    let x = Math.floor(Math.random()*canvas.width) - width;
+    let y = 1;
+    let z = 1;
+    let speed = Math.floor(Math.random() * 10) + 2;
 
-
-    //상하 반작용
-    let dyAfterBounce1 = (((obj1.m-obj2.m) * obj1.dy) + ((2*obj2.m) * obj2.dy)) / (obj1.m+obj2.m);
-    let dyAfterBounce2 = (((obj2.m-obj1.m) * obj2.dy) + ((2*obj1.m) * obj1.dy)) / (obj2.m+obj1.m);
-
-    obj1.dy = dyAfterBounce1*obj1.elasticity;
-    obj2.dy = dyAfterBounce2*obj2.elasticity;
-    
-    //진동 방지 및 wall type 예외처리.
-    [obj1, obj2].forEach(obj =>{
-        obj.stopVibration();
-        if(obj.type=='wall') obj.stop();
-    })
-}
-
-function randomObject(canvas, ctx){  //무작위 오브젝트를 생성하여 리턴. Math.random() (0~1 리턴) 이용
-    var mess   = Math.floor(Math.random()*0.3)+0.5;
-    var width  = Math.floor(Math.random()*25+10);
-    var height = Math.floor(Math.random()*20+5);
-    var color  = [Math.random()*80, Math.random()*80, Math.random()*255];
-    var x = Math.floor(Math.random()*canvas.width) - width;
-    var y = 1;
-    var z = 1;
-
-    return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
-}
-
-function randomCreautre(canvas, ctx){  //무작위 오브젝트를 생성하여 리턴. Math.random() (0~1 리턴) 이용
-    var mess   = Math.floor(Math.random()*0.3)+0.5;
-    var width  = Math.floor(Math.random()*25+10);
-    var height = Math.floor(Math.random()*20+5);
-    var color  = [Math.random()*80, Math.random()*80, Math.random()*255];
-    var x = Math.floor(Math.random()*canvas.width) - width;
-    var y = 1;
-    var z = 1;
-
-    return new Creature(canvas, ctx, 'Creautre', x, y, z, mess, width, height, color);
+    if(type == 'object')
+        return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
+    else if(type == 'creature')
+        return new Creature(canvas, ctx, 'creature', x, y, z, mess, width, height, color, speed);
 }
