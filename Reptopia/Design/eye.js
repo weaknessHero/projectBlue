@@ -5,6 +5,7 @@
 */
 /*
     1.3.7
+        1 Eye.draw() if eye.type == vertical: 가운데 빈 공간 채우는 선 추가.
 */
 
 function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
@@ -171,14 +172,25 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
             ctxBackground.fill();
         }
         else if(this.pupilShape == 'vertical'){
-            //동공
             ctxBackground.fillStyle = "black";
+            ctxBackground.strokeStyle = "black";
+
+            //right half
             ctxBackground.beginPath();
             ctxBackground.arc(this.x-this.pupilRadius*1.63, this.y, this.pupilRadius*2, -Math.PI/5, Math.PI/5, false);
             ctxBackground.fill();
+
+            //left half
             ctxBackground.beginPath();
-            ctxBackground.arc(this.x+this.pupilRadius*1.63, this.y, this.pupilRadius*2, Math.PI * 4/5, Math.PI*6/5, false);
+            ctxBackground.arc(this.x+this.pupilRadius*1.63, this.y, this.pupilRadius*2, Math.PI*4/5, Math.PI*6/5, false);
             ctxBackground.fill();
+
+            //middle line
+            ctxBackground.beginPath();
+            ctxBackground.moveTo(this.x, this.y - (this.pupilRadius*1.63 * Math.sin(Math.PI/5)));
+            ctxBackground.lineTo(this.x, this.y + (this.pupilRadius*1.63 * Math.sin(Math.PI/5)));
+            ctxBackground.lineWidth = 2;
+            ctxBackground.stroke();
         }
 
         //눈꺼풀

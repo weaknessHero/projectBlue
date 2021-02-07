@@ -8,11 +8,11 @@
 */
 
 function showCages(){
-    cages = document.getElementById("cages");
+    var cages = document.getElementById("cages");
     cages.setAttribute("style", "top: 5%; height: 80%");
     
-    cageList = document.getElementsByClassName("cage");
-    ctxList = [];
+    var cageList = document.getElementsByClassName("cage");
+    var ctxList = [];
 
     for(i=0;i<cageList.length;i++){
         cageList[i].setAttribute("style", "height: 30%;");
@@ -26,7 +26,7 @@ function showCages(){
                     'wall',0,cageList[cageN].height-30,1,10000,
                     cageList[cageN].width,30,[30,20,0] ),
                     randomObject('creature', cageList[cageN],ctxList[cageN])
-                ]);
+        ]);
     
     cageLoop();
     

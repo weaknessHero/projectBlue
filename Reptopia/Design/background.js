@@ -6,6 +6,7 @@
 /*
     1.3.7
         1 실행 코드 main.js로 슝
+        2 resize(): height < 530일 때 오류 수정
 */
 
 //Initial function
@@ -62,26 +63,33 @@ function mouseMove(event){
 }
 
 function resize(){
-    if(canvasEl.width != window.innerWidth | canvasEl.height != window.innerHeight){
-        eyes.forEach(eye => {
-            let rate = (innerWidth+innerHeight) / (canvasEl.width+canvasEl.height);
-            eye.whiteRadius  *= rate;
-            eye.whiteRadiusB *= rate;
-            eye.pupilRadius  *= rate;
-            eye.pupilRadiusB *= rate;
-            eye.irisRadius   *= rate;
-            eye.irisRadiusB  *= rate;
-            eye.looking = false;
-            eye.centerX *= window.innerWidth / window.canvasEl.width;
-            eye.centerY *= window.innerHeight / window.canvasEl.height;
-            eye.toCenter(1);
-        });
-        canvasEl.width = window.innerWidth;
-        canvasEl.height = window.innerHeight;
-    }
-    resizeFontSize(window.innerWidth, window.innerHeight); //글자 크기
-}
+    inWidth = innerWidth;
+    if(innerHeight>530) inHeight = innerHeight;
+    else                inHeight = 530;
+    
+    let rate = (inWidth+inHeight) / (canvasEl.width+canvasEl.height);
 
+    eyes.forEach(eye => {
+        eye.whiteRadius  *= rate;
+        eye.whiteRadiusB *= rate;
+        eye.pupilRadius  *= rate;
+        eye.pupilRadiusB *= rate;
+        eye.irisRadius   *= rate;
+        eye.irisRadiusB  *= rate;
+        eye.looking = false;
+        eye.centerX *= inWidth / canvasEl.width;
+        eye.centerY *= inHeight / canvasEl.height;
+        eye.toCenter(1);
+    });
+
+    canvasEl.width = inWidth;
+    canvasEl.height = inHeight;
+    
+    let inner = document.getElementsByClassName('inner')[0];
+    let sliders = inner.children;
+    for(let i=0; i<sliders.length; i++)
+        sliders[i].setAttribute("style", "font-size: "+ String(((inWidth+inHeight))/30) + "px;");
+}
 
 //etc
 function distance(location1, location2){

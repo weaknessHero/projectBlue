@@ -18,6 +18,9 @@ var mx, my;
 //현재 프레임
 var frame = 0;
 
+//canvas elements
+var cageList = [];
+
 //Animation frame objects.
 var backgroundAnimation;
 var cageAnimations = [];

@@ -17,7 +17,7 @@ var inner = document.getElementsByClassName("inner")[0];
 window.onload = setupSlider;
 
 function setupSlider(){
-    resizeFontSize(innerWidth, innerHeight);
+    resize();
 }
 
 function check(n){
@@ -65,13 +65,6 @@ function createSlide(n, left = false){
 
     if(left) inner.insertBefore(newEl, inner.firstChild);
     else inner.appendChild(newEl);
-}
-
-function resizeFontSize(width, height){
-    inner = document.getElementsByClassName('inner')[0];
-    let sliders = inner.children;
-    for(let i=0; i<sliders.length; i++)
-        sliders[i].setAttribute("style", "font-size: "+ String((width+height)/30) + "px;");
 }
 
 function hideSlides(){
