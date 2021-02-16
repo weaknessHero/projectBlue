@@ -1,4 +1,5 @@
-#3 Database.
+# 3 Database.
+ ## Save/load function using MySql.
  - Save/load creature data
  - Save/load cage data
  - Save/load inventory data
