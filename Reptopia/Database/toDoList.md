@@ -1,8 +1,8 @@
 # 3 Database.
  ## Save/load function using MySql.
- - Save/load creature data
- - Save/load cage data
- - Save/load inventory data
- - Save/load money data
- - Save/load stemina data
- - Save/load user( : id/password + all above) data
+ - Creature data (ex. species, color, speed, stress, x, y, ...)
+ - Cage data (ex. size, structure, substrate, temprature, humidity, ...)
+ - Inventory data (ex. unusing structure/substrate, artificial food, ...)
+ - Money data
+ - Stemina data
+ - User data (ex. id/password + all above)
