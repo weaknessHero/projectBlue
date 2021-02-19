@@ -1,148 +1,74 @@
 # -*- coding: utf-8 -*-
 """
-
-날짜를 입력받고 저장된 날짜에서부터 입력받은 날짜까지 데이터를 저장함
-초기 실행시 빠른 설치로 진행되고 새파일을 만든다 
-다음 설치시 부분적인 업데이트 날짜로 이어져서 부분설치가 된다 
+    open api를 통한 파일 양식 제작
+    데이터 받기 전 자료 요청
+    update.txt와 파일 구조등 resource들 생성
+"""
+"""
+    1.4.2
+1. api형으로 구조 자체 변경
+2. stock_data 같은 사전요구 데이터 제거
 
 """
-
-
-"""
-
-    실행방법
-1. cmd 실행하여 파일이 설치된 위치로 이동한다.
-2. pip install pykrx를 실행하여 같은 위치에 설치해준다
-3. ifReloadStockData.py 를 먼저 실행해준다
-4. 현재 파일을 실행하고 명령에 따른다. 
-5. 실행시 약 7분 이상의 시간이 소요된다. 실행이 완료되면 종료를 눌러준다.
-
-"""
-
-"""
-
-    1.3.6
-1. 최신날짜로 업데이트
-2. 시가총액으로 데이터를 받아오는걸로 변경
-3. update와 download 함수 통합
-4. 클릭 end 구조변경으로 마지막 출력 제거
-5. 거래량 생성
-"""
-
 
 import pandas as pd
-from pykrx import stock
-import numpy as np
-from datetime import date
-import time
-from tkinter import *
-from pynput import mouse
+import os
+import urllib.request as urlreq
+from io import BytesIO
+from zipfile import ZipFile
+import xml.etree.ElementTree as ET
+import requests
+import json
 
 
-firstSkockDate = "19900101"
-path = "data/"
+#url 요청 값
+url = 'https://opendart.fss.or.kr/api'
 
-#today 양식 변경
-day = date.today()
-todayDate = day.strftime("%Y%m%d") 
+corpCodeUrl='/corpCode.xml'
 
-downloadSize = 0
-end = False
-u = 0
 
-def main():
-    """
-    주가 데이터 저장
-    구조는 아래로 내려갈수록 숫자가 커지는 오름차순이다.
-    주가 데이터중 그때 상장하지 않은 주식은 공백으로 설정
-    """
-        
-    #과거 업데이트 날짜 받아오기 
-    updateTxt = open('update.txt','r')
-    lastUpdateDate = updateTxt.readline()
+CTFCTKey = "?crtfc_key=d171bfc3588a2a2cf9defbee64bc3561de0dfe8a"#인증키
+
+
+def getCorpCode():
+    #with로 url닫기를 자동 진행
+    with urlreq.urlopen(url+corpCodeUrl+CTFCTKey) as zipresp: #회사 정보 받아오기
+       with ZipFile(BytesIO(zipresp.read())) as zfile: #2진 zip 정보를 변환
+            zfile.extractall('resource')
+
+
+    ### 압축파일 안의 xml 파일 읽기
+    tree = ET.parse('resource/CORPCODE.xml')
+    root = tree.getroot()
+    
+    DFList1 = []
+    DFList2 = []
+
+    for corpCode in root.iter('list'):
+        if(corpCode[2].text.strip()!=''|corpCode[2].text!='999980'): #상장회사일 경우 True            
+            print(corpCode[0].text)
+            DFList1.append(corpCode[2].text.strip())
+            DFList2.append(corpCode[0].text.strip())
+
+    series1 = pd.Series(DFList1)
+    series2 = pd.Series(DFList2)
+    csv=pd.concat([series1, series2] , axis=1 ,keys=["stock_code","call_code"])
+
+    csv.to_csv('resource/corpCodeData.csv', mode='w', header=True)
+
+try:
+    os.mkdir('resource')
+    os.mkdir('data')
+
+except:
+    print('폴더가 이미 생성되어있습니다.')
+
+try:
+    updateTxt = open('update.txt','w')
     updateTxt.close()
+
+except:
+    print("update.txt 가 열려있는지 확인 후 닫아주세요")
     
-    if len(lastUpdateDate) > 1 :    #주가 업데이트 날짜 확인후 
-        print("It's has a history log")
-    else :
-        lastUpdateDate = firstSkockDate
-    
-    #날짜 데이터가 없으면 초기값으로 지정
-    
-    print('***********************************\n\nplease wait for 10~20 minute\npress mousse show the download percent\n\n***********************************')
-
-    start = time.time()
-    
-    download(lastUpdateDate)
-    print("time:", time.time() - start)
-    end = True   
-        
-def download(lastUpdateDate):
-    """
-    
-    주가 데이터를 받아와서 csv파일을 새로 제작한다.
-    
-    """
-    
-    global u
-    global end
-    global x
-    global downloadSize
-    global path 
-    downloadSize =0
-    x=1
-
-    if (int(lastUpdateDate) <= int(todayDate)) : 
-     
-        #모든 주가 데이터 종가 데이터로 변환
-        df=pd.read_csv('stock_code_data.csv',header = 0 ,names = ['num','stockCodeData'])
-        tickerSymbolList = df['stockCodeData'].values
-
-        downloadSize = tickerSymbolList.size
-        
-
-        #마우스 클립 입력받아 다운로드 퍼센트 확인 
-        listener = mouse.Listener(on_click=on_click)
-        listener.start()
-        df = pd.DataFrame(index=range(0,0))
-
-        #주가 데이터 받기    
-        for x in tickerSymbolList:
-            df1 = stock.get_market_cap_by_date(lastUpdateDate, todayDate , x)    #주가 데이터 수집
-            df = pd.concat([df , df1['시가총액']], axis=1)#시가총액 데이터로 변환
-            u= u+1
-
-        df.columns = tickerSymbolList
-
-            #이전 버전이 없을시 새로 만들고 존재시 덧붙인다 
-        try: 
-            if int(lastUpdateDate)<=int(firstSkockDate):
-                df.to_csv('stock_price_data.csv', mode='w', header= True,encoding='utf-8-sig')            
-            else :
-                df.to_csv('stock_price_data.csv', mode='a', header =True, encoding='utf-8-sig')
-
-            updateTxt = open('update.txt','w')
-            updateTxt.write(str(int(todayDate)+1))#다음날의 데이터 부터 받아온다
-            updateTxt.close()          
-
-            #접근성 오류 : 데이터 저장 관련 오류 
-        except PermissionError:
-            print("ERR : check you open csv file")
-            updateTxt = open('update.txt','w')
-            updateTxt.write(lastUpdateDate)
-            updateTxt.close()
-
-    else:
-        print('it already done')
-                
-
-def on_click(a,b,c,pressed):
-    if (end):
-        print("end")
-        return False
-    elif(pressed):
-        print("stock Code :", x  ,"how mouch downloaded")
-        print("\n", u, '/', downloadSize, '\n')
-
-
-main()
+getCorpCode()
+print("완료")
