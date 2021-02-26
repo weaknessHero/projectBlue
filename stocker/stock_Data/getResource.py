@@ -5,9 +5,8 @@
     update.txt와 파일 구조등 resource들 생성
 """
 """
-    1.4.2
-1. api형으로 구조 자체 변경
-2. stock_data 같은 사전요구 데이터 제거
+    1.4.3
+1. 회사찾기 위치용 updateCorp.txt 생성
 
 """
 
@@ -45,24 +44,47 @@ def getCorpCode():
     DFList2 = []
 
     for corpCode in root.iter('list'):
-        if(corpCode[2].text.strip()!=''|corpCode[2].text!='999980'): #상장회사일 경우 True            
-            print(corpCode[0].text)
+        if(corpCode[2].text.strip()!='' and corpCode[2].text!='999980'): #상장회사일 경우 True            
             DFList1.append(corpCode[2].text.strip())
             DFList2.append(corpCode[0].text.strip())
 
     series1 = pd.Series(DFList1)
     series2 = pd.Series(DFList2)
-    csv=pd.concat([series1, series2] , axis=1 ,keys=["stock_code","call_code"])
+    csv=pd.concat([series1, series2] , axis=1 ,keys=["stockCode","corpCode"])
 
-    csv.to_csv('resource/corpCodeData.csv', mode='w', header=True)
+    csv.to_csv('resource/corpCodeData.csv', mode='w', index=False, header=True)
 
 try:
     os.mkdir('resource')
+
+except:
+    print('폴더가 이미 생성되어있습니다.')
+
+try:
     os.mkdir('data')
 
 except:
     print('폴더가 이미 생성되어있습니다.')
 
+
+
+try:
+    os.mkdir('data/detailData')
+
+except:
+    print('폴더가 이미 생성되어있습니다.')
+
+    
+
+
+try:
+    updateTxt = open('updateCorp.txt','w')
+    updateTxt.close()
+
+except:
+    print("updateCorp.txt 가 열려있는지 확인 후 닫아주세요")
+
+    
 try:
     updateTxt = open('update.txt','w')
     updateTxt.close()

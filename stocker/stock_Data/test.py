@@ -8,6 +8,15 @@ import pandas as pd
 import csv
 from time import sleep
 
+"""
+
+오류 내용
+1. 업데이트 위치 저장 내용 오류
+
+
+"""
+
+
 #url 요청 url 
 url = 'https://opendart.fss.or.kr/api'
 
@@ -15,7 +24,11 @@ url = 'https://opendart.fss.or.kr/api'
 getCorpCode='/corpCode.xml'
 getCorpData='/fnlttSinglAcnt.json'
 
-CTFCTKey = "?crtfc_key=d171bfc3588a2a2cf9defbee64bc3561de0dfe8a"#인증키
+
+#인증키
+CTFCTKeyNA = "?crtfc_key="
+CTFCTKey1 = "69d81f8cacc28ddbbb16cdce1ca930ddc4cc0ca4"
+CTFCTKey2 = "d171bfc3588a2a2cf9defbee64bc3561de0dfe8a"
 
 corpCodeNA= "&corp_code="
 
@@ -27,9 +40,6 @@ fd_div = "&fs_div=CFS"
 
 seasonList=[0,4,2,1,3]
 
-deleteStrList=[' ', '및','기타포괄손익-', '의', '(증가)','(감소)']
-
-
 def main():
      #데이터 받아오기
 
@@ -37,6 +47,7 @@ def main():
      #코드 받기
      corpCodeData = pd.read_csv('resource/corpCodeData.csv', header=0)
 
+     
      #업데이트 파일 확인
      updateCorpTxt = open('updateCorp.txt','r')
      lastUpdateCorp=updateCorpTxt.readline()
@@ -46,12 +57,15 @@ def main():
      if(len(str(lastUpdateCorp)) >1):
           findIndexList = corpCodeData['stockCode'].tolist()
           startIndex=findIndexList.index(int(lastUpdateCorp))
-          corpCodeData=corpCodeData.iloc[startIndex:]
+          corpCodeData=corpCodeData.iloc[startIndex:]#순서가 계속 +1 -1 변동해서 안정적인 저장 
 
 
      for num, corpCode in corpCodeData.iterrows():
-          #데이터프레임 열 탐색
+          #testCode
+          #corpCode[0]="005930"
+          #corpCode[1]="00126380"
           
+          #데이터프레임 열 탐색
           print(str(corpCode[0]))
           year = 2015
           onCorpData = 0
@@ -60,22 +74,22 @@ def main():
 
           while year < 2020 :
                #api 차단 방지용
-               sleep(1)
+               sleep(0.05)
+               
                #데이터 존재 확인을 위해 연간보고서를 받는다
-               res= requests.get(url+getCorpData+CTFCTKey+corpCodeNA+str(corpCode[1]).zfill(8)+BSNSYearNA+ str(year) +reptyCodeNA + str(1))
+               res= requests.get(url+getCorpData+CTFCTKeyNA+ CTFCTKey2 +corpCodeNA+str(corpCode[1]).zfill(8)+BSNSYearNA+ str(year) +reptyCodeNA + str(1))
                item=json.loads(res.text)
 
-
                if(item['status']=='000'):#정상 값인지 확인
-                    sleep(0.5)
+                    sleep(0.05)
                     firstSeries=resSeries(item, baseDF)
                     onCorpData += 1
                     
                     for code in [3,2,4]:
                          #api 차단 방지용
-                         sleep(1)
+                         sleep(0.05)
                          #분기별 보고서 받기
-                         res= requests.get(url+getCorpData+CTFCTKey+corpCodeNA+str(corpCode[1]).zfill(8)+BSNSYearNA+ str(year) +reptyCodeNA + str(code))
+                         res= requests.get(url+getCorpData+CTFCTKeyNA+ CTFCTKey2 +corpCodeNA+str(corpCode[1]).zfill(8)+BSNSYearNA+ str(year) +reptyCodeNA + str(code))
                          item=json.loads(res.text)
                          
                          if(item['status']=='000'):
@@ -89,36 +103,23 @@ def main():
                     #연간보고서 추가
                     columnList.append(str(year)+str(seasonList[1]))
                     baseDF=pd.concat([baseDF,firstSeries], axis=1)
-                    
-                    #탐색위치 저장
-                    updateTxt = open('updateCorp.txt','w')
-                    updateTxt.write(str(corpCode[0]))
-                    updateTxt.close()
-                    
+
+               #사용한도 초과시     
                elif(item['status']=='020'):
-                    #사용한도 초과시
-                    break
-               else:
-                    #탐색위치 저장
-                    updateTxt = open('updateCorp.txt','w')
-                    updateTxt.write(str(corpCode[0]))
-                    updateTxt.close()
-
-               year +=1
+                    print('사용한도 초과')
+                    quit()
                
+               year +=1
 
-          if(item['status']=='020'):
-               print('사용한도 초과')
-               break
 
           #회사내용 존재시
           if(onCorpData>0):
                baseDF.columns=columnList
-               baseDF.to_csv('data/'+str(corpCode[0]).zfill(6)+'.csv', mode='w', header=True, index=True, encoding='utf-8-sig')
-               updateTxt = open('updateCorp.txt','w')
-               updateTxt.write(str(corpCode[0]))
-               updateTxt.close()
+               baseDF.to_csv('data/detailData/'+str(corpCode[0]).zfill(6)+'.csv', mode='w', header=True, index=True, encoding='utf-8-sig')
 
+          updateTxt = open('updateCorp.txt','w')
+          updateTxt.write(str(corpCode[0]))
+          updateTxt.close()
      
 def resSeries(item, baseDF):
      #데이터 받아서 시리얼로  변환
@@ -131,7 +132,7 @@ def resSeries(item, baseDF):
           indexCount=""
           
           #중복 제거
-          if countIndexList.count(itemList['account_nm']):#중복 확인
+          if countIndexList.count(itemList['account_nm']):
                indexCount = countIndexList.count(itemList['account_nm'])                          
 
           getDataList.append(itemList['thstrm_amount'])
@@ -142,16 +143,5 @@ def resSeries(item, baseDF):
 
      return df
 
-def erase(getStr, deleteList):
-
-
-     for deleteStr in deleteList:
-          getStr=getStr.replace(deleteStr,'')
-     getStr=getStr.replace('유사증자','유상증자')
-     getStr=getStr.replace('종기업','종속기업')
-     getStr=getStr.replace('차입금감소','차입금상')
-     getStr=getStr.replace('증권','금융자산')
-     getStr=getStr.replace('처분','취득')     
-     return getStr
 
 main()
