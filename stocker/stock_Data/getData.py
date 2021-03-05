@@ -21,9 +21,9 @@
 
 """
 
-    1.4.1
-1. 변한 파일명 및 구조와 연동할 수 있도록 변경
-2. 연동 폴더 구조 변경
+    1.4.4
+1. 데이터 받을때 try excep문을 통해서 오류시에도 진행
+
 
 """
 
@@ -37,7 +37,7 @@ from tkinter import *
 from pynput import mouse
 
 
-firstSkockDate = "19900101"
+firstSkockDate = "20100101"
 path = "data/"
 
 #today 양식 변경
@@ -47,6 +47,7 @@ todayDate = day.strftime("%Y%m%d")
 downloadSize = 0
 end = False
 u = 0
+
 
 def main():
     """
@@ -62,10 +63,10 @@ def main():
     
     if len(lastUpdateDate) > 1 :    #주가 업데이트 날짜 확인후 
         print("It's has a history log")
-    else :
-        lastUpdateDate = firstSkockDate
-    
+    else :     
     #날짜 데이터가 없으면 초기값으로 지정
+        lastUpdateDate = firstSkockDate
+
     
     print('***********************************\n\nplease wait for 10~20 minute\npress mousse show the download percent\n\n***********************************')
 
@@ -86,14 +87,16 @@ def download(lastUpdateDate):
     global end
     global x
     global downloadSize
-    global path 
+    global path
+    
+    culumnList=[]
     downloadSize =0
     x=1
 
     if (int(lastUpdateDate) <= int(todayDate)) : 
      
         #모든 주가 데이터 종가 데이터로 변환
-        df=pd.read_csv('resource/corpCodeData.csv',header = 0 ,names = ['num','stockCodeData','corpCodeData'])
+        df=pd.read_csv('resource/corpCodeData.csv',header = 0 ,names = ['stockCodeData','corpCodeData'])
         tickerSymbolList = df['stockCodeData'].values
 
         downloadSize = tickerSymbolList.size
@@ -102,24 +105,30 @@ def download(lastUpdateDate):
         #마우스 클립 입력받아 다운로드 퍼센트 확인 
         listener = mouse.Listener(on_click=on_click)
         listener.start()
-        tickerSymbolList = np.delete(tickerSymbolList, 999980)
         df = pd.DataFrame(index=range(0,0))
-        print(tickerSymbolList)
+        
         #주가 데이터 받기    
-        for x in tickerSymbolList:            
-            x=str(x).zfill(6) #자릿수 맞추기
-            df1 = stock.get_market_cap_by_date(lastUpdateDate, todayDate ,x)    #주가 데이터 수집
-            df = pd.concat([df , df1['시가총액']], axis=1)#시가총액 데이터로 변환
+        for x in tickerSymbolList:
             u= u+1
+            try:
+                x=str(x).zfill(6) #자릿수 맞추기
+                df1 = stock.get_market_cap_by_date(lastUpdateDate, todayDate ,x)    #주가 데이터 수집
+                df = pd.concat([df , df1['시가총액']], axis=1)#시가총액 데이터로 변환
+                culumnList.append(x)
+            except:
+                print('err')
+                
 
-        df.columns = tickerSymbolList
+        df.columns = culumnList
 
-            #이전 버전이 없을시 새로 만들고 존재시 덧붙인다 
+            #이전 버전이 없을시 새로 만들고 존재시 덧붙인다
+
+        
         try: 
             if int(lastUpdateDate)<=int(firstSkockDate):
-                df.to_csv('data/stock_price_data.csv', mode='w', header= True,encoding='utf-8-sig')            
+                df.to_csv('data/stock_price_data.csv', mode='w', header= True, encoding='utf-8-sig')            
             else :
-                df.to_csv('data/stock_price_data.csv', mode='a', header =True, encoding='utf-8-sig')
+                df.to_csv('data/stock_price_data.csv', mode='a', header =False, encoding='utf-8-sig')
 
             updateTxt = open('update.txt','w')
             updateTxt.write(str(int(todayDate)+1))#다음날의 데이터 부터 받아온다
