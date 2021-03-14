@@ -4,8 +4,8 @@
     Object engine.
 */
 /*
-    1.3.8
-        1 randomObject(): color 설정 파트에 Array.map() 적용
+    1.3.7
+        1 bounce(obj1, obj2): ObjectR.bounce(obj)로 수정(prototype 내부로 들임)
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
