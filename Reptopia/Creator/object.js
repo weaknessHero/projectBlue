@@ -6,6 +6,7 @@
 /*
     1.3.8
         1 drawCreature added.
+        2 생각보다 코드가 너무 많아졌다는 생각이 듦. 내가 한것임에도 2주동안 안하니까 다시 잡는데 시간이 걸렸음. 최적화가 필요할듯.
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -44,7 +45,7 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     this.update = function(){
         this.draw();
         this.gravity();
-        this.airresist();
+        this.airResist();
         this.friction();
         this.checkIn();
     }
@@ -61,7 +62,7 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
         this.dx *= 0.9;
     }
 
-    this.airresist = function(){     //공기저항 구현 ---개발중--- 저항 면적에 비례하여 저항 상승하도록
+    this.airResist = function(){     //공기저항 구현 ---개발중--- 저항 면적에 비례하여 저항 상승하도록
         this.dx *= 0.99;
         this.dr *= 0.98;
         this.dy *= 0.99;
@@ -229,7 +230,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     this.update = function(){
         if(frame % Math.floor(200/this.speed) == 0) this.setMovingCase();
         this.gravity();
-        this.airresist();
+        this.airResist();
         this.friction();
         this.movingCase.call();
         this.checkIn();
@@ -281,6 +282,14 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
         this.ctx.bezierCurveTo(this.x+44,this.y+36, this.x+42,this.y+38, this.x+40,this.y+40);
         this.ctx.bezierCurveTo(this.x+39,this.y+35, this.x+41,this.y+33, this.x+42,this.y+31);
         this.ctx.bezierCurveTo(this.x+42,this.y+33, this.x+42,this.y+33, this.x+42,this.y+32);
+        this.ctx.stroke();
+        
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+62, this.y+27);
+        this.ctx.bezierCurveTo(this.x+64,this.y+29, this.x+66,this.y+31, this.x+63,this.y+32);
+        this.ctx.bezierCurveTo(this.x+64,this.y+36, this.x+62,this.y+38, this.x+57,this.y+40);
+        this.ctx.bezierCurveTo(this.x+59,this.y+35, this.x+61,this.y+33, this.x+59,this.y+31);
+        this.ctx.bezierCurveTo(this.x+62,this.y+33, this.x+62,this.y+33, this.x+59,this.y+32);
         this.ctx.stroke();
     }
 }
