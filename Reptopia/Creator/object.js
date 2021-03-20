@@ -4,8 +4,8 @@
     Object engine.
 */
 /*
-    1.3.7
-        1 bounce(obj1, obj2): ObjectR.bounce(obj)로 수정(prototype 내부로 들임)
+    1.3.8
+        1 drawCreature added.
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -107,7 +107,10 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
         
         //오브젝트, 꼭짓점 draw
         this.ctx.fillStyle = arrToRGB(this.color);
-        this.ctx.fillRect(this.x, this.y, this.width*this.z, this.height*this.z);
+        if(this.type=='wall')
+            this.ctx.fillRect(this.x, this.y, this.width*this.z, this.height*this.z);
+        else if(this.type == 'creature')
+            this.drawCreature();
         this.drawPoints();
         
         this.ctx.rotate(-this.r);                                                //돌렸던 canvas를 다시 원래대로 회전
@@ -255,14 +258,39 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
         }
     
     }
+
+    this.drawCreature = function(){
+        this.ctx.strokeStyle = 'white';
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+32, this.y+22);
+        //head
+        this.ctx.bezierCurveTo(this.x+28,this.y+20, this.x+20,this.y+20, this.x+17,this.y+28);
+        this.ctx.bezierCurveTo(this.x+25,this.y+36, this.x+28,this.y+36, this.x+35,this.y+35);
+        //belly
+        this.ctx.bezierCurveTo(this.x+40,this.y+38, this.x+50,this.y+40, this.x+70,this.y+30);
+        //tail
+        this.ctx.bezierCurveTo(this.x+80,this.y+38, this.x+95,this.y+40, this.x+110,this.y+30);
+        this.ctx.bezierCurveTo(this.x+80,this.y+23, this.x+95,this.y+20, this.x+70,this.y+23);
+        //back
+        this.ctx.bezierCurveTo(this.x+40,this.y+23, this.x+50,this.y+20, this.x+32,this.y+22);
+        this.ctx.stroke();
+        
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+42, this.y+27);
+        this.ctx.bezierCurveTo(this.x+44,this.y+29, this.x+46,this.y+31, this.x+46,this.y+32);
+        this.ctx.bezierCurveTo(this.x+44,this.y+36, this.x+42,this.y+38, this.x+40,this.y+40);
+        this.ctx.bezierCurveTo(this.x+39,this.y+35, this.x+41,this.y+33, this.x+42,this.y+31);
+        this.ctx.bezierCurveTo(this.x+42,this.y+33, this.x+42,this.y+33, this.x+42,this.y+32);
+        this.ctx.stroke();
+    }
 }
 
 Creature.prototype = new ObjectR(); //Object prototype와 chain(상속)
 
 function randomObject(type, canvas, ctx){
     let mess   = Math.floor(Math.random()*2) + 1;
-    let width  = Math.floor(Math.random()*25) + 10;
-    let height = Math.floor(Math.random()*20) + 5;
+    let width  = Math.floor(Math.random()*65) + 90;
+    let height = Math.floor(Math.random()*45) + 45;
     let color  = [80, 80, 255].map(x=> Math.floor(x*Math.random()));
     let x = Math.floor(Math.random()*canvas.width) - width;
     let y = 1;
@@ -273,4 +301,8 @@ function randomObject(type, canvas, ctx){
         return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
     else if(type == 'creature')
         return new Creature(canvas, ctx, 'creature', x, y, z, mess, width, height, color, speed);
+}
+
+function arrToRGB(rgbArr){  //배열을 rgb문자열로 변환
+    return 'rgb(' + rgbArr[0] + ',' + rgbArr[1] + ',' + rgbArr[2] + ')';
 }
