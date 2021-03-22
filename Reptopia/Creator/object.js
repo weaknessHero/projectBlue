@@ -257,25 +257,45 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
             this.movingCase = this.stay;
             this.stay();
         }
-    
     }
 
     this.drawCreature = function(){
-        this.ctx.strokeStyle = 'white';
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x+32, this.y+22);
+        //비율 조정하는 툴 제작?
+
         //head
+        this.ctx.strokeStyle = arrToRGB([200, 200, 30]);
+        this.ctx.fillStyle = arrToRGB([200, 200, 30]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+28, this.y+22);
         this.ctx.bezierCurveTo(this.x+28,this.y+20, this.x+20,this.y+20, this.x+17,this.y+28);
-        this.ctx.bezierCurveTo(this.x+25,this.y+36, this.x+28,this.y+36, this.x+35,this.y+35);
-        //belly
-        this.ctx.bezierCurveTo(this.x+40,this.y+38, this.x+50,this.y+40, this.x+70,this.y+30);
-        //tail
-        this.ctx.bezierCurveTo(this.x+80,this.y+38, this.x+95,this.y+40, this.x+110,this.y+30);
-        this.ctx.bezierCurveTo(this.x+80,this.y+23, this.x+95,this.y+20, this.x+70,this.y+23);
-        //back
-        this.ctx.bezierCurveTo(this.x+40,this.y+23, this.x+50,this.y+20, this.x+32,this.y+22);
+        this.ctx.bezierCurveTo(this.x+25,this.y+36, this.x+28,this.y+36, this.x+35,this.y+32);
+        this.ctx.quadraticCurveTo(this.x+45,this.y+28, this.x+28,this.y+22);
         this.ctx.stroke();
+        this.ctx.fill();
+
+        //body
+        this.ctx.strokeStyle = arrToRGB([100, 100, 10]);
+        this.ctx.fillStyle = arrToRGB([100, 100, 10]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+35,this.y+31);
+        this.ctx.bezierCurveTo(this.x+37,this.y+38, this.x+65,this.y+40, this.x+75,this.y+30);
+        this.ctx.bezierCurveTo(this.x+60,this.y+20, this.x+40,this.y+20, this.x+35,this.y+25);
+        this.ctx.stroke();
+        this.ctx.fill();
+
+        //tail
+        this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
+        this.ctx.fillStyle = arrToRGB([200, 200, 10]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+70,this.y+30);
+        this.ctx.bezierCurveTo(this.x+80,this.y+40, this.x+95,this.y+40, this.x+105,this.y+30);
+        this.ctx.bezierCurveTo(this.x+90,this.y+28, this.x+80,this.y+20, this.x+70,this.y+28);
+        this.ctx.stroke();
+        this.ctx.fill();
         
+        //legs
+        this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
+        this.ctx.fillStyle = arrToRGB([200, 200, 10]);
         this.ctx.beginPath();
         this.ctx.moveTo(this.x+42, this.y+27);
         this.ctx.bezierCurveTo(this.x+44,this.y+29, this.x+46,this.y+31, this.x+46,this.y+32);
@@ -283,6 +303,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
         this.ctx.bezierCurveTo(this.x+39,this.y+35, this.x+41,this.y+33, this.x+42,this.y+31);
         this.ctx.bezierCurveTo(this.x+42,this.y+33, this.x+42,this.y+33, this.x+42,this.y+32);
         this.ctx.stroke();
+        this.ctx.fill();
         
         this.ctx.beginPath();
         this.ctx.moveTo(this.x+62, this.y+27);
@@ -291,6 +312,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
         this.ctx.bezierCurveTo(this.x+59,this.y+35, this.x+61,this.y+33, this.x+59,this.y+31);
         this.ctx.bezierCurveTo(this.x+62,this.y+33, this.x+62,this.y+33, this.x+59,this.y+32);
         this.ctx.stroke();
+        this.ctx.fill();
     }
 }
 
