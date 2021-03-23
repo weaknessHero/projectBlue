@@ -4,9 +4,9 @@
     Object engine.
 */
 /*
-    1.3.8
-        1 drawCreature added.
-        2 생각보다 코드가 너무 많아졌다는 생각이 듦. 내가 한것임에도 2주동안 안하니까 다시 잡는데 시간이 걸렸음. 최적화가 필요할듯.
+    1.3.9
+        1 drawCreature(): 초기값 비율 조정, 파트별 함수화,
+        2 Creature(): 파트별 위치 변수 추가. 
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -212,6 +212,12 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     this.p3     = [this.x + this.width, this.y + this.height];
     this.p4     = [this.x, this.y + this.height];
     this.points = [this.p1, this.p2, this.p3, this.p4];
+
+    this.firstFoot = {'x':31, 'y':41};
+    this.secondFoot = {'x':54, 'y':41};
+
+    this.firstKnee = {'x':34, 'y':34};
+    this.secondKnee = {'x':57, 'y':34};
     
     this.moveLeft = function(){
         this.dx -= Math.random() * this.speed;
@@ -259,60 +265,68 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
         }
     }
 
-    this.drawCreature = function(){
-        //비율 조정하는 툴 제작?
-
+    this.drawHead = function(){
         //head
         this.ctx.strokeStyle = arrToRGB([200, 200, 30]);
         this.ctx.fillStyle = arrToRGB([200, 200, 30]);
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x+28, this.y+22);
-        this.ctx.bezierCurveTo(this.x+28,this.y+20, this.x+20,this.y+20, this.x+17,this.y+28);
-        this.ctx.bezierCurveTo(this.x+25,this.y+36, this.x+28,this.y+36, this.x+35,this.y+32);
-        this.ctx.quadraticCurveTo(this.x+45,this.y+28, this.x+28,this.y+22);
+        this.ctx.moveTo(this.x+this.width*0.01*27, this.y+this.height*0.02*25);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*22,this.y+this.height*0.02*20, this.x+this.width*0.01*10,this.y+this.height*0.02*20, this.x+this.width*0.01*7,this.y+this.height*0.02*28);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*15,this.y+this.height*0.02*36, this.x+this.width*0.01*18,this.y+this.height*0.02*36, this.x+this.width*0.01*27,this.y+this.height*0.02*31);
         this.ctx.stroke();
         this.ctx.fill();
+    }
 
+    this.drawBody = function(){
         //body
         this.ctx.strokeStyle = arrToRGB([100, 100, 10]);
         this.ctx.fillStyle = arrToRGB([100, 100, 10]);
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x+35,this.y+31);
-        this.ctx.bezierCurveTo(this.x+37,this.y+38, this.x+65,this.y+40, this.x+75,this.y+30);
-        this.ctx.bezierCurveTo(this.x+60,this.y+20, this.x+40,this.y+20, this.x+35,this.y+25);
+        this.ctx.moveTo(this.x+this.width*0.01*27,this.y+this.height*0.02*31);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*32,this.y+this.height*0.02*38, this.x+this.width*0.01*55,this.y+this.height*0.02*40, this.x+this.width*0.01*65,this.y+this.height*0.02*30);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*60,this.y+this.height*0.02*20, this.x+this.width*0.01*30,this.y+this.height*0.02*24, this.x+this.width*0.01*27,this.y+this.height*0.02*25);
         this.ctx.stroke();
         this.ctx.fill();
+    }
 
+    this.drawTail = function(){
         //tail
         this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
         this.ctx.fillStyle = arrToRGB([200, 200, 10]);
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x+70,this.y+30);
-        this.ctx.bezierCurveTo(this.x+80,this.y+40, this.x+95,this.y+40, this.x+105,this.y+30);
-        this.ctx.bezierCurveTo(this.x+90,this.y+28, this.x+80,this.y+20, this.x+70,this.y+28);
+        this.ctx.moveTo(this.x+this.width*0.01*63,this.y+this.height*0.02*30);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*70,this.y+this.height*0.02*40, this.x+this.width*0.01*85,this.y+this.height*0.02*36, this.x+this.width*0.01*95,this.y+this.height*0.02*30);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*80,this.y+this.height*0.02*28, this.x+this.width*0.01*70,this.y+this.height*0.02*20, this.x+this.width*0.01*63,this.y+this.height*0.02*28);
         this.ctx.stroke();
         this.ctx.fill();
-        
+    }
+
+    this.drawLegs = function(){
         //legs
         this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
         this.ctx.fillStyle = arrToRGB([200, 200, 10]);
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x+42, this.y+27);
-        this.ctx.bezierCurveTo(this.x+44,this.y+29, this.x+46,this.y+31, this.x+46,this.y+32);
-        this.ctx.bezierCurveTo(this.x+44,this.y+36, this.x+42,this.y+38, this.x+40,this.y+40);
-        this.ctx.bezierCurveTo(this.x+39,this.y+35, this.x+41,this.y+33, this.x+42,this.y+31);
-        this.ctx.bezierCurveTo(this.x+42,this.y+33, this.x+42,this.y+33, this.x+42,this.y+32);
+        this.ctx.moveTo(this.x+this.width*0.01*32, this.y+this.height*0.02*31);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*34, this.y+this.height*0.02*23, this.x+this.width*0.01*37, this.y+this.height*0.02*30);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*37, this.y+this.height*0.02*39, this.x+this.width*0.01*this.firstFoot['x'], this.y+this.height*0.02*this.firstFoot['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*32, this.y+this.height*0.02*35, this.x+this.width*0.01*this.firstKnee['x'], this.y+this.height*0.02*this.firstKnee['y']);
         this.ctx.stroke();
         this.ctx.fill();
-        
+
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x+62, this.y+27);
-        this.ctx.bezierCurveTo(this.x+64,this.y+29, this.x+66,this.y+31, this.x+63,this.y+32);
-        this.ctx.bezierCurveTo(this.x+64,this.y+36, this.x+62,this.y+38, this.x+57,this.y+40);
-        this.ctx.bezierCurveTo(this.x+59,this.y+35, this.x+61,this.y+33, this.x+59,this.y+31);
-        this.ctx.bezierCurveTo(this.x+62,this.y+33, this.x+62,this.y+33, this.x+59,this.y+32);
+        this.ctx.moveTo(this.x+this.width*0.01*53, this.y+this.height*0.02*31);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*53, this.y+this.height*0.02*25, this.x+this.width*0.01*(this.secondKnee['x']+2), this.y+this.height*0.02*(this.secondKnee['y']-3));
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*60, this.y+this.height*0.02*39, this.x+this.width*0.01*this.secondFoot['x'], this.y+this.height*0.02*this.secondFoot['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*58, this.y+this.height*0.02*32, this.x+this.width*0.01*this.secondKnee['x'], this.y+this.height*0.02*this.secondKnee['y']);
         this.ctx.stroke();
         this.ctx.fill();
+    }
+
+    this.drawCreature = function(){
+        this.drawHead();
+        this.drawBody();
+        this.drawTail();
+        this.drawLegs();
     }
 }
 
