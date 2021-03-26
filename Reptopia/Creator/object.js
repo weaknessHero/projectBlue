@@ -6,7 +6,7 @@
 /*
     1.3.9
         1 drawCreature(): 초기값 비율 조정, 파트별 함수화,
-        2 Creature(): 파트별 위치 변수 추가. 
+        2 Creature(): 파트별 위치 변수 추가. walk() 추가.
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -327,6 +327,22 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
         this.drawBody();
         this.drawTail();
         this.drawLegs();
+    }
+
+    this.walk = function(frame){
+        newCreature.x -= 0.7;
+        if(frame%200<100){
+            this.firstFoot['x'] -= 0.1;
+            this.firstKnee['x'] -= 0.02;
+            this.secondFoot['x'] += 0.05;
+            this.secondKnee['x'] += 0.01;
+        }
+        else{
+            this.firstFoot['x'] += 0.1;
+            this.firstKnee['x'] += 0.02;
+            this.secondFoot['x'] -= 0.05;
+            this.secondKnee['x'] -= 0.01;
+        }
     }
 }
 
