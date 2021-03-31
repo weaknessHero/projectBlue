@@ -16,7 +16,7 @@ var ctxBackground = canvasEl.getContext("2d");
 
 var frame = 60;
 
-var newCreature = new Creature(canvasEl, ctxBackground, 'creature', canvasEl.width-200, canvasEl.height-500, 1, 1, 200, 100, [30,100,50]);
+var newCreature = new Creature(canvasEl, ctxBackground, 'creature', canvasEl.width-300, canvasEl.height-500, 1, 1, 250, 50, [30,100,50], 2);
 var ground = new ObjectR(canvasEl, ctxBackground, 'wall', 0, canvasEl.height-100, 1, 100, canvasEl.width, 100, [30,100,50]);
 var wall1 = new ObjectR(canvasEl, ctxBackground, 'wall', canvasEl.width-200, canvasEl.height-300, 1, 100, 100, 50, [30,100,150]);
 var wall2 = new ObjectR(canvasEl, ctxBackground, 'wall', canvasEl.width-250, canvasEl.height-250, 1, 100, 200, 50, [30,50,150]);
@@ -39,8 +39,6 @@ function backgroundLoop(){
         if(objects[i].collision(objects)==0) break;
         objects[i].move();
     }
-    newCreature.walk(frame);
-    console.log(newCreature.firstFoot['x']);
 
     backgroundAnimation = requestAnimationFrame(backgroundLoop);
 }

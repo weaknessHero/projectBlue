@@ -4,9 +4,9 @@
     Object engine.
 */
 /*
-    1.3.9
-        1 drawCreature(): 초기값 비율 조정, 파트별 함수화,
-        2 Creature(): 파트별 위치 변수 추가. walk() 추가.
+    1.3.10
+        1 Creature.walk(): 무빙케이스화
+        2 Creature draw: 비율, 속도 조정
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -59,7 +59,7 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     }
 
     this.friction = function(){
-        this.dx *= 0.9;
+        this.dx *= 0.98;
     }
 
     this.airResist = function(){     //공기저항 구현 ---개발중--- 저항 면적에 비례하여 저항 상승하도록
@@ -195,7 +195,10 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     this.height     = height;
     this.color      = color;
     this.elasticity = 0.3;
-    this.speed = speed;
+    this.maxSpeed = speed;
+    this.nowSpeed = 0;
+    this.direction = 'left';
+    this.legDirection = 'left';
 
     this.x = x;
     this.y = y;
@@ -213,32 +216,108 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     this.p4     = [this.x, this.y + this.height];
     this.points = [this.p1, this.p2, this.p3, this.p4];
 
-    this.firstFoot = {'x':31, 'y':41};
-    this.secondFoot = {'x':54, 'y':41};
+    this.firstFoot = {'x':0.3, 'y':1};
+    this.secondFoot = {'x':0.6, 'y':1};
 
-    this.firstKnee = {'x':34, 'y':34};
-    this.secondKnee = {'x':57, 'y':34};
+    this.firstKnee = {'x':0.35, 'y':0.7};
+    this.secondKnee = {'x':0.65, 'y':0.7};
+
+    this.drawDots = [];
+
+    this.drawCreature = function(){
+        //head
+        this.ctx.strokeStyle = arrToRGB([200, 200, 30]);
+        this.ctx.fillStyle = arrToRGB([200, 200, 30]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+this.width*0.2, this.y+this.height*0.3);
+        this.ctx.bezierCurveTo(this.x+this.width*0.15,this.y+this.height*0, this.x+this.width*0.02,this.y+this.height*0.1, this.x+this.width*0,this.y+this.height*0.36);
+        this.ctx.bezierCurveTo(this.x+this.width*0.08,this.y+this.height*0.72, this.x+this.width*0.11,this.y+this.height*0.72, this.x+this.width*0.20,this.y+this.height*0.62);
+        this.ctx.stroke();
+        this.ctx.fill();
+        //body
+        this.ctx.strokeStyle = arrToRGB([100, 100, 10]);
+        this.ctx.fillStyle = arrToRGB([100, 100, 10]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+this.width*0.20,this.y+this.height*0.62);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*32,this.y+this.height*0.02*38, this.x+this.width*0.01*55,this.y+this.height*0.02*40, this.x+this.width*0.62,this.y+this.height*0.63);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.68, this.y+this.height*0.5, this.x+this.width*0.65,this.y+this.height*0.38);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*60,this.y+this.height*0.35, this.x+this.width*0.01*30,this.y+this.height*0.18, this.x+this.width*0.2,this.y+this.height*0.3);
+        this.ctx.stroke();
+        this.ctx.fill();
+        //tail
+        this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
+        this.ctx.fillStyle = arrToRGB([200, 200, 10]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+this.width*0.01*63,this.y+this.height*0.02*30);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*70,this.y+this.height*0.02*40, this.x+this.width*0.01*85,this.y+this.height*0.02*36, this.x+this.width*1,this.y+this.height*0.6);
+        this.ctx.bezierCurveTo(this.x+this.width*0.01*80,this.y+this.height*0.28, this.x+this.width*0.01*70,this.y+this.height*0.02*20, this.x+this.width*0.63,this.y+this.height*0.38);
+        this.ctx.stroke();
+        this.ctx.fill();
+        //legs
+        this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
+        this.ctx.fillStyle = arrToRGB([200, 200, 10]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+this.width*0.01*32, this.y+this.height*0.02*31);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.34, this.y+this.height*0.5, this.x+this.width*0.01*37, this.y+this.height*0.02*30);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.37, this.y+this.height*0.8, this.x+this.width*this.firstFoot['x'], this.y+this.height*this.firstFoot['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.32, this.y+this.height*0.7, this.x+this.width*this.firstKnee['x'], this.y+this.height*this.firstKnee['y']);
+        this.ctx.stroke();
+        this.ctx.fill();
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.x+this.width*0.01*53, this.y+this.height*0.02*31);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*53, this.y+this.height*0.02*25, this.x+this.width*this.secondKnee['x'], this.y+this.height*this.secondKnee['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*60, this.y+this.height*0.02*39, this.x+this.width*this.secondFoot['x'], this.y+this.height*this.secondFoot['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*58, this.y+this.height*0.02*32, this.x+this.width*this.secondKnee['x'], this.y+this.height*this.secondKnee['y']);
+        this.ctx.stroke();
+        this.ctx.fill();
+    }
     
-    this.moveLeft = function(){
-        this.dx -= Math.random() * this.speed;
+
+    this.walk = function(){
+        if(this.direction == 'left')
+            var sign = -1;
+        else if(this.direction == 'right')
+            var sign = 1;
+
+        this.dx = this.nowSpeed * sign;
+
+        let tempVelocity = this.nowSpeed*this.width/100000;
+        
+        if(this.firstFoot['x'] < 0.2)
+            this.legDirection = 'right'
+        else if(this.firstFoot['x'] > 0.4)
+            this.legDirection = 'left'
+
+        if(this.legDirection == 'left'){
+            this.firstFoot['x'] -= tempVelocity;
+            this.firstKnee['x'] -= tempVelocity/5;
+            this.secondFoot['x'] += tempVelocity;
+            this.secondKnee['x'] += tempVelocity/5;
+        }
+        else if(this.legDirection == 'right'){
+            this.firstFoot['x'] += tempVelocity;
+            this.firstKnee['x'] += tempVelocity/5;
+            this.secondFoot['x'] -= tempVelocity;
+            this.secondKnee['x'] -= tempVelocity/5;
+        }
     }
-    this.moveRight = function(){
-        this.dx += Math.random() * this.speed;
-    }
+
     this.jump = function(){
-        this.dy -= Math.random() * this.speed + 1;
+        this.dy -= Math.random() * this.maxSpeed*5 + 2;
     }
+    
     this.stay = function(){
     }
 
     this.movingCase = this.stay;
     
     this.update = function(){
-        if(frame % Math.floor(200/this.speed) == 0) this.setMovingCase();
+        if(frame % Math.floor(200/this.maxSpeed) == 0) this.setMovingCase();
         this.gravity();
         this.airResist();
         this.friction();
-        this.movingCase.call();
+        this.movingCase.call(this);
         this.checkIn();
         this.draw();
     }
@@ -246,102 +325,21 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     this.setMovingCase = function(){
         let moveCase = Math.floor(Math.random()*10);
         if(moveCase <= 3){
-            if(Math.floor(Math.random()*2)<1){
-                this.movingCase = this.moveLeft;
-                this.moveLeft();
-            }
-            else{
-                this.movingCase = this.moveRight;
-                this.moveRight();
-            }
+            if(Math.floor(Math.random()*2)<1)
+                this.direction = 'left';
+            else
+                this.direction = 'right';
+            this.movingCase = this.walk;
+            this.nowSpeed = Math.floor(this.maxSpeed * Math.random())+0.5;
+            this.walk();
         }
-        else if (moveCase <= 4){
-            this.movingCase = this.jump;
+        else if (moveCase == 4){
+            this.movingCase = this.stay;
             this.jump();
         }
         else{
             this.movingCase = this.stay;
             this.stay();
-        }
-    }
-
-    this.drawHead = function(){
-        //head
-        this.ctx.strokeStyle = arrToRGB([200, 200, 30]);
-        this.ctx.fillStyle = arrToRGB([200, 200, 30]);
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x+this.width*0.01*27, this.y+this.height*0.02*25);
-        this.ctx.bezierCurveTo(this.x+this.width*0.01*22,this.y+this.height*0.02*20, this.x+this.width*0.01*10,this.y+this.height*0.02*20, this.x+this.width*0.01*7,this.y+this.height*0.02*28);
-        this.ctx.bezierCurveTo(this.x+this.width*0.01*15,this.y+this.height*0.02*36, this.x+this.width*0.01*18,this.y+this.height*0.02*36, this.x+this.width*0.01*27,this.y+this.height*0.02*31);
-        this.ctx.stroke();
-        this.ctx.fill();
-    }
-
-    this.drawBody = function(){
-        //body
-        this.ctx.strokeStyle = arrToRGB([100, 100, 10]);
-        this.ctx.fillStyle = arrToRGB([100, 100, 10]);
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x+this.width*0.01*27,this.y+this.height*0.02*31);
-        this.ctx.bezierCurveTo(this.x+this.width*0.01*32,this.y+this.height*0.02*38, this.x+this.width*0.01*55,this.y+this.height*0.02*40, this.x+this.width*0.01*65,this.y+this.height*0.02*30);
-        this.ctx.bezierCurveTo(this.x+this.width*0.01*60,this.y+this.height*0.02*20, this.x+this.width*0.01*30,this.y+this.height*0.02*24, this.x+this.width*0.01*27,this.y+this.height*0.02*25);
-        this.ctx.stroke();
-        this.ctx.fill();
-    }
-
-    this.drawTail = function(){
-        //tail
-        this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
-        this.ctx.fillStyle = arrToRGB([200, 200, 10]);
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x+this.width*0.01*63,this.y+this.height*0.02*30);
-        this.ctx.bezierCurveTo(this.x+this.width*0.01*70,this.y+this.height*0.02*40, this.x+this.width*0.01*85,this.y+this.height*0.02*36, this.x+this.width*0.01*95,this.y+this.height*0.02*30);
-        this.ctx.bezierCurveTo(this.x+this.width*0.01*80,this.y+this.height*0.02*28, this.x+this.width*0.01*70,this.y+this.height*0.02*20, this.x+this.width*0.01*63,this.y+this.height*0.02*28);
-        this.ctx.stroke();
-        this.ctx.fill();
-    }
-
-    this.drawLegs = function(){
-        //legs
-        this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
-        this.ctx.fillStyle = arrToRGB([200, 200, 10]);
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x+this.width*0.01*32, this.y+this.height*0.02*31);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*34, this.y+this.height*0.02*23, this.x+this.width*0.01*37, this.y+this.height*0.02*30);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*37, this.y+this.height*0.02*39, this.x+this.width*0.01*this.firstFoot['x'], this.y+this.height*0.02*this.firstFoot['y']);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*32, this.y+this.height*0.02*35, this.x+this.width*0.01*this.firstKnee['x'], this.y+this.height*0.02*this.firstKnee['y']);
-        this.ctx.stroke();
-        this.ctx.fill();
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.x+this.width*0.01*53, this.y+this.height*0.02*31);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*53, this.y+this.height*0.02*25, this.x+this.width*0.01*(this.secondKnee['x']+2), this.y+this.height*0.02*(this.secondKnee['y']-3));
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*60, this.y+this.height*0.02*39, this.x+this.width*0.01*this.secondFoot['x'], this.y+this.height*0.02*this.secondFoot['y']);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*58, this.y+this.height*0.02*32, this.x+this.width*0.01*this.secondKnee['x'], this.y+this.height*0.02*this.secondKnee['y']);
-        this.ctx.stroke();
-        this.ctx.fill();
-    }
-
-    this.drawCreature = function(){
-        this.drawHead();
-        this.drawBody();
-        this.drawTail();
-        this.drawLegs();
-    }
-
-    this.walk = function(frame){
-        newCreature.x -= 0.7;
-        if(frame%200<100){
-            this.firstFoot['x'] -= 0.1;
-            this.firstKnee['x'] -= 0.02;
-            this.secondFoot['x'] += 0.05;
-            this.secondKnee['x'] += 0.01;
-        }
-        else{
-            this.firstFoot['x'] += 0.1;
-            this.firstKnee['x'] += 0.02;
-            this.secondFoot['x'] -= 0.05;
-            this.secondKnee['x'] -= 0.01;
         }
     }
 }
@@ -356,7 +354,7 @@ function randomObject(type, canvas, ctx){
     let x = Math.floor(Math.random()*canvas.width) - width;
     let y = 1;
     let z = 1;
-    let speed = Math.floor(Math.random() * 10) + 2;
+    let speed = Math.floor(Math.random() * 100) + 0.1;
 
     if(type == 'object')
         return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
