@@ -7,6 +7,7 @@
     1.3.10
         1 Creature.walk(): 무빙케이스화
         2 Creature draw: 비율, 속도 조정
+        3 Horizontal collision.
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -127,9 +128,14 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
             let pWidth = this.width/80 + 3;let pHeight = this.height/80 + 3;   
 
             //꼭짓점이 오브젝트 안에 들어오도록 설정
-            if(i == 1)pWidth *= -1;
-            else if(i==2){pWidth *= -1;pHeight *= -1;}
-            else if(i==3)pHeight *= -1;
+            if(i == 1)
+                pWidth *= -1;
+            else if(i==2){
+                pWidth *= -1;
+                pHeight *= -1;
+            }
+            else if(i==3)
+                pHeight *= -1;
 
             this.ctx.fillRect(this.points[i][0], this.points[i][1], pWidth*this.z, pHeight*this.z);
     }}
@@ -139,44 +145,48 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
 
         for(let n = 0; n<objArray.length; n++){
             objS = objArray[n];
-            if(objS != this){for(let i = 0; i<4; i++){
-                if(this.z == objS.z){
-
-                    //this의 꼭짓점들이 objS 안에 들어가는지 확인
-                    if((objS.p1[0] + objS.dx < this.points[i][0] + this.dx) & (this.points[i][0] + this.dx < objS.p2[0] + objS.dx))
-                        if((objS.p2[1] + objS.dy < this.points[i][1] + this.dy) & (this.points[i][1] + this.dy < objS.p3[1] + objS.dy)){
-                            this.bounce(objS);
-                            this.collision(objArray, recursed+1);
-                            return 1;
-                        }
-                            
-                    //objS의 꼭짓점들이 this 안에 들어가는지 확인
-                    if((this.p1[0] + this.dx < objS.points[i][0] + objS.dx) & (objS.points[i][0] + objS.dx < this.p2[0] + this.dx))
-                        if((this.p2[1] + this.dy < objS.points[i][1]+objS.dy) & (objS.points[i][1] + objS.dy < this.p3[1] + this.dy)){
-                            objS.bounce(this);
-                            objS.collision(objArray, recursed+1);
-                            return 1;
-                        }
-        }}}}
+            if(objS != this){
+                for(let i = 0; i<4; i++){
+                    if(this.z == objS.z){
+                        this.checkColl(objS, i, objArray, recursed);
+                        objS.checkColl(this, i, objArray, recursed);
+                    }
+                }
+            }
+        }
         return -1;
     }
 
-    this.bounce = function(obj){
-        //좌우 반작용
-        //let dxAfterBounce1 = (((this.m-obj.m) * this.dx) + ((2*obj.m) * obj.dx)) / (this.m+obj.m);
-        //let dxAfterBounce2 = (((obj.m-this.m) * obj.dx) + ((2*this.m) * this.dx)) / (obj.m+this.m);
-    //
-        //this.dx = dxAfterBounce1*this.elasticity;
-        //obj.dx = dxAfterBounce2*obj.elasticity;
-    
-    
-        //상하 반작용
-        let dyAfterBounce1 = (((this.m-obj.m) * this.dy) + ((2*obj.m) * obj.dy)) / (this.m+obj.m);
-        let dyAfterBounce2 = (((obj.m-this.m) * obj.dy) + ((2*this.m) * this.dy)) / (obj.m+this.m);
-    
-        this.dy = dyAfterBounce1*this.elasticity;
-        obj.dy = dyAfterBounce2*obj.elasticity;
+    this.checkColl = function(objS, i, objArray, recursed){
+        //this의 꼭짓점들이 objS 안에 들어가는지 확인
+        if((objS.p1[0] + objS.dx <= this.points[i][0] + this.dx) & (this.points[i][0] + this.dx <= objS.p2[0] + objS.dx))
+            if((objS.p2[1] + objS.dy <= this.points[i][1] + this.dy) & (this.points[i][1] + this.d  y <= objS.p3[1] + objS.dy)){
+                if(this.p3[1]>objS.p1[1] | this.p1[1]<objS.p3[1])
+                    this.bounce(objS, 'vertical');
+                if(this.p2[0]<objS.p1[0] | this.p1[0]>objS.p2[0])
+                    this.bounce(objS, 'horizontal');
+                this.collision(objArray, recursed+1);
+                return 1;
+            }
+    }    
+
+    this.bounce = function(obj, direction){
+        if(direction == 'horizontal'){
+            //좌우 반작용
+            let dxAfterBounce1 = (((this.m-obj.m) * this.dx) + ((2*obj.m) * obj.dx)) / (this.m+obj.m);
+            let dxAfterBounce2 = (((obj.m-this.m) * obj.dx) + ((2*this.m) * this.dx)) / (obj.m+this.m);
         
+            this.dx = dxAfterBounce1*this.elasticity;
+            obj.dx = dxAfterBounce2*obj.elasticity;
+        }
+        else if(direction == 'vertical'){
+            //상하 반작용
+            let dyAfterBounce1 = (((this.m-obj.m) * this.dy) + ((2*obj.m) * obj.dy)) / (this.m+obj.m);
+            let dyAfterBounce2 = (((obj.m-this.m) * obj.dy) + ((2*this.m) * this.dy)) / (obj.m+this.m);
+        
+            this.dy = dyAfterBounce1*this.elasticity;
+            obj.dy = dyAfterBounce2*obj.elasticity;
+        }
         //진동 방지 및 wall type 예외처리.
         [this, obj].forEach(obj =>{
             obj.stopVibration();
@@ -323,7 +333,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     }
 
     this.setMovingCase = function(){
-        let moveCase = Math.floor(Math.random()*10);
+        let moveCase = Math.floor(Math.random()*5);
         if(moveCase <= 3){
             if(Math.floor(Math.random()*2)<1)
                 this.direction = 'left';
