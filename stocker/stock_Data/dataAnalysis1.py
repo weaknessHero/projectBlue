@@ -1,8 +1,13 @@
 """
-
-    파일에서 원하는 subject읽고 다루는 시스템
-    수치적으로 6개월 이후 이전으로 통계시의 값 계산
+    데이터분석 첫번째 4분기 이상치를 1/4한 값으로 계산
     
+    
+"""
+
+"""
+    1.3.10
+1.구조 간결화
+
 """
 
 import pandas as pd
@@ -10,6 +15,11 @@ import datetime
 import os
 import math
 
+
+
+exceptionSubject=['매출액', '영업이익', '법인세차감전 순이익', '당기순이익','매출액1', '영업이익1', '법인세차감전 순이익1', '당기순이익1']
+exceptionData1=['nan']
+exceptionData2=['-','']
 #주가 데이터 파일 읽기
 dataframePrice=pd.read_csv('data/stock_price_data.csv', index_col=0)
 
@@ -26,11 +36,17 @@ def seasonToDate(data):
 def stockDateLoop(season, stockCode,latedays):
     seasonDF= season+datetime.timedelta(days=latedays)
     price=""
-    while price== "":
+
+    loop=0
+    while (price=="")|(price=="nan"):
+        if loop >30:
+            break
+        
         try:
             price=dataframePrice[stockCode][str(seasonDF)]
         except:
             seasonDF=seasonDF+datetime.timedelta(days=1)
+            loop+=1
 
 
     return seasonDF
@@ -39,145 +55,120 @@ def stockDateLoop(season, stockCode,latedays):
 
 
 def main():
-    #재무제표적 요소가 주가에 미치는 영향 조사 
+    #재무제표적 개별적 요소가 주가에 미치는 영향 조사 
 
-    err=0
 
-    N =[0 for y in range(26)]
-    A3=[0 for y in range(26)]
-    A6=[0 for y in range(26)]
-    B3=[0 for y in range(26)]
-    B6=[0 for y in range(26)]
-    #폴더 리스트에서 받아오기 
+    i=0
+    err4=0
+    
+    dataArr=[[0]*26 for i in range(8)]
+    print(dataArr)
+    #통계적 값 
+    nomalProcess=0
+    errProcess=0
+
+    #폴더 리스트에서 받아오기
     pathData = 'data/detailData'
     dirList = os.listdir(pathData)
     stockCodeList=list(map(lambda x : x.replace('.csv',''), dirList))
-    price=""
-    floatData=""
-    floatDataBF=""
-    seasonDF=''
-    nomal=0
-    i=0
-    
-    df=pd.read_csv(pathData+'/'+'000020'+".csv", index_col=0)
-    subjectList=[]
-    subjectList=df.index
-    for stockCode in stockCodeList:
-        #스톡 코드가 존재시 찾고 그것이 전년도 대비 요소들의 상승 하락에 비교하여 주가 변동 파악
 
+
+    #과목이름 정렬및 맞추기 
+    subjectList=[]
+    i=0
+    while len(subjectList)!=26:
+        print(len(subjectList))
+        df=pd.read_csv(pathData+'/'+dirList[i], index_col=0)
+        subjectList=df.index
+        i+=1
+
+        
+    #스톡 코드가 존재시 찾고 그것이 전년도 대비 요소들의 상승 하락에 비교하여 주가 변동 파악
+    for stockCode in stockCodeList:
         print(stockCode)
         df=pd.read_csv(pathData+'/'+stockCode+".csv", index_col=0)
-
         i=0
+        y=0
+
+
         
-        #subject 당 해당 값을 찾아서 비교후 True False 연산
-        for subject in df.index:
-            
+        #subject 확인
+        for subject in df.index:            
             df.loc[subject] = list(map(lambda x : str(x).replace(',', '') ,df.loc[subject]))
-            price=""
 
+            floatData=""
+            floatDataBF=""
+
+
+            
             for season in df.columns:
-
-
                 #예외처리
                 if season[4:]=='4':
-                    if subject in ['매출액', '영업이익', '법인세차감전 순이익', '당기순이익','매출액1', '영업이익1', '법인세차감전 순이익1', '당기순이익1']:
-                        try:#예외값 처리                        
+                    if subject in exceptionSubject:
+                        try:                        
                             df[season][subject]=int(df[season][subject])//4
                         except:
-                            err
+                            err4+=1
+
                 #값 정의
                 floatDataBF = floatData
                 floatData = df[season][subject]
 
                 
-                #시즌을 날짜로 변경
-                season=seasonToDate(season)
-                
                 #예외값 처리
-                if floatData=='nan':
+                if floatData in exceptionData1 :
                     floatData=""
-                elif floatData=="-":
+                elif floatData in exceptionData2 : 
                     floatData=floatDataBF
-                    if floatDataBF=="-":
+                    if floatDataBF in exceptionData2:
                         floatData=''
                 else :
+                    #경량화
                     floatData=str(floatData)[:len(str(floatData))-6]
+
                     
-                    
-                    #경량화보다 값이 작을경우 좌 양수 기준 우 음수 기준 
-                    if (floatData=="")|(floatData=="-"):
+                    if floatData in exceptionData2:
                         floatData=0
 
-
-                seasonNow=season
+                seasonDate=seasonToDate(season)
                 
-
-                price=""
-                while price=="":
-                    try:
-                        price=dataframePrice[stockCode][str(seasonNow)]
-                    except:
-                        seasonNow=seasonNow+datetime.timedelta(days=1)
-                        
-                #비교대상 존재시        
+                #비교대상 존재시   
                 if (floatDataBF!="")&(floatData!=""):
-                    try:
-                        seasonDF1=stockDateLoop(season,stockCode, -182)
-                        seasonDF2=stockDateLoop(season,stockCode, -91)
-                        seasonDF3=stockDateLoop(season,stockCode, 91)
-                        seasonDF4=stockDateLoop(season,stockCode, 182)
-                        
-                        if (int(floatData)>int(floatDataBF))==(int(dataframePrice[stockCode][str(seasonDF2)])>int(dataframePrice[stockCode][str(seasonDF1)])):
-                            B6[i]+=1
+                    for i in range(0,4,1):
+                        try:
+                            seasonDF1=stockDateLoop(seasonDate,stockCode, 91*(i-2))
+                            seasonDF2=stockDateLoop(seasonDate,stockCode, 91*(i-1))
+                            
+                            if (int(floatDataBF)<int(floatData))==(int(dataframePrice[stockCode][str(seasonDF1)])<int(dataframePrice[stockCode][str(seasonDF2)])):
+                                dataArr[i][y]+=1
+
+                            dataArr[i+4][y]+=1
+                            nomalProcess+=1
+
+                        except:
+                            print(int(floatData),int(floatDataBF),'one file has the err:',dataframePrice[stockCode][str(seasonDF1)],dataframePrice[stockCode][str(seasonDF2)])
+                            errProcess+=1
 
 
-                        if (int(floatData)>int(floatDataBF))==(int(dataframePrice[stockCode][str(seasonNow)])>int(dataframePrice[stockCode][str(seasonDF2)])):
-                            B3[i]+=1                    
 
-
-                        if (int(floatData)>int(floatDataBF))==(int(dataframePrice[stockCode][str(seasonDF3)])>int(dataframePrice[stockCode][str(seasonNow)])):
-                            A3[i]+=1
-
-                        if (int(floatData)>int(floatDataBF))==(int(dataframePrice[stockCode][str(seasonDF4)])>int(dataframePrice[stockCode][str(seasonDF3)])):
-                            A6[i]+=1
-                        N[i]+=1
-                        nomal+=1
-
-                    except:
-                        print(int(floatData),int(floatDataBF),'one file has the err:',dataframePrice[stockCode][str(seasonDF1)],dataframePrice[stockCode][str(seasonDF2)],dataframePrice[stockCode][str(seasonNow)],dataframePrice[stockCode][str(seasonDF3)],dataframePrice[stockCode][str(seasonDF4)])
-                        err+=1
-
+            y+=1
                 
-            #요소 변경시에 값변경
-            floatData=""  
-            i+=1
 
-            
+
+    #상태 표시
+    print(dataArr)
     y=0
     for subject in subjectList:
         print('subject:',subject)
-        print(B6[y]/N[y]*100)
-        print(B3[y]/N[y]*100)
-        print(A3[y]/N[y]*100)
-        print(A6[y]/N[y]*100)
+        print(dataArr[0][y]/dataArr[4][y]*100)
+        print(dataArr[1][y]/dataArr[5][y]*100)
+        print(dataArr[2][y]/dataArr[6][y]*100)
+        print(dataArr[3][y]/dataArr[7][y]*100)
         y+=1
-    print('nomalCount:',nomal)
-    print('errCount:',err)
-        
 
-    print(N)
-    print(A3)
-    print(A6)
-    print(B3)
-    print(B6)
-                        #요소 유지및 증가시
-                        #값 비교 이후 크면 값을 증가시킨다 작을경우 
+
+    print('nomalCount:',nomalProcess)
+    print('errCount:',errProcess)
+    print("err4Count:",err4)
                         
-                    
-
-                        
-
-                    
-
 main()
