@@ -160,7 +160,7 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     this.checkColl = function(objS, i, objArray, recursed){
         //this의 꼭짓점들이 objS 안에 들어가는지 확인
         if((objS.p1[0] + objS.dx <= this.points[i][0] + this.dx) & (this.points[i][0] + this.dx <= objS.p2[0] + objS.dx))
-            if((objS.p2[1] + objS.dy <= this.points[i][1] + this.dy) & (this.points[i][1] + this.d  y <= objS.p3[1] + objS.dy)){
+            if((objS.p2[1] + objS.dy <= this.points[i][1] + this.dy) & (this.points[i][1] + this.dy <= objS.p3[1] + objS.dy)){
                 if(this.p3[1]>objS.p1[1] | this.p1[1]<objS.p3[1])
                     this.bounce(objS, 'vertical');
                 if(this.p2[0]<objS.p1[0] | this.p1[0]>objS.p2[0])
