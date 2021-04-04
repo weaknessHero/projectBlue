@@ -35,7 +35,7 @@ from datetime import date
 import time
 from tkinter import *
 from pynput import mouse
-
+from time import sleep
 
 firstSkockDate = "20100101"
 path = "data/"
@@ -111,9 +111,12 @@ def download(lastUpdateDate):
         for x in tickerSymbolList:
             u= u+1
             try:
+                sleep(0.05)               
                 x=str(x).zfill(6) #자릿수 맞추기
-                df1 = stock.get_market_cap_by_date(lastUpdateDate, todayDate ,x)    #주가 데이터 수집
+                df1 = stock.get_market_cap_by_date(lastUpdateDate, todayDate ,x)
+                print('a')#주가 데이터 수집
                 df = pd.concat([df , df1['시가총액']], axis=1)#시가총액 데이터로 변환
+                print('b')
                 culumnList.append(x)
             except:
                 print('err')
