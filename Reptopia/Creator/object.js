@@ -227,10 +227,13 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     this.points = [this.p1, this.p2, this.p3, this.p4];
 
     this.firstFoot = {'x':0.3, 'y':1};
-    this.secondFoot = {'x':0.6, 'y':1};
+    this.secondFoot = {'x':0.55, 'y':1};
 
-    this.firstKnee = {'x':0.35, 'y':0.7};
-    this.secondKnee = {'x':0.65, 'y':0.7};
+    this.firstKnee = {'x':0.35, 'y':0.6};
+    this.secondKnee = {'x':0.62, 'y':0.6};
+
+    this.firstShoulder = {'x': 0.3, 'y': 0.4};
+    this.secondShoulder = {'x': 0.53, 'y': 0.4};
 
     this.drawDots = [];
 
@@ -267,18 +270,18 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
         this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
         this.ctx.fillStyle = arrToRGB([200, 200, 10]);
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x+this.width*0.01*32, this.y+this.height*0.02*31);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.34, this.y+this.height*0.5, this.x+this.width*0.01*37, this.y+this.height*0.02*30);
+        this.ctx.moveTo(this.x+this.width*this.firstShoulder['x'], this.y+this.height*this.firstShoulder['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.34, this.y+this.height*0.4, this.x+this.width*0.01*37, this.y+this.height*0.02*30);
         this.ctx.quadraticCurveTo(this.x+this.width*0.37, this.y+this.height*0.8, this.x+this.width*this.firstFoot['x'], this.y+this.height*this.firstFoot['y']);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.32, this.y+this.height*0.7, this.x+this.width*this.firstKnee['x'], this.y+this.height*this.firstKnee['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.32, this.y+this.height*0.7, this.x+this.width*this.firstKnee['x']*0.95, this.y+this.height*this.firstKnee['y']);
         this.ctx.stroke();
         this.ctx.fill();
 
         this.ctx.beginPath();
-        this.ctx.moveTo(this.x+this.width*0.01*53, this.y+this.height*0.02*31);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*53, this.y+this.height*0.02*25, this.x+this.width*this.secondKnee['x'], this.y+this.height*this.secondKnee['y']);
+        this.ctx.moveTo(this.x+this.width*this.secondShoulder['x'], this.y+this.height*this.secondShoulder['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.6, this.y+this.height*0.4, this.x+this.width*this.secondKnee['x'], this.y+this.height*this.secondKnee['y']);
         this.ctx.quadraticCurveTo(this.x+this.width*0.01*60, this.y+this.height*0.02*39, this.x+this.width*this.secondFoot['x'], this.y+this.height*this.secondFoot['y']);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*58, this.y+this.height*0.02*32, this.x+this.width*this.secondKnee['x'], this.y+this.height*this.secondKnee['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*58, this.y+this.height*0.02*32, this.x+this.width*this.secondKnee['x']*0.95, this.y+this.height*this.secondKnee['y']);
         this.ctx.stroke();
         this.ctx.fill();
     }
