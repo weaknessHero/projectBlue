@@ -109,11 +109,12 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
         
         //오브젝트, 꼭짓점 draw
         this.ctx.fillStyle = arrToRGB(this.color);
-        if(this.type=='wall')
+        if(this.type=='wall'){
             this.ctx.fillRect(this.x, this.y, this.width*this.z, this.height*this.z);
+            this.drawPoints();
+        }
         else if(this.type == 'creature')
             this.drawCreature();
-        this.drawPoints();
         
         this.ctx.rotate(-this.r);                                                //돌렸던 canvas를 다시 원래대로 회전
         
@@ -295,7 +296,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
 
         this.dx = this.nowSpeed * sign;
 
-        let tempVelocity = this.nowSpeed*this.width/100000;
+        let tempVelocity = this.nowSpeed*this.width/5000;
         
         if(this.firstFoot['x'] < 0.2)
             this.legDirection = 'right'
@@ -317,7 +318,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     }
 
     this.jump = function(){
-        this.dy -= Math.random() * this.maxSpeed*5 + 2;
+        this.dy -= Math.random() * this.maxSpeed*1 + 3;
     }
     
     this.stay = function(){
@@ -336,7 +337,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     }
 
     this.setMovingCase = function(){
-        let moveCase = Math.floor(Math.random()*5);
+        let moveCase = Math.floor(Math.random()*15);
         if(moveCase <= 3){
             if(Math.floor(Math.random()*2)<1)
                 this.direction = 'left';
@@ -360,14 +361,14 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
 Creature.prototype = new ObjectR(); //Object prototype와 chain(상속)
 
 function randomObject(type, canvas, ctx){
-    let mess   = Math.floor(Math.random()*2) + 1;
-    let width  = Math.floor(Math.random()*65) + 90;
-    let height = Math.floor(Math.random()*45) + 45;
+    let mess   = Math.random()*1 + 1;
+    let width  = Math.floor(Math.random()*(canvas.width/10))+25;
+    let height = Math.floor(Math.random()*(canvas.height/10)) + 12;
     let color  = [80, 80, 255].map(x=> Math.floor(x*Math.random()));
     let x = Math.floor(Math.random()*canvas.width) - width;
     let y = 1;
     let z = 1;
-    let speed = Math.floor(Math.random() * 100) + 0.1;
+    let speed = Math.random() * 2 + 2;
 
     if(type == 'object')
         return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
