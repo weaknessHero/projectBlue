@@ -4,13 +4,14 @@
     Reptopia의 background canvas 자바스크립트.
 */
 /*
-    1.3.8
-        1 보유 Creature 수에 맞게 눈 생성
+    1.3.11
+    
 */
 
 //Initial function
 function setupCanvas(){
-    for(let temp = 0; temp < document.getElementsByClassName("cage").length; temp++) eyes.push(randomEye()); //랜덤 눈알 객체
+    for(let temp = 0; temp < document.getElementsByClassName("cage").length; temp++)
+        eyes.push(randomEye()); //개체 수 만큼의 배경 눈
 }
 
 function init(){ //Initial setting

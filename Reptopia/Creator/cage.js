@@ -1,10 +1,12 @@
 /*
     cage.js
     2021.01.27
-    Canvas element for cages.
+    Functions for Cages.
 */
 /*
-    1.3.7
+    1.3.11
+        1. Speed 출력 삭제
+        2. Put two creature in one cage.
 */
 
 function showCages(){
@@ -24,10 +26,10 @@ function showCages(){
     for(cageN=0;cageN<ctxList.length;cageN++)
         objects.push([ new ObjectR( cageList[cageN],ctxList[cageN],
                     'wall',0,cageList[cageN].height-30,1,10000,
-                    cageList[cageN].width,30,[30,20,0] ),
+                    cageList[cageN].width,30,[120,80,30] ),
                     randomObject('creature', cageList[cageN],ctxList[cageN]),
                     randomObject('creature', cageList[cageN],ctxList[cageN])
-        ]);
+                    ]);
     
     cageLoop();
     
@@ -39,7 +41,7 @@ function showCages(){
             let ctx = ctxList[cageN];
             let cageObjects = objects[cageN];
 
-            ctx.fillStyle = 'green';
+            ctx.fillStyle = arrToRGB([20, 30, 20]);
             ctx.fillRect(0,0, canvas.width, canvas.height);
 
             cageObjects.forEach(obj => obj.update());

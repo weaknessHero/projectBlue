@@ -4,10 +4,12 @@
     Object engine.
 */
 /*
-    1.3.10
-        1 Creature.walk(): 무빙케이스화
-        2 Creature draw: 비율, 속도 조정
-        3 Horizontal collision.
+    1.3.11
+        randomObject() : 색, 무게, 두께, 높이, 속도 수치 조정
+        drawCreature() : 개체 개별 색 적용
+        walk(): tempVelocity 수치 조정
+        jump(): 속도 조정
+        setMovingCase: 확률 조정
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -109,10 +111,8 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
         
         //오브젝트, 꼭짓점 draw
         this.ctx.fillStyle = arrToRGB(this.color);
-        if(this.type=='wall'){
+        if(this.type=='wall')
             this.ctx.fillRect(this.x, this.y, this.width*this.z, this.height*this.z);
-            this.drawPoints();
-        }
         else if(this.type == 'creature')
             this.drawCreature();
         
@@ -240,50 +240,40 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
 
     this.drawCreature = function(){
         //head
-        this.ctx.strokeStyle = arrToRGB([200, 200, 30]);
-        this.ctx.fillStyle = arrToRGB([200, 200, 30]);
+        this.ctx.fillStyle = arrToRGB(this.color);
         this.ctx.beginPath();
         this.ctx.moveTo(this.x+this.width*0.2, this.y+this.height*0.3);
         this.ctx.bezierCurveTo(this.x+this.width*0.15,this.y+this.height*0, this.x+this.width*0.02,this.y+this.height*0.1, this.x+this.width*0,this.y+this.height*0.36);
         this.ctx.bezierCurveTo(this.x+this.width*0.08,this.y+this.height*0.72, this.x+this.width*0.11,this.y+this.height*0.72, this.x+this.width*0.20,this.y+this.height*0.62);
-        this.ctx.stroke();
         this.ctx.fill();
         //body
-        this.ctx.strokeStyle = arrToRGB([100, 100, 10]);
-        this.ctx.fillStyle = arrToRGB([100, 100, 10]);
+        this.ctx.fillStyle = arrToRGB(this.color.map(x=>x*=0.3));
         this.ctx.beginPath();
         this.ctx.moveTo(this.x+this.width*0.20,this.y+this.height*0.62);
         this.ctx.bezierCurveTo(this.x+this.width*0.01*32,this.y+this.height*0.02*38, this.x+this.width*0.01*55,this.y+this.height*0.02*40, this.x+this.width*0.62,this.y+this.height*0.63);
         this.ctx.quadraticCurveTo(this.x+this.width*0.68, this.y+this.height*0.5, this.x+this.width*0.65,this.y+this.height*0.38);
         this.ctx.bezierCurveTo(this.x+this.width*0.01*60,this.y+this.height*0.35, this.x+this.width*0.01*30,this.y+this.height*0.18, this.x+this.width*0.2,this.y+this.height*0.3);
-        this.ctx.stroke();
         this.ctx.fill();
         //tail
-        this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
-        this.ctx.fillStyle = arrToRGB([200, 200, 10]);
+        this.ctx.fillStyle = arrToRGB(this.color);
         this.ctx.beginPath();
         this.ctx.moveTo(this.x+this.width*0.01*63,this.y+this.height*0.02*30);
         this.ctx.bezierCurveTo(this.x+this.width*0.01*70,this.y+this.height*0.02*40, this.x+this.width*0.01*85,this.y+this.height*0.02*36, this.x+this.width*1,this.y+this.height*0.6);
         this.ctx.bezierCurveTo(this.x+this.width*0.01*80,this.y+this.height*0.28, this.x+this.width*0.01*70,this.y+this.height*0.02*20, this.x+this.width*0.63,this.y+this.height*0.38);
-        this.ctx.stroke();
         this.ctx.fill();
         //legs
-        this.ctx.strokeStyle = arrToRGB([200, 200, 10]);
-        this.ctx.fillStyle = arrToRGB([200, 200, 10]);
         this.ctx.beginPath();
         this.ctx.moveTo(this.x+this.width*this.firstShoulder['x'], this.y+this.height*this.firstShoulder['y']);
         this.ctx.quadraticCurveTo(this.x+this.width*0.34, this.y+this.height*0.4, this.x+this.width*0.01*37, this.y+this.height*0.02*30);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.37, this.y+this.height*0.8, this.x+this.width*this.firstFoot['x'], this.y+this.height*this.firstFoot['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*this.firstFoot['x']*1.1, this.y+this.height*1.1, this.x+this.width*this.firstFoot['x'], this.y+this.height*this.firstFoot['y']);
         this.ctx.quadraticCurveTo(this.x+this.width*0.32, this.y+this.height*0.7, this.x+this.width*this.firstKnee['x']*0.95, this.y+this.height*this.firstKnee['y']);
-        this.ctx.stroke();
         this.ctx.fill();
 
         this.ctx.beginPath();
         this.ctx.moveTo(this.x+this.width*this.secondShoulder['x'], this.y+this.height*this.secondShoulder['y']);
         this.ctx.quadraticCurveTo(this.x+this.width*0.6, this.y+this.height*0.4, this.x+this.width*this.secondKnee['x'], this.y+this.height*this.secondKnee['y']);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*60, this.y+this.height*0.02*39, this.x+this.width*this.secondFoot['x'], this.y+this.height*this.secondFoot['y']);
-        this.ctx.quadraticCurveTo(this.x+this.width*0.01*58, this.y+this.height*0.02*32, this.x+this.width*this.secondKnee['x']*0.95, this.y+this.height*this.secondKnee['y']);
-        this.ctx.stroke();
+        this.ctx.quadraticCurveTo(this.x+this.width*this.secondFoot['x']*1.1, this.y+this.height*1.1, this.x+this.width*this.secondFoot['x'], this.y+this.height*this.secondFoot['y']);
+        this.ctx.quadraticCurveTo(this.x+this.width*0.01*58, this.y+this.height*0.64, this.x+this.width*this.secondKnee['x']*0.95, this.y+this.height*this.secondKnee['y']);
         this.ctx.fill();
     }
     
@@ -344,7 +334,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
             else
                 this.direction = 'right';
             this.movingCase = this.walk;
-            this.nowSpeed = Math.floor(this.maxSpeed * Math.random())+0.5;
+            this.nowSpeed = Math.random()*this.maxSpeed/2;
             this.walk();
         }
         else if (moveCase == 4){
@@ -364,7 +354,9 @@ function randomObject(type, canvas, ctx){
     let mess   = Math.random()*1 + 1;
     let width  = Math.floor(Math.random()*(canvas.width/10))+25;
     let height = Math.floor(Math.random()*(canvas.height/10)) + 12;
-    let color  = [80, 80, 255].map(x=> Math.floor(x*Math.random()));
+    let color  = [155, 155, 200].map(x=> Math.floor(x*Math.random()*Math.random()));
+    color[0]+=100;
+    color[1]+=100;  //색 확률 조정(노랑 up)
     let x = Math.floor(Math.random()*canvas.width) - width;
     let y = 1;
     let z = 1;
