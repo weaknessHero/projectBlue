@@ -6,7 +6,7 @@
 /*
     1.3.11
         randomObject() : 색, 무게, 두께, 높이, 속도 수치 조정
-        drawCreature() : 개체 개별 색 적용
+        drawCreature() : 개체 개별 색 적용, 수치 조정, 식 간소화, 오른쪽 모습 추가
         walk(): tempVelocity 수치 조정
         jump(): 속도 조정
         setMovingCase: 확률 조정
@@ -196,7 +196,7 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     }
 }
 
-function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed){
+function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed, eye){
     this.canvas = canvas;
     this.ctx = ctx;
 
@@ -210,6 +210,11 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     this.nowSpeed   = 0;
     this.direction  = 'left';
     this.legDirection = 'left';
+
+    this.eye = eye;
+    eyes.push(this.eye);
+    this.eye.init(10);
+    this.eye.eyelidWidthRadius = 105;
 
     this.x = x;
     this.y = y;
@@ -362,6 +367,8 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
         this.movingCase.call(this);
         this.checkIn();
         this.draw();
+        this.moveEye();
+        this.eye.update();
     }
 
     this.setMovingCase = function(){
@@ -384,6 +391,21 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
             this.stay();
         }
     }
+
+    this.moveEye = function(){
+        if(this.direction == 'left'){
+            this.eye.centerX = this.x+this.width*0.1;
+            this.eye.centerY = this.y+this.height*0.3;
+            this.eye.x = this.x+this.width*0.1;
+            this.eye.y = this.y+this.height*0.3;
+        }
+        else{
+            this.eye.centerX = this.x+this.width*0.9;
+            this.eye.centerY = this.y+this.height*0.3;
+            this.eye.x = this.x+this.width*0.9;
+            this.eye.y = this.y+this.height*0.3;
+        }
+    }
 }
 
 Creature.prototype = new ObjectR(); //Object prototype와 chain(상속)
@@ -403,7 +425,7 @@ function randomObject(type, canvas, ctx, spawnX){
     if(type == 'object')
         return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
     else if(type == 'creature')
-        return new Creature(canvas, ctx, 'creature', x, y, z, mess, width, height, color, speed);
+        return new Creature(canvas, ctx, 'creature', x, y, z, mess, width, height, color, speed, new Eye(canvas, ctx, x+width/100, y+height/100, (width+height)/70, [0, 30, 0], [250, 200, 250], [200, 150, 50], 'circle'));
 }
 
 function arrToRGB(rgbArr){  //배열을 rgb문자열로 변환

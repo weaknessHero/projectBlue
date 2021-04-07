@@ -27,8 +27,8 @@ function showCages(){
         objects.push([ new ObjectR( cageList[cageN],ctxList[cageN],
                     'wall',0,cageList[cageN].height-30,1,10000,
                     cageList[cageN].width,30,[120,80,30] ),
-                    randomObject('creature', cageList[cageN],ctxList[cageN]),
-                    randomObject('creature', cageList[cageN],ctxList[cageN])
+                    randomObject('creature', cageList[cageN],ctxList[cageN], 10),
+                    randomObject('creature', cageList[cageN],ctxList[cageN], 200)
                     ]);
     
     cageLoop();

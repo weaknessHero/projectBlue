@@ -8,12 +8,14 @@
         1 Eye.draw() if eye.type == vertical: 가운데 빈 공간 채우는 선 추가.
 */
 
-function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
+function Eye(canvas, ctx, x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
     /* TODO
         + Eye shape to ellipse.
         + Eyelid skin texture.
         + Vein in lens.
     */
+    this.canvas = canvas;
+    this.ctx = ctx;
 
     this.pupilShape = shape;
 
@@ -108,7 +110,7 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
     this.blink = function(frame, delay = 0){ //깜빡임
         if(!this.blinking){
             if(delay != 0){
-                this.blinkDelay = delay - this.whiteRadius/((canvasEl.width+canvasEl.height)/10)*30;
+                this.blinkDelay = delay - this.whiteRadius/((this.canvas.width+this.canvas.height)/10)*30;
                 this.blinkWidth = 180-this.blinkDelay*6;
                 this.blinking = true;
                 this.blinkStartFrame = frame + this.blinkDelay;
@@ -125,72 +127,72 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
 
     this.drawEyelid = function(){ // 눈꺼풀 그림
         if(this.eyelidWidthRadius>180) this.eyelidWidthRadius = 180;
-        ctxBackground.fillStyle = arrToRGB(this.eyelidCol);
+        this.ctx.fillStyle = arrToRGB(this.eyelidCol);
 
         //this.eyelidWidthRadius에 비례한 두께로 눈꺼풀 그림.
         for(let d = -5; d + this.eyelidWidthRadius <= 185; d += 5){ // 위
-            ctxBackground.beginPath();
-            ctxBackground.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d + this.eyelidWidthRadius), false);
-            ctxBackground.fill();
+            this.ctx.beginPath();
+            this.ctx.arc(this.centerX, this.centerY, this.whiteRadius+1, degreeToRadian(d), degreeToRadian(d + this.eyelidWidthRadius), false);
+            this.ctx.fill();
         }
         for(let d = -5; d + this.eyelidWidthRadius <= 185; d += 5){ // 아래
-            ctxBackground.beginPath();
-            ctxBackground.arc(this.centerX, this.centerY, this.whiteRadius + 1, Math.PI + degreeToRadian(d), Math.PI + degreeToRadian(d + this.eyelidWidthRadius), false);
-            ctxBackground.fill();
+            this.ctx.beginPath();
+            this.ctx.arc(this.centerX, this.centerY, this.whiteRadius + 1, Math.PI + degreeToRadian(d), Math.PI + degreeToRadian(d + this.eyelidWidthRadius), false);
+            this.ctx.fill();
         }
     }
 
     this.draw = function(){
         //흰자 ---명암---
-        ctxBackground.fillStyle = arrToRGB(this.whiteColor);
-        ctxBackground.beginPath();
-        ctxBackground.arc(this.centerX, this.centerY, this.whiteRadius, 0, Math.PI * 2, false);
-        ctxBackground.fill();
+        this.ctx.fillStyle = arrToRGB(this.whiteColor);
+        this.ctx.beginPath();
+        this.ctx.arc(this.centerX, this.centerY, this.whiteRadius, 0, Math.PI * 2, false);
+        this.ctx.fill();
 
         //홍채
         if(this.pupilShape == 'circle'){
-            ctxBackground.fillStyle = arrToRGB(this.irisColor);
-            ctxBackground.beginPath();
-            ctxBackground.arc(this.x, this.y, this.irisRadius, 0, Math.PI * 2, false);
-            ctxBackground.fill();
+            this.ctx.fillStyle = arrToRGB(this.irisColor);
+            this.ctx.beginPath();
+            this.ctx.arc(this.x, this.y, this.irisRadius, 0, Math.PI * 2, false);
+            this.ctx.fill();
 
             //그라데이션
             var gradation = 1;
-            ctxBackground.lineWidth = 1;
-            for(let tempR = 0; tempR < this.irisRadius-this.pupilRadius; tempR+=ctxBackground.lineWidth){
+            this.ctx.lineWidth = 1;
+            for(let tempR = 0; tempR < this.irisRadius-this.pupilRadius; tempR+=this.ctx.lineWidth){
                 gradation = tempR/this.irisRadius;
-                ctxBackground.strokeStyle = arrToRGB([this.irisColor[0] * gradation, this.irisColor[1] * gradation, this.irisColor[2] * gradation]);
-                ctxBackground.beginPath();
-                ctxBackground.arc(this.x, this.y, this.irisRadius-tempR, 0, Math.PI * 2, false);
-                ctxBackground.stroke();
+                this.ctx.strokeStyle = arrToRGB([this.irisColor[0] * gradation, this.irisColor[1] * gradation, this.irisColor[2] * gradation]);
+                this.ctx.beginPath();
+                this.ctx.arc(this.x, this.y, this.irisRadius-tempR, 0, Math.PI * 2, false);
+                this.ctx.stroke();
             }
 
             //동공
-            ctxBackground.fillStyle = "black";
-            ctxBackground.beginPath();
-            ctxBackground.arc(this.x, this.y, this.pupilRadius, 0, Math.PI * 2, false);
-            ctxBackground.fill();
+            this.ctx.fillStyle = "black";
+            this.ctx.beginPath();
+            this.ctx.arc(this.x, this.y, this.pupilRadius, 0, Math.PI * 2, false);
+            this.ctx.fill();
         }
         else if(this.pupilShape == 'vertical'){
-            ctxBackground.fillStyle = "black";
-            ctxBackground.strokeStyle = "black";
+            this.ctx.fillStyle = "black";
+            this.ctx.strokeStyle = "black";
 
             //right half
-            ctxBackground.beginPath();
-            ctxBackground.arc(this.x-this.pupilRadius*1.63, this.y, this.pupilRadius*2, -Math.PI/5, Math.PI/5, false);
-            ctxBackground.fill();
+            this.ctx.beginPath();
+            this.ctx.arc(this.x-this.pupilRadius*1.63, this.y, this.pupilRadius*2, -Math.PI/5, Math.PI/5, false);
+            this.ctx.fill();
 
             //left half
-            ctxBackground.beginPath();
-            ctxBackground.arc(this.x+this.pupilRadius*1.63, this.y, this.pupilRadius*2, Math.PI*4/5, Math.PI*6/5, false);
-            ctxBackground.fill();
+            this.ctx.beginPath();
+            this.ctx.arc(this.x+this.pupilRadius*1.63, this.y, this.pupilRadius*2, Math.PI*4/5, Math.PI*6/5, false);
+            this.ctx.fill();
 
             //middle line
-            ctxBackground.beginPath();
-            ctxBackground.moveTo(this.x, this.y - (this.pupilRadius*1.63 * Math.sin(Math.PI/5)));
-            ctxBackground.lineTo(this.x, this.y + (this.pupilRadius*1.63 * Math.sin(Math.PI/5)));
-            ctxBackground.lineWidth = 2;
-            ctxBackground.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.x, this.y - (this.pupilRadius*1.63 * Math.sin(Math.PI/5)));
+            this.ctx.lineTo(this.x, this.y + (this.pupilRadius*1.63 * Math.sin(Math.PI/5)));
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
         }
 
         //눈꺼풀
@@ -219,7 +221,7 @@ function Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
     }
 }
 
-function randomEye(){
+function randomEye(canvas, ctx){
     let whiteRadius = (Math.random() * 24 + 26) * sizeRate;
     let x = Math.random()*canvasEl.width;
     let y = Math.random()*canvasEl.height;
@@ -245,5 +247,5 @@ function randomEye(){
     let whiteColor = [Math.random() * 30 + 205, Math.random() * 30 + 205, Math.random() * 30 + 205];
     let eyelidColor = [Math.random() * 160, Math.random() * 160, Math.random() * 160];
     let shape = ['circle', 'circle', 'vertical'][Math.floor(Math.random()*3)];
-    return new Eye(x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape);
+    return new Eye(canvas, ctx, x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape);
 }

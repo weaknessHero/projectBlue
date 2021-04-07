@@ -11,16 +11,15 @@
 //Initial function
 function setupCanvas(){
     for(let temp = 0; temp < document.getElementsByClassName("cage").length; temp++)
-        eyes.push(randomEye()); //개체 수 만큼의 배경 눈
+        eyes.push(randomEye(canvasEl, ctxBackground)); //개체 수 만큼의 배경 눈
 }
 
 function init(){ //Initial setting
     if(frame < initFrameA-initFrameB) eyes.forEach(eye=>eye.init(initFrameA-initFrameB)); //
     else if(frame > initFrameA) return 0;
     if(frame > (initFrameA-initFrameB)/2) eyes.forEach(eye=>eye.eyelidWidthRadius -= 105/((initFrameA+initFrameB)/2));
-    requestAnimationFrame(init);
+    initAnimation = requestAnimationFrame(init);
 }
-
 
 
 function backgroundLoop(){ //Background animation
@@ -41,8 +40,8 @@ function backgroundLoop(){ //Background animation
 function mouseClick(){
     eyes.forEach(function(eye){
         let d = distance([mx-9,my-90], [eye.centerX, eye.centerY]);
-        if(d < (canvasEl.width + canvasEl.height)/10 + eye.whiteRadius)
-            eye.blink(frame, (d/((canvasEl.width + canvasEl.height)/10)) * waveFrame);
+        if(d < (eye.canvas.width + eye.canvas.height)/10 + eye.whiteRadius)
+            eye.blink(frame, (d/((eye.canvas.width + eye.canvas.height)/10)) * waveFrame);
     });
     waves.push({'x' : mx-9, 'y' : my-90, 'frame' : frame, 'end' : false});
 }
@@ -53,7 +52,7 @@ function mouseMove(event){
 
     eyes.forEach(function(eye){
         let d = distance([mx, my], [eye.centerX, eye.centerY]);
-        if(d > eye.range * (canvasEl.width + canvasEl.height)/2000)
+        if(d > eye.range * (eye.canvas.width + eye.canvas.height)/2000)
             eye.looking = false;
         else if(!eye.looking){
             eye.slowDownCount = eye.reactingTime; //반응속도 구현
