@@ -28,7 +28,7 @@ function Eye(canvas, ctx, x, y, whiteRadius, irisColor, whiteColor, eyelidColor,
 
     //Size
     this.whiteRadius = whiteRadius;
-    if(this.pupilShape == 'circle') this.pupilRadius = whiteRadius/2;
+    if(this.pupilShape == 'circle') this.pupilRadius = whiteRadius/2-0.1;
     else if(this.pupilShape == 'vertical') this.pupilRadius = 3*whiteRadius/4;
     this.irisRadius = (this.whiteRadius + this.pupilRadius) / 2; //홍채 크기
     if(this.irisRadius > whiteRadius * 3/4) this.irisRadius = whiteRadius * 3/4; //홍채 크기 제한

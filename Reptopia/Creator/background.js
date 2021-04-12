@@ -19,6 +19,8 @@ function init(){ //Initial setting
     else if(frame > initFrameA) return 0;
     if(frame > (initFrameA-initFrameB)/2) eyes.forEach(eye=>eye.eyelidWidthRadius -= 105/((initFrameA+initFrameB)/2));
     initAnimation = requestAnimationFrame(init);
+    if(frame>100)
+        cancelAnimationFrame(initAnimation);
 }
 
 

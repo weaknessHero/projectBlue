@@ -212,9 +212,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed,
     this.legDirection = 'left';
 
     this.eye = eye;
-    eyes.push(this.eye);
-    this.eye.init(10);
-    this.eye.eyelidWidthRadius = 105;
+    this.eye.eyelidWidthRadius = 75;
 
     this.x = x;
     this.y = y;
@@ -425,7 +423,7 @@ function randomObject(type, canvas, ctx, spawnX){
     if(type == 'object')
         return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
     else if(type == 'creature')
-        return new Creature(canvas, ctx, 'creature', x, y, z, mess, width, height, color, speed, new Eye(canvas, ctx, x+width/100, y+height/100, (width+height)/70, [0, 30, 0], [250, 200, 250], [200, 150, 50], 'circle'));
+        return new Creature(canvas, ctx, 'creature', x, y, z, mess, width, height, color, speed, new Eye(canvas, ctx, x+width/100, y+height/100, (width+height)/60, [0, 30, 0], [250, 200, 250], [200, 150, 50], 'circle'));
 }
 
 function arrToRGB(rgbArr){  //배열을 rgb문자열로 변환

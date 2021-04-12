@@ -4,9 +4,8 @@
     Functions for Cages.
 */
 /*
-    1.3.11
-        1. Speed 출력 삭제
-        2. Put two creature in one cage.
+    1.3.12
+        1. element, data, function 구조 변경 필요.!
 */
 
 function showCages(){
@@ -30,10 +29,9 @@ function showCages(){
                     randomObject('creature', cageList[cageN],ctxList[cageN], 10),
                     randomObject('creature', cageList[cageN],ctxList[cageN], 200)
                     ]);
-    
-    cageLoop();
-    
 
+
+    cageLoop();
 
     function cageLoop(){
         for(cageN=0;cageN<ctxList.length;cageN++){

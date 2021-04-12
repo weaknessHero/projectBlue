@@ -39,6 +39,4 @@ const eyeRange = 25;
 
 setupCanvas();
 init();
-if(frame>100)
-    cancelAnimationFrame(initAnimation);
 backgroundLoop();
