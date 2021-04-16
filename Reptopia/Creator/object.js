@@ -192,7 +192,7 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     }
 }
 
-function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed, eye){
+function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed){
     this.canvas = canvas;
     this.ctx = ctx;
 
@@ -207,7 +207,12 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed,
     this.direction  = 'left';
     this.legDirection = 'left';
 
-    this.eye = eye;
+    this.eye =
+        new Eye(canvas, ctx, x+width/20, y+height/20, (width+height)/35,
+        [Math.floor(Math.random()*255), Math.floor(Math.random()*255), Math.floor(Math.random()*255)],
+        [Math.floor(Math.random()*255), Math.floor(Math.random()*255), Math.floor(Math.random()*255)],
+        color.map(x=>x*0.8), 'circle');
+
     this.eye.eyelidWidthRadius = 75;
 
     this.x = x;
@@ -411,9 +416,9 @@ Creature.prototype = new ObjectR(); //Object prototype와 chain(상속)
 function randomObject(type, canvas, ctx, spawnX){
     let size = Math.random();
 
-    let mess   = Math.random()*1 + 1;
-    let width  = Math.floor(Math.random()*(canvas.width/100) + 25 * (1+size));
-    let height = Math.floor(Math.random()*(canvas.height/100) + 12 * (1+size));
+    let mess   = Math.random()*1 + 0.5;
+    let width  = Math.floor(Math.random()*(canvas.width/100) + (canvasEl.width+canvas.height)*(1+size)/50);
+    let height = Math.floor(Math.random()*(canvas.height/100) + (canvasEl.width+canvas.height)*(1+size)/100);
     let color  = [155, 155, 200].map(x=> Math.floor(x*Math.random()*Math.random()));
     color[0]+=100;
     color[1]+=100;  //색 확률 조정(노랑 up)
@@ -425,7 +430,7 @@ function randomObject(type, canvas, ctx, spawnX){
     if(type == 'object')
         return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
     else if(type == 'creature')
-        return new Creature(canvas, ctx, 'creature', x, y, z, mess, width, height, color, speed, new Eye(canvas, ctx, x+width/100, y+height/100, (width+height)/60, [0, 30, 0], [250, 200, 250], [200, 150, 50], 'circle'));
+        return new Creature(canvas, ctx, 'creature', x, y, z, mess, width, height, color, speed);
 }
 
 function arrToRGB(rgbArr){  //배열을 rgb문자열로 변환

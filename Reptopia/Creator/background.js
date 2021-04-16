@@ -97,10 +97,6 @@ function distance(location1, location2){
     return Math.abs(Math.sqrt(((location1[0]-location2[0])**2 + (location1[1]-location2[1])**2)));
 }
 
-function arrToRGB(arr){
-    return "rgb(" + arr[0] + "," + arr[1] + "," + arr[2] + ")";
-}
-
 function drawWave(wave){
     if(wave['end']) waves.splice(waves.findIndex( w => w==wave), 1); //제거 파트
 

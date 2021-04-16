@@ -25,7 +25,7 @@ const reactFrame = 10 * timeSlow;
 
 var frame = 60;
 
-var newCreature = new Creature(canvasEl, ctxBackground, 'creature', canvasEl.width-300, canvasEl.height-500, 1, 0.1, 250, 50, [30,100,50], 12, new Eye(canvasEl, ctxBackground, 8, 8, 4, [0, 30, 0], [250, 200, 250], [200, 150, 50], 'circle'));
+var newCreature = new Creature(canvasEl, ctxBackground, 'creature', canvasEl.width-300, canvasEl.height-500, 1, 0.3, 250, 50, [30,100,50], 12);
 var ground = new ObjectR(canvasEl, ctxBackground, 'wall', 0, canvasEl.height-100, 1, 100, canvasEl.width, 100, [30,100,50]);
 var wall1 = new ObjectR(canvasEl, ctxBackground, 'wall', canvasEl.width-200, canvasEl.height-300, 1, 100, 100, 50, [30,100,150]);
 var wall2 = new ObjectR(canvasEl, ctxBackground, 'wall', canvasEl.width-250, canvasEl.height-250, 1, 100, 200, 50, [30,50,150]);
