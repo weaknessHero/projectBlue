@@ -5,7 +5,7 @@
 """
 
 """
-    1.3.10
+    1.3.11
 1.구조 간결화
 
 """
@@ -61,7 +61,7 @@ def main():
     i=0
     err4=0
     
-    dataArr=[[0]*26 for i in range(8)]
+    dataArr=[[0]*26 for i in range(10)]
     print(dataArr)
     #통계적 값 
     nomalProcess=0
@@ -104,11 +104,14 @@ def main():
             for season in df.columns:
                 #예외처리
                 if season[4:]=='4':
+                    year=season[:4]
                     if subject in exceptionSubject:
-                        try:                        
-                            df[season][subject]=int(df[season][subject])//4
+                        try:
+                            for i in ["1","2","3"]:
+                                df[season][subject]=int(df[season][subject])-int(df[year+i][subject])
                         except:
                             err4+=1
+                            df[season][subject]=""
 
                 #값 정의
                 floatDataBF = floatData
@@ -134,13 +137,14 @@ def main():
                 
                 #비교대상 존재시   
                 if (floatDataBF!="")&(floatData!=""):
-                    for i in range(0,4,1):
+                    for i in range(0,5,1):
                         try:
-                            seasonDF1=stockDateLoop(seasonDate,stockCode, 91*(i-2))
-                            seasonDF2=stockDateLoop(seasonDate,stockCode, 91*(i-1))
-
-                            dataArr[i][y]+=(int(dataframePrice[stockCode][str(seasonDF2)]))/(int(dataframePrice[stockCode][str(seasonDF1)]))
-                            dataArr[i+4][y]+=1
+                            seasonDF1=str(stockDateLoop(seasonDate,stockCode, 91*(i-1)))
+                            seasonDF2=str(stockDateLoop(seasonDate,stockCode, 91*(i-2)))
+                            if int(dataframePrice[stockCode][seasonDF1])>int(dataframePrice[stockCode][seasonDF2]):
+                                dataArr[i][y]+=1
+                                                                                  
+                            dataArr[i+5][y]+=1
                             
                             nomalProcess+=1
 
@@ -159,10 +163,11 @@ def main():
     y=0
     for subject in subjectList:
         print('subject:',subject)
-        print(dataArr[0][y]/dataArr[4][y]*100)
-        print(dataArr[1][y]/dataArr[5][y]*100)
-        print(dataArr[2][y]/dataArr[6][y]*100)
-        print(dataArr[3][y]/dataArr[7][y]*100)
+        print(dataArr[0][y]/dataArr[5][y]*100)
+        print(dataArr[1][y]/dataArr[6][y]*100)
+        print(dataArr[2][y]/dataArr[7][y]*100)
+        print(dataArr[3][y]/dataArr[8][y]*100)
+        print(dataArr[4][y]/dataArr[9][y]*100)
         y+=1
 
 
