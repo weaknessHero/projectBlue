@@ -101,10 +101,6 @@ function arrToRGB(arr){
     return "rgb(" + arr[0] + "," + arr[1] + "," + arr[2] + ")";
 }
 
-function degreeToRadian(degree){
-    return Math.PI * degree/180;
-}
-
 function drawWave(wave){
     if(wave['end']) waves.splice(waves.findIndex( w => w==wave), 1); //제거 파트
 

@@ -4,12 +4,8 @@
     Object engine.
 */
 /*
-    1.3.11
-        randomObject() : 색, 무게, 두께, 높이, 속도 수치 조정
-        drawCreature() : 개체 개별 색 적용, 수치 조정, 식 간소화, 오른쪽 모습 추가
-        walk(): tempVelocity 수치 조정
-        jump(): 속도 조정
-        setMovingCase: 확률 조정
+    1.3.12
+        randomObject: 길이, 높이 랜덤값 조정 (비율이 더 일정하게)
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -230,6 +226,10 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed,
     this.p4     = [this.x, this.y + this.height];
     this.points = [this.p1, this.p2, this.p3, this.p4];
 
+    this.firstHeadB = {'x': 0.15, 'y':0};
+    this.secondHeadB = {'x': 0.05, 'y':0.3};
+    this.thirdHeadB = {'x': 0.11, 'y': 0.72};
+
     this.firstFoot = {'x':0.3, 'y':1};
     this.secondFoot = {'x':0.55, 'y':1};
 
@@ -245,8 +245,8 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed,
             this.ctx.fillStyle = arrToRGB(this.color);
             this.ctx.beginPath();
             this.ctx.moveTo(this.x+this.width*0.2, this.y+this.height*0.3);
-            this.ctx.bezierCurveTo(this.x+this.width*0.15,this.y+this.height*0, this.x+this.width*0.02,this.y+this.height*0.1, this.x+this.width*0,this.y+this.height*0.36);
-            this.ctx.bezierCurveTo(this.x+this.width*0.08,this.y+this.height*0.72, this.x+this.width*0.11,this.y+this.height*0.72, this.x+this.width*0.2,this.y+this.height*0.62);
+            this.ctx.bezierCurveTo(this.x+this.width*this.firstHeadB['x'],this.y+this.height*this.firstHeadB['y'], this.x+this.width*this.secondHeadB['x'],this.y+this.height*this.secondHeadB['y'], this.x+this.width*0,this.y+this.height*0.36);
+            this.ctx.quadraticCurveTo(this.x+this.width*this.thirdHeadB['x'],this.y+this.height*this.thirdHeadB['y'], this.x+this.width*0.2,this.y+this.height*0.62);
             this.ctx.fill();
             //body
             this.ctx.fillStyle = arrToRGB(this.color.map(x=>x*=0.3));
@@ -409,9 +409,11 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed,
 Creature.prototype = new ObjectR(); //Object prototype와 chain(상속)
 
 function randomObject(type, canvas, ctx, spawnX){
+    let size = Math.random();
+
     let mess   = Math.random()*1 + 1;
-    let width  = Math.floor(Math.random()*(canvas.width/10))+25;
-    let height = Math.floor(Math.random()*(canvas.height/10)) + 12;
+    let width  = Math.floor(Math.random()*(canvas.width/100) + 25 * (1+size));
+    let height = Math.floor(Math.random()*(canvas.height/100) + 12 * (1+size));
     let color  = [155, 155, 200].map(x=> Math.floor(x*Math.random()*Math.random()));
     color[0]+=100;
     color[1]+=100;  //색 확률 조정(노랑 up)

@@ -4,8 +4,8 @@
     Reptopia의 배경에 나타나는 Eye 객체와, 그걸 다루는 함수들.
 */
 /*
-    1.3.7
-        1 Eye.draw() if eye.type == vertical: 가운데 빈 공간 채우는 선 추가.
+    1.3.12
+        1 size up eyes. (main.js: eyeSizeRate)
 */
 
 function Eye(canvas, ctx, x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape){
@@ -222,7 +222,7 @@ function Eye(canvas, ctx, x, y, whiteRadius, irisColor, whiteColor, eyelidColor,
 }
 
 function randomEye(canvas, ctx){
-    let whiteRadius = (Math.random() * 24 + 26) * sizeRate;
+    let whiteRadius = (Math.random() * 24 + 26) * eyeSizeRate;
     let x = Math.random()*canvasEl.width;
     let y = Math.random()*canvasEl.height;
 
@@ -248,4 +248,8 @@ function randomEye(canvas, ctx){
     let eyelidColor = [Math.random() * 160, Math.random() * 160, Math.random() * 160];
     let shape = ['circle', 'circle', 'vertical'][Math.floor(Math.random()*3)];
     return new Eye(canvas, ctx, x, y, whiteRadius, irisColor, whiteColor, eyelidColor, shape);
+}
+
+function degreeToRadian(degree){
+    return Math.PI * degree/180;
 }

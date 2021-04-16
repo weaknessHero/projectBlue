@@ -1,3 +1,13 @@
+/*
+    cage.js
+    2021.01.27
+    Functions for Cages.
+*/
+/*
+    1.3.12
+        1. element, data, function 구조 변경 필요.!
+*/
+
 //Element setting
 var canvasEl = document.getElementById("background");
 canvasEl.width = innerWidth;
@@ -34,9 +44,11 @@ const initFrameB = 10 * timeSlow;
 const reactFrame = 10 * timeSlow;
 const waveWidth = 20;
 const waveFrame = 20 * timeSlow;
-const sizeRate =  (canvasEl.width + canvasEl.height)/3000;
+const eyeSizeRate =  (canvasEl.width + canvasEl.height)/1000;
 const eyeRange = 25;
 
 setupCanvas();
 init();
+if(frame>100)
+    cancelAnimationFrame(initAnimation);
 backgroundLoop();
