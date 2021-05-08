@@ -1,29 +1,22 @@
-# -*- coding: utf-8 -*-
 """
-
 날짜를 입력받고 저장된 날짜에서부터 입력받은 날짜까지 데이터를 저장함
 초기 실행시 빠른 설치로 진행되고 새파일을 만든다 
 다음 설치시 부분적인 업데이트 날짜로 이어져서 부분설치가 된다 
-
 """
 
 
 """
-
     실행방법
 1. cmd 실행하여 파일이 설치된 위치로 이동한다.
 2. pip install pykrx를 실행하여 같은 위치에 설치해준다
 3. ifReloadStockData.py 를 먼저 실행해준다
 4. 현재 파일을 실행하고 명령에 따른다. 
 5. 실행시 약 7분 이상의 시간이 소요된다. 실행이 완료되면 종료를 눌러준다.
-
 """
 
 """
-
     1.4.4
-1. 데이터 받을때 try excep문을 통해서 오류시에도 진행
-
+1. csv 데이터 구조 변경에 따른 연동부 변경
 
 """
 
@@ -96,7 +89,7 @@ def download(lastUpdateDate):
     if (int(lastUpdateDate) <= int(todayDate)) : 
      
         #모든 주가 데이터 종가 데이터로 변환
-        df=pd.read_csv('resource/corpCodeData.csv',header = 0 ,names = ['stockCodeData','corpCodeData'])
+        df=pd.read_csv('resource/corpCodeData.csv',header = 0 ,names = ['corpName','stockCodeData','corpCodeData'])
         tickerSymbolList = df['stockCodeData'].values
 
         downloadSize = tickerSymbolList.size

@@ -9,7 +9,7 @@ CTFCT 키 2개를 사용한다했을때 4일정도가 걸림
 
 """
      1.4.4
-1. 주파일 이름 변경
+1. csv 데이터 구조 변경에 따른 연동부 변경
 
 """
 import urllib.request as urlreq
@@ -37,7 +37,7 @@ getCorpData='/fnlttSinglAcnt.json'
 CTFCTKeyNA = "?crtfc_key="
 CTFCTKey1 = "69d81f8cacc28ddbbb16cdce1ca930ddc4cc0ca4"
 CTFCTKey2 = "d171bfc3588a2a2cf9defbee64bc3561de0dfe8a"
-CTFCTKey = CTFCTKey2
+CTFCTKey = CTFCTKey1
 
 corpCodeNA= "&corp_code="
 
@@ -55,7 +55,7 @@ def main():
 
      #코드 받기
      corpCodeData = pd.read_csv('resource/corpCodeData.csv', header=0)
-
+     print(corpCodeData)
      
      #업데이트 파일 확인
      updateCorpTxt = open('updateCorp.txt','r')
@@ -69,24 +69,21 @@ def main():
           corpCodeData=corpCodeData.iloc[startIndex:]#순서가 계속 +1 -1 변동해서 안정적인 저장 
 
 
-     for num, corpCode in corpCodeData.iterrows():
-          #testCode
-          #corpCode[0]="005930"
-          #corpCode[1]="00126380"
+     for  num, corpCode in corpCodeData.iterrows():
           
           #데이터프레임 열 탐색
-          print(str(corpCode[0]))
+          print(corpCode[0])
           year = 2015
           onCorpData = 0
           baseDF = pd.DataFrame(index=range(0,0))
           columnList= []
 
-          while year < 2020 :
+          while year < 2021 :
                #api 차단 방지용
                sleep(0.05)
                
                #데이터 존재 확인을 위해 연간보고서를 받는다
-               res= requests.get(url+getCorpData+CTFCTKeyNA+ CTFCTKey +corpCodeNA+str(corpCode[1]).zfill(8)+BSNSYearNA+ str(year) +reptyCodeNA + str(1))
+               res= requests.get(url+getCorpData+CTFCTKeyNA+ CTFCTKey +corpCodeNA+str(corpCode[2]).zfill(8)+BSNSYearNA+ str(year) +reptyCodeNA + str(1))
                item=json.loads(res.text)
 
                if(item['status']=='000'):#정상 값인지 확인
@@ -98,7 +95,7 @@ def main():
                          #api 차단 방지용
                          sleep(0.05)
                          #분기별 보고서 받기
-                         res= requests.get(url+getCorpData+CTFCTKeyNA+ CTFCTKey +corpCodeNA+str(corpCode[1]).zfill(8)+BSNSYearNA+ str(year) +reptyCodeNA + str(code))
+                         res= requests.get(url+getCorpData+CTFCTKeyNA+ CTFCTKey +corpCodeNA+str(corpCode[2]).zfill(8)+BSNSYearNA+ str(year) +reptyCodeNA + str(code))
                          item=json.loads(res.text)
                          
                          if(item['status']=='000'):
@@ -124,10 +121,10 @@ def main():
           #회사내용 존재시
           if(onCorpData>0):
                baseDF.columns=columnList
-               baseDF.to_csv('data/detailData/'+str(corpCode[0]).zfill(6)+'.csv', mode='w', header=True, index=True, encoding='utf-8-sig')
+               baseDF.to_csv('data/detailData/'+str(corpCode[1]).zfill(6)+'.csv', mode='w', header=True, index=True, encoding='utf-8-sig')
 
           updateTxt = open('updateCorp.txt','w')
-          updateTxt.write(str(corpCode[0]))
+          updateTxt.write(str(corpCode[1]))
           updateTxt.close()
      
 def resSeries(item, baseDF):

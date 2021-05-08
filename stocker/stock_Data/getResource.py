@@ -5,9 +5,8 @@
     update.txt와 파일 구조등 resource들 생성
 """
 """
-    1.4.3
-1. 회사찾기 위치용 updateCorp.txt 생성
-2. d
+     1.4.4
+1. csv 데이터 형태를 검색에 용의하도록 변경
 
 """
 
@@ -43,17 +42,20 @@ def getCorpCode():
     
     DFList1 = []
     DFList2 = []
+    DFList3 = []
 
     for corpCode in root.iter('list'):
         if(corpCode[2].text.strip()!='' and corpCode[2].text!='999980'): #상장회사일 경우 True            
-            DFList1.append(corpCode[2].text.strip())
-            DFList2.append(corpCode[0].text.strip())
+            DFList1.append(corpCode[1].text.strip())
+            DFList2.append(corpCode[2].text.strip())
+            DFList3.append(corpCode[0].text.strip())
 
     series1 = pd.Series(DFList1)
     series2 = pd.Series(DFList2)
-    csv=pd.concat([series1, series2] , axis=1 ,keys=["stockCode","corpCode"])
+    series3 = pd.Series(DFList3)
+    csv=pd.concat([series1, series2,series3] , axis=1 ,keys=["corpName","stockCode","corpCode"])
 
-    csv.to_csv('resource/corpCodeData.csv', mode='w', index=False, header=True)
+    csv.to_csv('resource/corpCodeData.csv', mode='w', index=False, header=True, encoding="utf-8-sig")
 
 try:
     os.mkdir('resource')
