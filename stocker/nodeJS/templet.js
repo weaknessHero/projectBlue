@@ -23,9 +23,9 @@ module.exports = {
   },
   searchBar:function(){
     return `
-    <p><a href="/"><h1>stocker</h1></a></p>
-    <form action="/">
-    <input type="text" name="search">
+    <a href="/"><h1>stocker</h1></a>
+    <form action="/search">
+    <input type="text" name="searchId">
     <input type="submit">
     </form>
     `;
