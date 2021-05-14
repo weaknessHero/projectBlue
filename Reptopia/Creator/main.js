@@ -36,6 +36,8 @@ var backgroundAnimation;
 var initAnimation;
 var cageAnimations = [];
 
+feeding = false;
+
 //conts
 const timeSlow = 1;
 const blinkVelocity = 5 * timeSlow;

@@ -34,6 +34,9 @@ function backgroundLoop(){ //Background animation
     eyes.forEach(eye => eye.update());
     eyes.forEach(function(eye){if(Math.random()*2000<1) eye.blink(frame)});
 
+    if(feeding)
+        dragCricket();
+
     backgroundAnimation = requestAnimationFrame(backgroundLoop);
 }
 
@@ -110,4 +113,16 @@ function drawWave(wave){
     ctxBackground.stroke();
 
     if(frame - wave['frame'] >= waveFrame-2) wave['end'] = true; //제거 파트
+}
+
+function feed(){
+    feeding = true;
+}
+
+function dragCricket(){
+    ctxBackground.drawImage(document.getElementById("feed2"), mx-35, my-130, 50, 50);
+}
+
+function feedCage(){
+    feeding = false;
 }

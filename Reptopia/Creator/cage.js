@@ -12,6 +12,8 @@ function showCages(){
     var cages = document.getElementById("cages");
     cages.setAttribute("style", "top: 5%; height: 80%");
     
+    document.getElementById("feed").setAttribute("style", "opacity: 1;");
+    
     var cageList = document.getElementsByClassName("cage");
     var ctxList = [];
 
@@ -58,6 +60,8 @@ function hideCages(){
     cages = document.getElementById("cages");
     cages.setAttribute("style", "top: 90%; height: 0%");
     document.getElementById("arrow").setAttribute("style", "opacity: 0;");
+    document.getElementById("feed").setAttribute("style", "opacity: 0;");
     cageList = document.getElementsByClassName("cage");
     for(i=0;i<cageList.length;i++){cageList[i].setAttribute("style", "height: 0%;");}
+    feeding = false;
 }
