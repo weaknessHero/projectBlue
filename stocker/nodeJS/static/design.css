@@ -1,0 +1,45 @@
+body { text-align: center; }
+div { text-align: center; }
+
+
+*{
+  user-select: none;
+}
+*:focus { outline:none; }
+
+#logoIMG{
+  margin-top: 20%;
+}
+#logoIMG > a > img{
+  width:60%;
+}
+.smallLogo{
+  display: inline-block;
+}
+.smallLogo > a > img{
+  height: 50px;
+  text-align: left;
+}
+
+
+.searchBar{
+  display:inline-block;
+  border: gray 1px solid;
+  width: 80%;
+  text-align: center;
+}
+
+
+input[type="text"] {
+
+  size:10;
+  width:90%;
+  padding: 5px;
+  height: 40px;
+  font-size: 14pt;
+  border: none;
+}
+button{
+  border: none;
+  background-color: white;
+}
