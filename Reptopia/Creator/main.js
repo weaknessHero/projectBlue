@@ -23,7 +23,7 @@ window.addEventListener("resize", resize);
 var eyes = [], waves = [], objects = [];
 
 //Mouse x, y
-var mx, my;
+var mx, my, cageMouseX, cageMouseY;
 
 //현재 프레임
 var frame = 0;
@@ -37,6 +37,7 @@ var initAnimation;
 var cageAnimations = [];
 
 feeding = false;
+out = true;
 
 //conts
 const timeSlow = 1;

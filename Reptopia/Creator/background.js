@@ -114,15 +114,3 @@ function drawWave(wave){
 
     if(frame - wave['frame'] >= waveFrame-2) wave['end'] = true; //제거 파트
 }
-
-function feed(){
-    feeding = true;
-}
-
-function dragCricket(){
-    ctxBackground.drawImage(document.getElementById("feed2"), mx-35, my-130, 50, 50);
-}
-
-function feedCage(){
-    feeding = false;
-}
