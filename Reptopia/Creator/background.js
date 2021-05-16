@@ -4,8 +4,8 @@
     Reptopia의 background canvas 자바스크립트.
 */
 /*
-    1.3.11
-    
+    1.3.14
+        1. cages 화면에서 feeding 삭제
 */
 
 //Initial function
@@ -33,9 +33,6 @@ function backgroundLoop(){ //Background animation
     waves.forEach(wave => drawWave(wave));
     eyes.forEach(eye => eye.update());
     eyes.forEach(function(eye){if(Math.random()*2000<1) eye.blink(frame)});
-
-    if(feeding)
-        dragCricket();
 
     backgroundAnimation = requestAnimationFrame(backgroundLoop);
 }

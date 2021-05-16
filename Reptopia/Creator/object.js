@@ -4,8 +4,8 @@
     Object engine.
 */
 /*
-    1.3.12
-        randomObject: 길이, 높이 랜덤값 조정 (비율이 더 일정하게)
+    1.3.14
+        1. 각 cage의 해상도 조정에 따른 세부 수치 조정(creature 크기, 무게, 공기저항, 속도 등 증가)
 */
 
 function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
@@ -62,7 +62,7 @@ function ObjectR(canvas, ctx, type, x, y, z, mess, width, height, color){
     }
 
     this.airResist = function(){     //공기저항 구현 ---개발중--- 저항 면적에 비례하여 저항 상승하도록
-        this.dx *= 0.99;
+        this.dx *= 0.91;
         this.dr *= 0.98;
         this.dy *= 0.99;
     }
@@ -332,7 +332,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
 
         this.dx = this.nowSpeed * sign;
 
-        let tempVelocity = this.nowSpeed*this.width/5000;
+        let tempVelocity = this.nowSpeed*this.width/100000;
         
         if(this.firstFoot['x'] < 0.2)
             this.legDirection = 'right'
@@ -354,7 +354,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
     }
 
     this.jump = function(){
-        this.dy -= Math.random() * this.maxSpeed*1 + 3;
+        this.dy -= Math.random() * this.maxSpeed*this.m + 3;
     }
     
     this.stay = function(){
@@ -416,16 +416,16 @@ Creature.prototype = new ObjectR(); //Object prototype와 chain(상속)
 function randomObject(type, canvas, ctx, spawnX){
     let size = Math.random();
 
-    let mess   = Math.random()*1 + 0.5;
-    let width  = Math.floor(Math.random()*(canvas.width/10) + (canvasEl.width+canvas.height)*(1+size)/25);
-    let height = Math.floor(Math.random()*(canvas.height/10) + (canvasEl.width+canvas.height)*(1+size)/50);
+    let mess   = Math.random()*2 + 1;
+    let width  = Math.floor(Math.random()*(canvas.width/8) + (canvasEl.width+canvas.height)*(1+size)/20);
+    let height = Math.floor(Math.random()*(canvas.height/8) + (canvasEl.width+canvas.height)*(1+size)/40);
     let color  = [155, 155, 200].map(x=> Math.floor(x*Math.random()*Math.random()));
     color[0]+=100;
     color[1]+=100;  //색 확률 조정(노랑 up)
     let x = spawnX;
     let y = 1;
     let z = 1;
-    let speed = Math.random() * 6 + 6;
+    let speed = Math.random() * 10 + 10;
 
     if(type == 'object')
         return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);

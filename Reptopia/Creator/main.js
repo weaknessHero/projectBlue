@@ -4,8 +4,8 @@
     Functions for Cages.
 */
 /*
-    1.3.12
-        1. element, data, function 구조 변경 필요.!
+    1.3.14
+        1. cage 초기설정 추가
 */
 
 //Element setting
@@ -19,7 +19,7 @@ document.body.addEventListener("mousemove", mouseMove);
 document.body.addEventListener("click", mouseClick);
 window.addEventListener("resize", resize);
 
-//page 위치
+//현재 page 위치
 var pageState = "slide";
 
 //객체를 총괄하는 배열
@@ -28,21 +28,15 @@ var cageList = document.getElementsByClassName("cage");
 var cageCtxList = [];
 
 //Mouse x, y
-var mx, my, cageMouseX, cageMouseY;
+var mx, my;
 
 //현재 프레임
 var frame = 0;
-
-//canvas elements
-var cageList = document.getElementsByClassName("cage");
 
 //Animation frame objects.
 var backgroundAnimation;
 var initAnimation;
 var cageAnimations = [0, 0, 0, 0, 0];
-
-feeding = false;
-out = true;
 
 //conts
 const timeSlow = 1;
@@ -52,9 +46,10 @@ const initFrameB = 10 * timeSlow;
 const reactFrame = 10 * timeSlow;
 const waveWidth = 20;
 const waveFrame = 20 * timeSlow;
-const eyeSizeRate =  (canvasEl.width + canvasEl.height)/1000;
+const eyeSizeRate =  (canvasEl.width + canvasEl.height) / 1000;
 const eyeRange = 25;
 
+//Cages 초기설정(바닥 하나, creatures 둘)
 for(cageN=0;cageN<cageList.length;cageN++){
     cageCtxList.push(cageList[cageN].getContext("2d"));
     objects.push([  new ObjectR(cageList[cageN], cageCtxList[cageN],
@@ -62,7 +57,6 @@ for(cageN=0;cageN<cageList.length;cageN++){
             cageList[cageN].width, 100, [120,80,30]),
         randomObject('creature', cageList[cageN], cageCtxList[cageN], 10),
         randomObject('creature', cageList[cageN], cageCtxList[cageN], 700)]);
-    console.log("cageN");
 }
 
 setupCanvas();

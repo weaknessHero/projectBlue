@@ -5,8 +5,6 @@
 */
 /*
     1.3.6
-        1 showSlides(): cancelAnimationFrame 추가
-
 */
 var beforeN = 1;
 var d = 0;
