@@ -74,6 +74,7 @@ function hideSlides(){
 }
 
 function showSlides(){
+    pageState = "slide";
     hideCages();
     let slides = document.getElementById("slides");
     slides.setAttribute("style", 'top: 40%');

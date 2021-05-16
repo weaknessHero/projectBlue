@@ -19,8 +19,13 @@ document.body.addEventListener("mousemove", mouseMove);
 document.body.addEventListener("click", mouseClick);
 window.addEventListener("resize", resize);
 
+//page 위치
+var pageState = "slide";
+
 //객체를 총괄하는 배열
 var eyes = [], waves = [], objects = [];
+var cageList = document.getElementsByClassName("cage");
+var cageCtxList = [];
 
 //Mouse x, y
 var mx, my, cageMouseX, cageMouseY;
@@ -29,12 +34,12 @@ var mx, my, cageMouseX, cageMouseY;
 var frame = 0;
 
 //canvas elements
-var cageList = [];
+var cageList = document.getElementsByClassName("cage");
 
 //Animation frame objects.
 var backgroundAnimation;
 var initAnimation;
-var cageAnimations = [];
+var cageAnimations = [0, 0, 0, 0, 0];
 
 feeding = false;
 out = true;
@@ -49,6 +54,16 @@ const waveWidth = 20;
 const waveFrame = 20 * timeSlow;
 const eyeSizeRate =  (canvasEl.width + canvasEl.height)/1000;
 const eyeRange = 25;
+
+for(cageN=0;cageN<cageList.length;cageN++){
+    cageCtxList.push(cageList[cageN].getContext("2d"));
+    objects.push([  new ObjectR(cageList[cageN], cageCtxList[cageN],
+            'wall', 0, cageList[cageN].height-100, 1, 10000,
+            cageList[cageN].width, 100, [120,80,30]),
+        randomObject('creature', cageList[cageN], cageCtxList[cageN], 10),
+        randomObject('creature', cageList[cageN], cageCtxList[cageN], 700)]);
+    console.log("cageN");
+}
 
 setupCanvas();
 init();

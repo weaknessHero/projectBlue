@@ -417,15 +417,15 @@ function randomObject(type, canvas, ctx, spawnX){
     let size = Math.random();
 
     let mess   = Math.random()*1 + 0.5;
-    let width  = Math.floor(Math.random()*(canvas.width/100) + (canvasEl.width+canvas.height)*(1+size)/50);
-    let height = Math.floor(Math.random()*(canvas.height/100) + (canvasEl.width+canvas.height)*(1+size)/100);
+    let width  = Math.floor(Math.random()*(canvas.width/10) + (canvasEl.width+canvas.height)*(1+size)/25);
+    let height = Math.floor(Math.random()*(canvas.height/10) + (canvasEl.width+canvas.height)*(1+size)/50);
     let color  = [155, 155, 200].map(x=> Math.floor(x*Math.random()*Math.random()));
     color[0]+=100;
     color[1]+=100;  //색 확률 조정(노랑 up)
     let x = spawnX;
     let y = 1;
     let z = 1;
-    let speed = Math.random() * 2 + 2;
+    let speed = Math.random() * 6 + 6;
 
     if(type == 'object')
         return new ObjectR(canvas, ctx, 'object', x, y, z, mess, width, height, color);
