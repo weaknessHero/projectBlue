@@ -21,13 +21,20 @@ module.exports = {
   
     return templet;
   },
-  searchBar:function(){
+  searchBar:function(value){
+    if (value===undefined){
+      value=""
+    }
     return `
-    <a href="/"><h1>stocker</h1></a>
-    <form action="/search">
-    <input type="text" name="searchId">
-    <input type="submit">
+    <div id="searchBar">
+    <form action="/search" >
+      <input type="text" name="searchId" value=${value}>
+      <button type="submit"><img src="/IMG/searchICon.png" style="width:50px;height:50px;"></img></button>
     </form>
+    </div>
     `;
+  },
+  logo:function(){
+    return`<div class=topDiv><a href="/"><div class='logo'>STOCKER</div></a></div>`
   }
 };

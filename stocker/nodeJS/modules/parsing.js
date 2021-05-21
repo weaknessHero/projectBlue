@@ -20,13 +20,25 @@ module.exports = {
 
       for (var rowCell = 0; rowCell < rowCells.length; rowCell++) {
         if (singleRow === 0) {
-          table += '<th>';
-          table += rowCells[rowCell];
-          table += '</th>';
+          if(rowCell===0){
+            table += '<th>';
+            table += rowCells[rowCell]
+            table += '</th>';
+          } else{
+            table += '<th>';
+            table += rowCells[rowCell].substring(0,4)+"년도 "+rowCells[rowCell].substring(4,5)+"분기";
+            table += '</th>';
+          }
         } else {
-          table += '<td>';
-          table += rowCells[rowCell];
-          table += '</td>';
+          if(rowCell===0){
+            table += '<th>';
+            table += rowCells[rowCell]
+            table += '</th>';
+          } else{
+            table += '<td>';
+            table += rowCells[rowCell].substring(rowCells[rowCell].length-8,8-rowCells[rowCell].length);
+            table += '</td>';
+          }
         }
       }
       if (singleRow === 0) {
