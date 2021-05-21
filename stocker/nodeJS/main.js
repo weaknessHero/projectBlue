@@ -22,8 +22,6 @@ const app = express();
 
 const templet = require('./modules/templet.js');
 const parsing= require('./modules/parsing.js')
-
-const searchBar= templet.searchBar();
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
 
@@ -31,45 +29,62 @@ app.use(express.static('static'));
 
 
 app.get('/',(req, res) => {
-  var html=templet.HTML(`execution.js`, `design.css`, searchBar,`<img src="/logo.jpg">`);
+  var html=templet.HTML(`execution.js`, `designIndex.css`, `<div class=topDiv><p><a href="/"><img src="/logo.jpg" alt="logo" width="800px" height="300px"></a></p></div>`,templet.searchBar());
   res.send(html);
 });
 
 app.get('/search',(req, res) => {
-  MongoClient.connect(url, function(err, db) {
+  MongoClient.connect(url, { useUnifiedTopology: true }, function(err, db) {
     if (err) throw err; 
-    var dbo = db.db("stocker");      
-    if (req.query.searchId!="") {
-      console.log(req.query.searchId)
-      dbo.collection("stockId").find({name: new RegExp(req.query.searchId)}).toArray(function(err, result){
-          
-        var i = result.length;
-        var des=`<ul>`
-        while(i--){
-          des+=`<h2><a href=/stockData?stockCodeID=${result[i].stockCode}><ol>${result[i].name}</ol></a></h2>`
-        }
-        des+=`</ul>`
+    var dbo = db.db("stockerDB");      
 
-        var html=templet.HTML(`execution.js`, `design.css`, searchBar, des);
-        res.send(html);
-      });
-    }
+    dbo.collection("ID").find({name: new RegExp(req.query.searchId)}).toArray(function(err, result){
+
+      var i = result.length;
+      var des=`<div class="searchResult">`
+      if((i<1)|(req.query.searchId==="")){
+        des=`<p class="announcement">"${req.query.searchId}"에 대한 검색결과를 찾지 못했습니다.</p>`;
+
+
+      }else{
+        des=`<p class="announcement">"${req.query.searchId}"에 대한 검색결과입니다.</p>`;
+        while(i--){
+          des+=`<div class="resultIndex"><a href=/stockData?stockCodeID=${result[i].stockCode}&searchId=${req.query.searchId}>${result[i].name}</a></div>`
+        }
+      }
+
+      des+=`</div>`
+
+      var html=templet.HTML(`execution.js`, `design.css`, templet.logo(),templet.searchBar(req.query.searchId), des);
+      res.send(html);
+
+    });    
   });
 });
 
 app.get('/stockData',(req, res) => {
-  fs.readFile(`./static/detailData/${req.query.stockCodeID}.csv`, 'utf8', function(err, codeData){
-    var table ="";
-    if (err) {
-      table="";
-      
-    } else{
-      table=parsing.CSVtoTable(codeData);
-    }
+  fs.readFile(`./static/detailData/${req.query.stockCodeID}.csv`, 'utf8', function(RFErr, fileCodeData){
+    MongoClient.connect(url, { useUnifiedTopology: true }, function(CErr, db) {
+      if (CErr) throw CErr;
+      var dbo = db.db("stockerDB");      
+      dbo.collection("ID").findOne({stockCode:req.query.stockCodeID}, function(FErr, result){
+        if (FErr) throw FErr;
+        var table ="";
+        if (RFErr) {
+          var html=templet.HTML(`execution.js`, `design.css`, templet.logo() ,templet.searchBar(req.query.searchId),`<p class="announcement">${result.name}의 정보를 찾을수 없습니다.</p>`);
+          
+        } else{
+          table=parsing.CSVtoTable(fileCodeData);
+          var html=templet.HTML(`execution.js`, `design.css`, templet.logo() ,templet.searchBar(req.query.searchId), `<p class="announcement">${result.name}</p>`, `<h1>재무제표</h1><div class="scrollDiv">${table}</div><p style="font-size:24px;">- 위의 표기된 수치는 (표기 수치)억을 기준으로 표기되며, 세부 항목에 1이 붙은 경우에는 자회사까지 포함한 결과입니다.</p>`);
 
-    console.log(req.query.stockCodeID);
-    var html=templet.HTML(`execution.js`, `data.css`, searchBar, req.query.stockCodeID, table);
-    res.send(html);
+        }
+        res.send(html);
+
+      });    
+    });
+
+
+
   });
 });
 
