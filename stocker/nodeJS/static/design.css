@@ -1,45 +1,100 @@
-body { text-align: center; }
-div { text-align: center; }
+body { text-align: left; }
+div 
+{
+  display: block;
+}
+input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px #fff inset ; -webkit-text-fill-color: #000; }
 
+
+a:link { color: black; text-decoration: none;}
+a:visited { color: black; text-decoration: none;}
+a:hover { color: blue; text-decoration: none;}
 
 *{
   user-select: none;
 }
 *:focus { outline:none; }
 
-#logoIMG{
-  margin-top: 20%;
+th {
+  background-color:	#AECDFF ;
+  font-size: 16pt;
+  min-width: 300px;
+  text-align: center; 
 }
-#logoIMG > a > img{
-  width:60%;
+
+td {
+  font-size: 24pt;
+  min-width: 300px;
+  text-align: right;
 }
-.smallLogo{
+
+button{
+  background-color: white;
+  border: none;
+  vertical-align:middle;
+  margin: 6px 10px 6px 6px;
+}
+
+.announcement{
+  font-size: 36px;
+  font-weight: bold;
+  letter-spacing: 2pt;
+
+}
+
+tr:nth-child(even){
+  background-color:	#E0EBFF ;
+}
+
+
+.scrollDiv{
+  overflow: scroll;
+}
+
+.logo{
   display: inline-block;
+  font-size: 28pt;
+  font-weight:bold;
 }
-.smallLogo > a > img{
-  height: 50px;
+
+
+
+.topDiv{
+  display: inline-block;
+  margin-top:30px;
+}
+
+#searchBar{
+  height:auto;
+  display: inline-block;
+  width:1000px;
+
+  border: 2px solid black;
+  border-radius: 30px;
+  text-align: right;
+}
+
+
+.searchResult{
+  margin: 30px;
   text-align: left;
+
 }
 
-
-.searchBar{
-  display:inline-block;
-  border: gray 1px solid;
-  width: 80%;
-  text-align: center;
+.resultIndex{
+  font-weight:bold;
+  margin:40px;
+  font-size: 32pt;
 }
 
 
 input[type="text"] {
-
-  size:10;
-  width:90%;
+  vertical-align:middle;
+  width: 880px;
   padding: 5px;
-  height: 40px;
-  font-size: 14pt;
+  height: 50px;
+  font-size: 18pt;
   border: none;
 }
-button{
-  border: none;
-  background-color: white;
-}
+
+
