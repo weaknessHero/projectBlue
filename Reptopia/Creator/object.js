@@ -254,7 +254,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
             this.ctx.quadraticCurveTo(this.x+this.width*this.thirdHeadB['x'],this.y+this.height*this.thirdHeadB['y'], this.x+this.width*0.2,this.y+this.height*0.62);
             this.ctx.fill();
             //body
-            this.ctx.fillStyle = arrToRGB(this.color.map(x=>x*=0.3));
+            this.ctx.fillStyle = arrToRGB(this.color.map(x=>x*=0.6));
             this.ctx.beginPath();
             this.ctx.moveTo(this.x+this.width*0.2,this.y+this.height*0.62);
             this.ctx.bezierCurveTo(this.x+this.width*0.32,this.y+this.height*0.76, this.x+this.width*0.55,this.y+this.height*0.8, this.x+this.width*0.62,this.y+this.height*0.63);
@@ -292,7 +292,7 @@ function Creature(canvas, ctx, type, x, y, z, mess, width, height, color, speed)
             this.ctx.bezierCurveTo(this.x+this.width*(1-0.08),this.y+this.height*0.72, this.x+this.width*(1-0.11),this.y+this.height*0.72, this.x+this.width*(1-0.2),this.y+this.height*0.62);
             this.ctx.fill();
             //body
-            this.ctx.fillStyle = arrToRGB(this.color.map(x=>x*=0.3));
+            this.ctx.fillStyle = arrToRGB(this.color.map(x=>x*=0.6));
             this.ctx.beginPath();
             this.ctx.moveTo(this.x+this.width*(1-0.20),this.y+this.height*0.62);
             this.ctx.bezierCurveTo(this.x+this.width*(1-0.32),this.y+this.height*0.76, this.x+this.width*(1-0.55),this.y+this.height*0.8, this.x+this.width*(1-0.62),this.y+this.height*0.63);
